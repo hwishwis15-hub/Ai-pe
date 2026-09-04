@@ -925,38 +925,530 @@ export const MOUTH_BEHAVIORS: MouthDef[] = [
   ]},
 
 
+
+  // ============================================================
+  //  ULTRA-REALISTIC EXPANSION v6 — 90+ новых сложнейших мимик
+  //  Анатомически точные: уголки вверх при улыбке (corner -), вниз при грусти (corner +),
+  //  Духенн, contempt, shame, awe, flirt, cringe и т.д. — 3-5 фаз onset-apex-offset
+  // ============================================================
+  { id: 'duchenne_true_joy', name: 'Духенн истинная радость', cat: 'happy', w: 6, frames: [
+    { d: 0.24, p: m({ width: 44, height: 9.2, smile: 0.72, openness: 0.18, teethUpper: 0.42, cornerLeft: -2.2, cornerRight: -2.2, upperRaise: 0.18 }), e: 'outCubic' },
+    { d: 0.55, p: m({ smile: 0.81, openness: 0.22, teethUpper: 0.55, cornerLeft: -2.6, cornerRight: -2.6 }), e: 'inOutQuad' },
+    { d: 0.7, p: m({ smile: 0.68, openness: 0.12 }), e: 'outQuad' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'polite_closed_smile', name: 'Вежливая закрытая улыбка', cat: 'happy', w: 7, frames: [
+    { d: 0.22, p: m({ width: 36, height: 7.0, smile: 0.38, openness: 0.02, cornerLeft: -1.1, cornerRight: -1.1, lipTight: 0.08 }), e: 'outQuad' },
+    { d: 1.1, p: m({ smile: 0.40 }), e: 'hold' },
+    { d: 0.32, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'smirk_asymmetric_left', name: 'Ухмылка асимметрия влево', cat: 'happy', w: 5, frames: [
+    { d: 0.16, p: m({ width: 40, height: 8.0, smile: 0.52, openness: 0.06, cornerLeft: -2.8, cornerRight: 0.6, teethUpper: 0.18 }), e: 'outBack' },
+    { d: 0.6, p: m({ smile: 0.56, cornerLeft: -2.5 }), e: 'hold' },
+    { d: 0.3, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'smirk_asymmetric_right', name: 'Ухмылка вправо', cat: 'happy', w: 5, frames: [
+    { d: 0.16, p: m({ width: 40, height: 8.0, smile: 0.52, openness: 0.06, cornerLeft: 0.6, cornerRight: -2.8, teethUpper: 0.18 }), e: 'outBack' },
+    { d: 0.6, p: m({ smile: 0.56, cornerRight: -2.5 }), e: 'hold' },
+    { d: 0.3, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'chuckle_shake', name: 'Хихик покачивание', cat: 'happy', w: 5, frames: [
+    { d: 0.11, p: m({ width: 44, height: 10.2, smile: 0.74, openness: 0.38, teethUpper: 0.52, teethLower: 0.18, cornerLeft: -1.9, cornerRight: -1.9, quiver: 0.55 }), e: 'outQuad' },
+    { d: 0.09, p: m({ openness: 0.26, quiver: 0.42 }), e: 'inQuad' },
+    { d: 0.11, p: m({ openness: 0.41, quiver: 0.61 }), e: 'outQuad' },
+    { d: 0.09, p: m({ openness: 0.24 }), e: 'inQuad' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'giggle_nasal', name: 'Хихик носом', cat: 'happy', w: 5, frames: [
+    { d: 0.13, p: m({ width: 38, height: 8.5, smile: 0.66, openness: 0.18, teethUpper: 0.32, cornerLeft: -1.6, cornerRight: -1.6, quiver: 0.38, upperRaise: 0.12 }), e: 'outQuad' },
+    { d: 0.10, p: m({ openness: 0.09, smile: 0.62 }), e: 'inQuad' },
+    { d: 0.12, p: m({ openness: 0.21 }), e: 'outQuad' },
+    { d: 0.32, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'laugh_cry_joy', name: 'Смех до слёз радости', cat: 'happy', w: 3, frames: [
+    { d: 0.14, p: m({ width: 46, height: 11.5, smile: 0.86, openness: 0.62, teethUpper: 0.68, teethLower: 0.42, tongueOut: 0.12, cornerLeft: -2.4, cornerRight: -2.4, quiver: 0.62, drool: 0.04, innerDark: 0.84 }), e: 'outBack' },
+    { d: 0.10, p: m({ openness: 0.48, quiver: 0.88 }), e: 'inQuad' },
+    { d: 0.12, p: m({ openness: 0.66, quiver: 0.71 }), e: 'outQuad' },
+    { d: 0.6, p: m({ smile: 0.79, quiver: 0.42 }), e: 'outQuad' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'content_sigh_smile', name: 'Довольный вздох улыбка', cat: 'happy', w: 6, frames: [
+    { d: 0.32, p: m({ width: 40, height: 9.0, smile: 0.48, openness: 0.20, teethUpper: 0.12, cornerLeft: -1.4, cornerRight: -1.4, innerDark: 0.9 }), e: 'inOutQuad' },
+    { d: 0.45, p: m({ openness: 0.08, smile: 0.44, width: 38 }), e: 'outQuad' },
+    { d: 0.50, p: m({ smile: 0.34 }), e: 'outQuad' },
+  ]},
+  { id: 'relief_half_smile', name: 'Облегчённая полуулыбка', cat: 'happy', w: 6, frames: [
+    { d: 0.28, p: m({ width: 38, height: 8.2, smile: 0.31, openness: 0.11, cornerLeft: -0.9, cornerRight: -0.9, lowerDroop: 0.12, drool: 0.01 }), e: 'outQuad' },
+    { d: 0.55, p: m({ smile: 0.36, openness: 0.06 }), e: 'inOutQuad' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'pride_smile_chinup', name: 'Гордая улыбка подбородок вверх', cat: 'happy', w: 5, frames: [
+    { d: 0.22, p: m({ width: 42, height: 8.5, smile: 0.58, openness: 0.14, teethUpper: 0.36, cornerLeft: -1.7, cornerRight: -1.7, upperRaise: 0.06, lowerDroop: -0.08 }), e: 'outBack' },
+    { d: 0.75, p: m({ smile: 0.62 }), e: 'hold' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'embarrassed_corner_bite', name: 'Смущённая закусила уголок', cat: 'happy', w: 4, frames: [
+    { d: 0.18, p: m({ width: 32, height: 7.8, smile: 0.28, openness: 0.05, cornerLeft: -0.6, cornerRight: 1.2, lipTight: 0.18, teethLower: 0.08 }), e: 'outQuad' },
+    { d: 0.38, p: m({ cornerRight: 1.4, smile: 0.24, lipTight: 0.22 }), e: 'hold' },
+    { d: 0.32, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'nostalgic_wistful_smile', name: 'Ностальгическая улыбка', cat: 'happy', w: 5, frames: [
+    { d: 0.30, p: m({ width: 36, height: 7.8, smile: 0.36, openness: 0.04, cornerLeft: -1.2, cornerRight: 0.8, quiver: 0.18, lowerDroop: 0.10, lipTight: 0.12 }), e: 'inOutQuad' },
+    { d: 0.85, p: m({ smile: 0.32, quiver: 0.22, cornerRight: 0.95 }), e: 'hold' },
+    { d: 0.42, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'bittersweet_smile_sadeyes', name: 'Горько-сладкая улыбка', cat: 'happy', w: 4, frames: [
+    { d: 0.26, p: m({ width: 38, height: 8.2, smile: 0.44, openness: 0.07, cornerLeft: -1.5, cornerRight: 1.1, lowerDroop: 0.14, quiver: 0.28, teethUpper: 0.14 }), e: 'outCubic' },
+    { d: 0.70, p: m({ smile: 0.39, cornerRight: 1.35, quiver: 0.34 }), e: 'linear' },
+    { d: 0.38, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'smug_press_lips', name: 'Самодовольные сжатые губы', cat: 'happy', w: 5, frames: [
+    { d: 0.24, p: m({ width: 30, height: 5.8, smile: 0.32, openness: 0.01, lipTight: 0.42, cornerLeft: -0.8, cornerRight: -0.8 }), e: 'outQuad' },
+    { d: 0.55, p: m({ lipTight: 0.48, smile: 0.36 }), e: 'hold' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'beaming_open_cheeks', name: 'Сияющая щёки вверх', cat: 'happy', w: 6, frames: [
+    { d: 0.20, p: m({ width: 46, height: 10.0, smile: 0.78, openness: 0.34, teethUpper: 0.58, cornerLeft: -2.7, cornerRight: -2.7, upperRaise: 0.14, lowerDroop: 0.04 }), e: 'outBack' },
+    { d: 0.65, p: m({ smile: 0.82, openness: 0.28 }), e: 'hold' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'grief_pang', name: 'Укол горя', cat: 'sad', w: 4, frames: [
+    { d: 0.16, p: m({ width: 34, height: 9.2, smile: -0.58, openness: 0.22, cornerLeft: 3.8, cornerRight: 3.8, quiver: 0.88, lowerDroop: 0.28, upperRaise: 0.16, lipTight: 0.18 }), e: 'inQuad' },
+    { d: 0.55, p: m({ smile: -0.66, openness: 0.14, quiver: 1.12 }), e: 'linear' },
+    { d: 0.42, p: m({ quiver: 0.62 }), e: 'outQuad' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'disappointment_drop', name: 'Разочарование уголки вниз', cat: 'sad', w: 6, frames: [
+    { d: 0.28, p: m({ width: 36, height: 7.8, smile: -0.44, openness: 0.06, cornerLeft: 2.9, cornerRight: 2.9, lowerDroop: 0.18, lipTight: 0.14 }), e: 'outQuad' },
+    { d: 0.70, p: m({ smile: -0.48, cornerLeft: 3.2, cornerRight: 3.2 }), e: 'hold' },
+    { d: 0.36, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'resigned_sigh_down', name: 'Смиренный вздох вниз', cat: 'sad', w: 5, frames: [
+    { d: 0.30, p: m({ width: 38, height: 8.5, smile: -0.32, openness: 0.20, cornerLeft: 1.8, cornerRight: 1.8, lowerDroop: 0.22 }), e: 'inOutQuad' },
+    { d: 0.42, p: m({ openness: 0.06, smile: -0.28, lowerDroop: 0.12 }), e: 'outQuad' },
+    { d: 0.55, p: m({ smile: -0.22 }), e: 'outQuad' },
+  ]},
+  { id: 'lonely_droop_chin', name: 'Одиночество подбородок дрожит', cat: 'sad', w: 5, frames: [
+    { d: 0.26, p: m({ width: 32, height: 8.0, smile: -0.42, openness: 0.08, cornerLeft: 2.4, cornerRight: 2.4, lowerDroop: 0.34, quiver: 0.58, lipTight: 0.22 }), e: 'outQuad' },
+    { d: 0.80, p: m({ quiver: 0.92, smile: -0.46, lowerDroop: 0.38 }), e: 'linear' },
+    { d: 0.38, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'shame_lower_lip_in', name: 'Стыд нижняя губа внутрь', cat: 'sad', w: 5, frames: [
+    { d: 0.20, p: m({ width: 30, height: 6.5, smile: -0.26, openness: 0.04, lipTight: 0.38, lowerDroop: -0.12, cornerLeft: 1.4, cornerRight: 1.4, teethLower: 0.06 }), e: 'inQuad' },
+    { d: 0.65, p: m({ lipTight: 0.44, cornerLeft: 1.6, cornerRight: 1.6 }), e: 'hold' },
+    { d: 0.34, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'heartbreak_wail_big', name: 'Разбитое сердце вопль', cat: 'sad', w: 3, frames: [
+    { d: 0.14, p: m({ width: 38, height: 12.2, smile: -0.88, openness: 0.74, teethLower: 0.42, tongueOut: 0.14, cornerLeft: 4.2, cornerRight: 4.2, quiver: 1.42, drool: 0.12, lowerDroop: 0.42, innerDark: 0.84 }), e: 'outBack' },
+    { d: 0.12, p: m({ openness: 0.58, quiver: 1.88 }), e: 'inQuad' },
+    { d: 0.14, p: m({ openness: 0.78, quiver: 1.62 }), e: 'outQuad' },
+    { d: 0.70, p: m({ quiver: 0.88 }), e: 'outQuad' },
+    { d: 0.32, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'sniffle_nose_mouth', name: 'Шмыг нос-рот', cat: 'sad', w: 4, frames: [
+    { d: 0.12, p: m({ width: 34, height: 8.2, smile: -0.36, openness: 0.06, upperRaise: 0.28, cornerLeft: 1.2, cornerRight: 1.2, quiver: 0.32, lipTight: 0.14 }), e: 'outQuad' },
+    { d: 0.14, p: m({ openness: 0.12, upperRaise: 0.34 }), e: 'inQuad' },
+    { d: 0.18, p: m({ openness: 0.04 }), e: 'outQuad' },
+    { d: 0.32, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'pout_sulk_child', name: 'Детский надутый', cat: 'sad', w: 5, frames: [
+    { d: 0.22, p: m({ width: 26, height: 10.2, smile: -0.22, openness: 0.06, lowerDroop: 0.58, upperRaise: 0.08, lipTight: 0.08, cornerLeft: 0.8, cornerRight: 0.8 }), e: 'outBack' },
+    { d: 0.65, p: m({ lowerDroop: 0.62 }), e: 'hold' },
+    { d: 0.34, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'tremble_chin_mentalis', name: 'Дрожь подбородка mentalis', cat: 'sad', w: 4, frames: [
+    { d: 0.10, p: m({ width: 34, height: 7.6, smile: -0.48, openness: 0.08, quiver: 1.02, lowerDroop: 0.18, cornerLeft: 2.6, cornerRight: 2.6, lipTight: 0.28 }), e: 'outQuad' },
+    { d: 0.09, p: m({ lowerDroop: 0.08, quiver: 1.24 }), e: 'inQuad' },
+    { d: 0.10, p: m({ lowerDroop: 0.21, quiver: 1.42 }), e: 'outQuad' },
+    { d: 0.55, p: m({ quiver: 0.62 }), e: 'outQuad' },
+  ]},
+  { id: 'tearless_wail_soft', name: 'Безслёзный тихий вой', cat: 'sad', w: 4, frames: [
+    { d: 0.18, p: m({ width: 36, height: 10.2, smile: -0.62, openness: 0.44, cornerLeft: 3.4, cornerRight: 3.4, quiver: 0.92, lowerDroop: 0.28, teethLower: 0.16 }), e: 'outCubic' },
+    { d: 0.65, p: m({ openness: 0.38, quiver: 1.18 }), e: 'linear' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'indignant_huff_nostrils', name: 'Возмущённый фырк', cat: 'angry', w: 5, frames: [
+    { d: 0.14, p: m({ width: 34, height: 7.2, smile: -0.22, openness: 0.07, lipTight: 0.36, upperRaise: 0.22, cornerLeft: 1.8, cornerRight: 1.8, quiver: 0.38 }), e: 'outQuad' },
+    { d: 0.16, p: m({ openness: 0.04, upperRaise: 0.32, lipTight: 0.42 }), e: 'inQuad' },
+    { d: 0.32, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'contempt_unilateral', name: 'Презрение одностороннее', cat: 'angry', w: 5, frames: [
+    { d: 0.18, p: m({ width: 38, height: 7.6, smile: 0.18, openness: 0.04, cornerLeft: -1.6, cornerRight: 2.2, upperRaise: 0.28, lipTight: 0.22 }), e: 'outCubic' },
+    { d: 0.62, p: m({ cornerRight: 2.6, upperRaise: 0.32 }), e: 'hold' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'scorn_curl_upper', name: 'Презрительный загиб верхней', cat: 'angry', w: 4, frames: [
+    { d: 0.16, p: m({ width: 36, height: 8.0, openness: 0.08, upperRaise: 0.52, cornerLeft: 0.4, cornerRight: 0.4, lipTight: 0.18, teethUpper: 0.22 }), e: 'outQuad' },
+    { d: 0.55, p: m({ upperRaise: 0.58, teethUpper: 0.28 }), e: 'hold' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'furious_bare_teeth', name: 'Яростный оскал', cat: 'angry', w: 3, frames: [
+    { d: 0.12, p: m({ width: 44, height: 10.2, smile: -0.18, openness: 0.42, teethUpper: 0.82, teethLower: 0.42, upperRaise: 0.42, lowerDroop: 0.18, cornerLeft: 1.6, cornerRight: 1.6, lipTight: 0.22, quiver: 0.42 }), e: 'outBack' },
+    { d: 0.55, p: m({ openness: 0.48, quiver: 0.58 }), e: 'linear' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'simmer_hold_press', name: 'Сдерживаемая злость сжато', cat: 'angry', w: 5, frames: [
+    { d: 0.26, p: m({ width: 28, height: 5.2, openness: 0.01, lipTight: 0.58, cornerLeft: 1.1, cornerRight: 1.1, upperRaise: 0.08, quiver: 0.32 }), e: 'inQuad' },
+    { d: 0.75, p: m({ lipTight: 0.62, quiver: 0.48 }), e: 'hold' },
+    { d: 0.34, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'jaw_clench_grind', name: 'Сжатие челюстей скрежет', cat: 'angry', w: 4, frames: [
+    { d: 0.18, p: m({ width: 40, height: 6.2, openness: 0.04, lipTight: 0.48, cornerLeft: 0.9, cornerRight: 0.9, quiver: 0.28, teethUpper: 0.08 }), e: 'inQuad' },
+    { d: 0.12, p: m({ width: 41, lipTight: 0.52, quiver: 0.42 }), e: 'linear' },
+    { d: 0.14, p: m({ width: 39, quiver: 0.32 }), e: 'linear' },
+    { d: 0.32, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'snarl_nasolabial', name: 'Рык носогубка', cat: 'angry', w: 4, frames: [
+    { d: 0.14, p: m({ width: 40, height: 9.0, openness: 0.16, upperRaise: 0.62, cornerLeft: 1.2, cornerRight: 1.2, teethUpper: 0.48, lipTight: 0.14 }), e: 'outQuad' },
+    { d: 0.50, p: m({ upperRaise: 0.68, teethUpper: 0.54 }), e: 'hold' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'annoyed_eye_roll_mouth', name: 'Раздражённый закат губ', cat: 'angry', w: 5, frames: [
+    { d: 0.20, p: m({ width: 36, height: 7.0, smile: -0.18, openness: 0.06, cornerLeft: 0.8, cornerRight: 1.6, lipTight: 0.18, lowerDroop: 0.12 }), e: 'outQuad' },
+    { d: 0.45, p: m({ cornerRight: 1.9 }), e: 'hold' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'threat_press_lips_white', name: 'Угроза побледневшие сжатые', cat: 'angry', w: 3, frames: [
+    { d: 0.16, p: m({ width: 26, height: 4.8, openness: 0.005, lipTight: 0.72, cornerLeft: 0.6, cornerRight: 0.6, innerDark: 0.96 }), e: 'inQuad' },
+    { d: 0.62, p: m({ lipTight: 0.78, quiver: 0.22 }), e: 'hold' },
+    { d: 0.32, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'picky_purse_narrow', name: 'Придирчиво поджатые узко', cat: 'disgusted', w: 6, frames: [
+    { d: 0.20, p: m({ width: 26, height: 6.2, openness: 0.02, lipTight: 0.32, upperRaise: 0.18, lowerDroop: 0.08, cornerLeft: 0.6, cornerRight: 0.6 }), e: 'outQuad' },
+    { d: 0.55, p: m({ width: 24, lipTight: 0.38 }), e: 'hold' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'queasy_swallow', name: 'Тошнотный глоток', cat: 'disgusted', w: 4, frames: [
+    { d: 0.18, p: m({ width: 32, height: 7.8, openness: 0.08, upperRaise: 0.38, lowerDroop: 0.12, lipTight: 0.16, cornerLeft: 0.8, cornerRight: 0.8 }), e: 'outQuad' },
+    { d: 0.22, p: m({ openness: 0.02, upperRaise: 0.44, lipTight: 0.22 }), e: 'inQuad' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'bitter_taste_tongue', name: 'Горький вкус язык наружу', cat: 'disgusted', w: 5, frames: [
+    { d: 0.16, p: m({ width: 34, height: 8.2, openness: 0.18, upperRaise: 0.32, tongueOut: 0.18, tongueCurl: 0.22, cornerLeft: 0.6, cornerRight: 0.6 }), e: 'outQuad' },
+    { d: 0.32, p: m({ tongueOut: 0.24, tongueCurl: 0.32 }), e: 'hold' },
+    { d: 0.28, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'sour_suck_cheeks', name: 'Кислые втянутые щёки', cat: 'disgusted', w: 5, frames: [
+    { d: 0.18, p: m({ width: 24, height: 7.0, openness: 0.03, lipTight: 0.28, cornerLeft: 0.4, cornerRight: 0.4, upperRaise: 0.12 }), e: 'outQuad' },
+    { d: 0.42, p: m({ width: 22, lipTight: 0.34 }), e: 'hold' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'nose_wrinkle_upper_sneer', name: 'Сморщенный нос усмешка', cat: 'disgusted', w: 4, frames: [
+    { d: 0.14, p: m({ width: 36, height: 8.5, openness: 0.06, upperRaise: 0.58, cornerLeft: 0.7, cornerRight: 0.7, lipTight: 0.12, teethUpper: 0.14 }), e: 'outQuad' },
+    { d: 0.55, p: m({ upperRaise: 0.62 }), e: 'hold' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'gag_recoil_tongue', name: 'Рвотный позыв откат языка', cat: 'disgusted', w: 3, frames: [
+    { d: 0.12, p: m({ width: 38, height: 11.0, openness: 0.58, tongueOut: 0.42, tongueCurl: 0.42, upperRaise: 0.36, cornerLeft: 0.4, cornerRight: 0.4, quiver: 0.38, innerDark: 0.82 }), e: 'outBack' },
+    { d: 0.18, p: m({ openness: 0.32, tongueOut: 0.22 }), e: 'inQuad' },
+    { d: 0.32, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'gasp_silent_O', name: 'Беззвучный вздох О', cat: 'surprised', w: 6, frames: [
+    { d: 0.10, p: m({ width: 32, height: 11.2, openness: 0.58, cornerLeft: -0.2, cornerRight: -0.2, lowerDroop: 0.28, innerDark: 0.86 }), e: 'outCubic' },
+    { d: 0.55, p: m({ openness: 0.48 }), e: 'hold' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'awe_open_soft', name: 'Трепет мягко открыт', cat: 'surprised', w: 5, frames: [
+    { d: 0.22, p: m({ width: 36, height: 10.2, openness: 0.38, cornerLeft: -0.4, cornerRight: -0.4, lowerDroop: 0.18, teethUpper: 0.14 }), e: 'outQuad' },
+    { d: 0.75, p: m({ openness: 0.34 }), e: 'hold' },
+    { d: 0.38, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'startle_jolt_mouth', name: 'Испуг рывок рта', cat: 'surprised', w: 3, frames: [
+    { d: 0.07, p: m({ width: 34, height: 12.0, openness: 0.62, cornerLeft: 0.2, cornerRight: 0.2, lowerDroop: 0.32, quiver: 0.42 }), e: 'outQuad' },
+    { d: 0.10, p: m({ openness: 0.34, quiver: 0.22 }), e: 'inQuad' },
+    { d: 0.32, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'double_take_O_mouth', name: 'Двойной дубль О', cat: 'surprised', w: 4, frames: [
+    { d: 0.11, p: m({ width: 34, height: 11.0, openness: 0.48, cornerLeft: 0.0, cornerRight: 0.0, lowerDroop: 0.22 }), e: 'outQuad' },
+    { d: 0.10, p: m({ openness: 0.18 }), e: 'inQuad' },
+    { d: 0.12, p: m({ openness: 0.54 }), e: 'outQuad' },
+    { d: 0.40, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'breath_hold_awe', name: 'Затаил дыхание трепет', cat: 'surprised', w: 4, frames: [
+    { d: 0.28, p: m({ width: 30, height: 9.5, openness: 0.22, cornerLeft: -0.3, cornerRight: -0.3, lipTight: 0.08, innerDark: 0.90 }), e: 'inQuad' },
+    { d: 0.62, p: m({ openness: 0.18, lipTight: 0.12 }), e: 'hold' },
+    { d: 0.34, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'jaw_drop_slow', name: 'Медленно падает челюсть', cat: 'surprised', w: 5, frames: [
+    { d: 0.42, p: m({ width: 36, height: 10.8, openness: 0.52, lowerDroop: 0.42, cornerLeft: -0.2, cornerRight: -0.2 }), e: 'inOutCubic' },
+    { d: 0.55, p: m({ openness: 0.58 }), e: 'linear' },
+    { d: 0.40, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'flirt_bite_lower_lip', name: 'Флирт закусила нижнюю', cat: 'playful', w: 5, frames: [
+    { d: 0.18, p: m({ width: 34, height: 8.2, openness: 0.07, smile: 0.42, cornerLeft: -1.4, cornerRight: -0.2, teethUpper: 0.22, lowerDroop: 0.08 }), e: 'outQuad' },
+    { d: 0.42, p: m({ smile: 0.48, cornerLeft: -1.6, teethUpper: 0.26 }), e: 'hold' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'cheeky_wink_mouth_asym', name: 'Хитрый рот асим', cat: 'playful', w: 5, frames: [
+    { d: 0.14, p: m({ width: 38, height: 7.8, smile: 0.48, openness: 0.04, cornerLeft: -1.8, cornerRight: 0.8, lipTight: 0.08 }), e: 'outBack' },
+    { d: 0.50, p: m({ smile: 0.52, cornerLeft: -2.0 }), e: 'hold' },
+    { d: 0.28, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'mischief_pout_tongue_side', name: 'Озорной высунул вбок', cat: 'playful', w: 4, frames: [
+    { d: 0.14, p: m({ width: 36, height: 9.0, openness: 0.16, smile: 0.28, tongueOut: 0.22, tongueWobble: 0.42, cornerLeft: -0.8, cornerRight: -0.6 }), e: 'outBack' },
+    { d: 0.38, p: m({ tongueWobble: 0.58 }), e: 'linear' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'tongue_out_silly_wide', name: 'Глупый высунут широко', cat: 'playful', w: 4, frames: [
+    { d: 0.12, p: m({ width: 40, height: 10.2, openness: 0.42, tongueOut: 0.48, tongueWobble: 0.18, cornerLeft: 0.2, cornerRight: 0.2, smile: 0.18 }), e: 'outBack' },
+    { d: 0.55, p: m({ tongueOut: 0.52, tongueWobble: 0.32 }), e: 'linear' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'lip_pop_bubble_v2', name: 'Пузырь лопнул губами', cat: 'playful', w: 4, frames: [
+    { d: 0.12, p: m({ width: 24, height: 10.2, openness: 0.04, lipTight: 0.08 }), e: 'inQuad' },
+    { d: 0.08, p: m({ width: 44, openness: 0.18, lipTight: 0.02 }), e: 'outQuad' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'kiss_blow_air', name: 'Воздушный поцелуй', cat: 'playful', w: 6, frames: [
+    { d: 0.18, p: m({ width: 22, height: 9.2, openness: 0.04, lipTight: 0.12, cornerLeft: 0.2, cornerRight: 0.2 }), e: 'outQuad' },
+    { d: 0.14, p: m({ width: 20, lipTight: 0.18 }), e: 'inQuad' },
+    { d: 0.16, p: m({ width: 28, openness: 0.08 }), e: 'outQuad' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'whistle_tune', name: 'Свист мелодия', cat: 'playful', w: 5, frames: [
+    { d: 0.16, p: m({ width: 20, height: 8.5, openness: 0.06, lipTight: 0.18, cornerLeft: 0.3, cornerRight: 0.3 }), e: 'outQuad' },
+    { d: 0.28, p: m({ width: 22, openness: 0.08 }), e: 'linear' },
+    { d: 0.28, p: m({ width: 18, openness: 0.05 }), e: 'linear' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'mock_surprise_gasp_play', name: 'Игровой вздох удивления', cat: 'playful', w: 4, frames: [
+    { d: 0.10, p: m({ width: 38, height: 11.2, openness: 0.48, smile: 0.32, cornerLeft: -1.2, cornerRight: -1.2 }), e: 'outBack' },
+    { d: 0.42, p: m({ openness: 0.28, smile: 0.38 }), e: 'outQuad' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'daydream_mouth_part', name: 'Мечтательный приоткрыт', cat: 'idle', w: 5, frames: [
+    { d: 0.34, p: m({ width: 36, height: 8.8, openness: 0.12, cornerLeft: 0.2, cornerRight: 0.2, lowerDroop: 0.12, innerDark: 0.92 }), e: 'inOutQuad' },
+    { d: 1.1, p: m({ openness: 0.09 }), e: 'hold' },
+    { d: 0.42, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'concentration_tongue_tip', name: 'Концентрация кончик языка', cat: 'idle', w: 4, frames: [
+    { d: 0.22, p: m({ width: 32, height: 7.2, openness: 0.08, tongueOut: 0.08, cornerLeft: 0.3, cornerRight: 0.3, lipTight: 0.12 }), e: 'outQuad' },
+    { d: 0.75, p: m({ tongueOut: 0.10 }), e: 'hold' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'lip_press_think', name: 'Думает сжал губы', cat: 'idle', w: 6, frames: [
+    { d: 0.20, p: m({ width: 32, height: 6.0, openness: 0.01, lipTight: 0.32, cornerLeft: 0.4, cornerRight: 0.4 }), e: 'inQuad' },
+    { d: 0.75, p: m({ lipTight: 0.38 }), e: 'hold' },
+    { d: 0.32, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'micro_smile_flicker', name: 'Микроулыбка вспышка', cat: 'idle', w: 7, frames: [
+    { d: 0.12, p: m({ width: 36, height: 7.2, smile: 0.28, openness: 0.02, cornerLeft: -0.8, cornerRight: -0.8 }), e: 'outQuad' },
+    { d: 0.16, p: m({ smile: 0.08 }), e: 'inQuad' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'breath_nasal_slow_idle', name: 'Дыхание носом медленно', cat: 'idle', w: 5, frames: [
+    { d: 0.48, p: m({ width: 34, height: 7.0, openness: 0.03, lowerDroop: 0.06, innerDark: 0.93 }), e: 'inOutQuad' },
+    { d: 0.55, p: m({ lowerDroop: 0.02 }), e: 'inOutQuad' },
+    { d: 0.42, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'swallow_idle', name: 'Сглотнул в покое', cat: 'idle', w: 4, frames: [
+    { d: 0.14, p: m({ width: 32, height: 6.8, openness: 0.04, lipTight: 0.22, upperRaise: 0.08 }), e: 'inQuad' },
+    { d: 0.18, p: m({ lipTight: 0.28, openness: 0.01 }), e: 'inQuad' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'yawn_small_covert', name: 'Скрытый маленький зевок', cat: 'idle', w: 4, frames: [
+    { d: 0.28, p: m({ width: 36, height: 10.0, openness: 0.32, lowerDroop: 0.22, cornerLeft: 0.2, cornerRight: 0.2 }), e: 'inOutQuad' },
+    { d: 0.38, p: m({ openness: 0.12 }), e: 'outQuad' },
+    { d: 0.32, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'lip_lick_quick', name: 'Быстро облизнул', cat: 'idle', w: 6, frames: [
+    { d: 0.10, p: m({ width: 36, openness: 0.06, tongueOut: 0.12 }), e: 'outQuad' },
+    { d: 0.12, p: m({ tongueOut: 0.18, tongueWobble: 0.32 }), e: 'linear' },
+    { d: 0.14, p: m({ tongueOut: 0.02 }), e: 'outQuad' },
+    { d: 0.26, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'savor_eyes_closed_mmm', name: 'Смак глаза закрыты ммм', cat: 'eating', w: 5, frames: [
+    { d: 0.22, p: m({ width: 36, height: 8.2, openness: 0.12, smile: 0.32, cornerLeft: -0.9, cornerRight: -0.9, lowerDroop: 0.08 }), e: 'outQuad' },
+    { d: 0.32, p: m({ openness: 0.04, smile: 0.36 }), e: 'inQuad' },
+    { d: 0.48, p: m({ smile: 0.38 }), e: 'hold' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'chew_side_right', name: 'Жует справа', cat: 'eating', w: 6, frames: [
+    { d: 0.14, p: m({ width: 38, height: 8.5, openness: 0.12, cornerLeft: 0.4, cornerRight: -0.6, lowerDroop: 0.14 }), e: 'outQuad' },
+    { d: 0.12, p: m({ openness: 0.04, cornerRight: -0.2 }), e: 'inQuad' },
+    { d: 0.14, p: m({ openness: 0.13 }), e: 'outQuad' },
+    { d: 0.12, p: m({ openness: 0.03 }), e: 'inQuad' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'chew_side_left', name: 'Жует слева', cat: 'eating', w: 6, frames: [
+    { d: 0.14, p: m({ width: 38, height: 8.5, openness: 0.12, cornerLeft: -0.6, cornerRight: 0.4, lowerDroop: 0.14 }), e: 'outQuad' },
+    { d: 0.12, p: m({ openness: 0.04, cornerLeft: -0.2 }), e: 'inQuad' },
+    { d: 0.14, p: m({ openness: 0.13 }), e: 'outQuad' },
+    { d: 0.12, p: m({ openness: 0.03 }), e: 'inQuad' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'crunch_crispy_loud', name: 'Хруст громкий', cat: 'eating', w: 4, frames: [
+    { d: 0.10, p: m({ width: 40, height: 9.2, openness: 0.28, teethUpper: 0.42, teethLower: 0.18, cornerLeft: 0.1, cornerRight: 0.1 }), e: 'outQuad' },
+    { d: 0.12, p: m({ openness: 0.06, teethUpper: 0.22 }), e: 'inQuad' },
+    { d: 0.10, p: m({ openness: 0.22 }), e: 'outQuad' },
+    { d: 0.28, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'slurp_noodle_pull', name: 'Втянул лапшу', cat: 'eating', w: 4, frames: [
+    { d: 0.16, p: m({ width: 30, height: 9.5, openness: 0.18, lowerDroop: 0.18, tongueOut: 0.08 }), e: 'outQuad' },
+    { d: 0.22, p: m({ width: 26, openness: 0.08, lipTight: 0.14 }), e: 'inQuad' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'lip_smack_after_eat', name: 'Чмок после еды', cat: 'eating', w: 5, frames: [
+    { d: 0.12, p: m({ width: 28, height: 6.5, openness: 0.03, lipTight: 0.12 }), e: 'outQuad' },
+    { d: 0.10, p: m({ openness: 0.08, lipTight: 0.04 }), e: 'outQuad' },
+    { d: 0.12, p: m({ openness: 0.02, lipTight: 0.14 }), e: 'inQuad' },
+    { d: 0.28, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'greet_warm_wide_social', name: 'Приветствие тёплое широко', cat: 'social', w: 6, frames: [
+    { d: 0.16, p: m({ width: 44, height: 9.0, smile: 0.68, openness: 0.14, teethUpper: 0.38, cornerLeft: -1.8, cornerRight: -1.8 }), e: 'outBack' },
+    { d: 0.55, p: m({ smile: 0.72 }), e: 'hold' },
+    { d: 0.32, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'whisper_conspire_side', name: 'Шепчет заговор сбоку', cat: 'social', w: 5, frames: [
+    { d: 0.18, p: m({ width: 32, height: 7.2, openness: 0.08, cornerLeft: -0.8, cornerRight: 0.9, smile: 0.08, lowerDroop: 0.06 }), e: 'outQuad' },
+    { d: 0.55, p: m({ cornerRight: 1.1, openness: 0.06 }), e: 'hold' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'coo_soft_affection', name: 'Воркует мягко', cat: 'social', w: 5, frames: [
+    { d: 0.20, p: m({ width: 34, height: 8.2, smile: 0.32, openness: 0.09, cornerLeft: -0.7, cornerRight: -0.7, lowerDroop: 0.08 }), e: 'inOutQuad' },
+    { d: 0.50, p: m({ smile: 0.38, openness: 0.06 }), e: 'hold' },
+    { d: 0.32, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'agree_murmur_nod_mouth', name: 'Согласие мычанием', cat: 'social', w: 5, frames: [
+    { d: 0.12, p: m({ width: 34, openness: 0.04, smile: 0.18, cornerLeft: -0.5, cornerRight: -0.5 }), e: 'outQuad' },
+    { d: 0.10, p: m({ openness: 0.08 }), e: 'inQuad' },
+    { d: 0.12, p: m({ openness: 0.02 }), e: 'outQuad' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'bluff_pout_negotiate_v2', name: 'Торг надул губы', cat: 'social', w: 4, frames: [
+    { d: 0.20, p: m({ width: 30, height: 9.8, openness: 0.04, lowerDroop: 0.44, upperRaise: 0.08, cornerLeft: 0.4, cornerRight: 0.4, lipTight: 0.06 }), e: 'outBack' },
+    { d: 0.52, p: m({ lowerDroop: 0.48 }), e: 'hold' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'apologetic_press_lips', name: 'Виновато сжал губы', cat: 'social', w: 5, frames: [
+    { d: 0.18, p: m({ width: 30, height: 5.8, openness: 0.01, lipTight: 0.42, cornerLeft: 1.1, cornerRight: 1.1, smile: -0.08 }), e: 'inQuad' },
+    { d: 0.52, p: m({ lipTight: 0.46, cornerLeft: 1.3, cornerRight: 1.3 }), e: 'hold' },
+    { d: 0.32, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'cringe_secondhand', name: 'Кринж испанский стыд', cat: 'rare', w: 3, frames: [
+    { d: 0.16, p: m({ width: 36, height: 8.2, smile: -0.12, openness: 0.08, cornerLeft: 1.6, cornerRight: 1.6, upperRaise: 0.18, lowerDroop: 0.14, lipTight: 0.22, quiver: 0.22 }), e: 'outQuad' },
+    { d: 0.55, p: m({ upperRaise: 0.24, quiver: 0.32 }), e: 'hold' },
+    { d: 0.32, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'schadenfreude_suppress', name: 'Злорадство подавляет', cat: 'rare', w: 3, frames: [
+    { d: 0.16, p: m({ width: 38, height: 7.6, smile: 0.42, openness: 0.04, cornerLeft: -1.4, cornerRight: 0.8, lipTight: 0.22, upperRaise: 0.08 }), e: 'outQuad' },
+    { d: 0.14, p: m({ lipTight: 0.32, smile: 0.28 }), e: 'inQuad' },
+    { d: 0.32, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'awe_goosebumps_mouth', name: 'Мурашки трепет рот', cat: 'rare', w: 3, frames: [
+    { d: 0.22, p: m({ width: 36, height: 9.8, openness: 0.28, lowerDroop: 0.18, cornerLeft: -0.3, cornerRight: -0.3, quiver: 0.18, innerDark: 0.88 }), e: 'inOutQuad' },
+    { d: 0.62, p: m({ openness: 0.22, quiver: 0.28 }), e: 'hold' },
+    { d: 0.36, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'bittersweet_tears_smile', name: 'Слёзы сквозь улыбку', cat: 'rare', w: 2, frames: [
+    { d: 0.20, p: m({ width: 38, height: 8.8, smile: 0.38, openness: 0.12, cornerLeft: -1.1, cornerRight: 1.4, quiver: 0.42, lowerDroop: 0.16, drool: 0.04 }), e: 'outCubic' },
+    { d: 0.65, p: m({ smile: 0.32, cornerRight: 1.7, quiver: 0.58 }), e: 'linear' },
+    { d: 0.38, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'nervous_lip_chew', name: 'Нервно грызёт губу', cat: 'rare', w: 4, frames: [
+    { d: 0.14, p: m({ width: 34, height: 7.2, openness: 0.06, teethUpper: 0.18, lowerDroop: 0.08, cornerLeft: 0.6, cornerRight: 0.6, quiver: 0.22 }), e: 'outQuad' },
+    { d: 0.18, p: m({ teethUpper: 0.26, lowerDroop: 0.12, quiver: 0.32 }), e: 'linear' },
+    { d: 0.22, p: m({ teethUpper: 0.14 }), e: 'outQuad' },
+    { d: 0.28, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'contempt_sneer_hold', name: 'Презрительная усмешка держит', cat: 'rare', w: 3, frames: [
+    { d: 0.18, p: m({ width: 40, height: 7.8, smile: 0.12, openness: 0.04, cornerLeft: -1.9, cornerRight: 1.4, upperRaise: 0.34, lipTight: 0.18 }), e: 'outQuad' },
+    { d: 0.68, p: m({ upperRaise: 0.38, cornerRight: 1.7 }), e: 'hold' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'shame_look_away_mouth', name: 'Стыд отвёл взгляд рот', cat: 'rare', w: 4, frames: [
+    { d: 0.20, p: m({ width: 32, height: 6.8, smile: -0.18, openness: 0.03, lipTight: 0.28, cornerLeft: 1.2, cornerRight: 1.2, lowerDroop: -0.08 }), e: 'inQuad' },
+    { d: 0.55, p: m({ lipTight: 0.34, cornerLeft: 1.45, cornerRight: 1.45 }), e: 'hold' },
+    { d: 0.32, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'excitement_bubble_mouth', name: 'Возбуждение пузырь рта', cat: 'rare', w: 3, frames: [
+    { d: 0.11, p: m({ width: 42, height: 10.2, smile: 0.62, openness: 0.28, teethUpper: 0.32, cornerLeft: -1.6, cornerRight: -1.6, quiver: 0.22 }), e: 'outBack' },
+    { d: 0.09, p: m({ openness: 0.18, quiver: 0.32 }), e: 'inQuad' },
+    { d: 0.11, p: m({ openness: 0.32 }), e: 'outQuad' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'pensive_purse_lips_side', name: 'Задумчиво поджал вбок', cat: 'rare', w: 4, frames: [
+    { d: 0.22, p: m({ width: 30, height: 6.2, openness: 0.02, lipTight: 0.28, cornerLeft: 0.8, cornerRight: 0.2, smile: -0.04 }), e: 'outQuad' },
+    { d: 0.60, p: m({ lipTight: 0.34, cornerLeft: 1.0 }), e: 'hold' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'flustered_apologize_mumble', name: 'Смущённо бормочет извинение', cat: 'rare', w: 4, frames: [
+    { d: 0.10, p: m({ width: 36, height: 7.8, smile: -0.08, openness: 0.14, cornerLeft: 0.9, cornerRight: 0.9, quiver: 0.38, lowerDroop: 0.12 }), e: 'outQuad' },
+    { d: 0.08, p: m({ openness: 0.06, quiver: 0.48 }), e: 'inQuad' },
+    { d: 0.10, p: m({ openness: 0.12 }), e: 'outQuad' },
+    { d: 0.32, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'relief_exhale_mouth', name: 'Выдох облегчения рот', cat: 'rare', w: 4, frames: [
+    { d: 0.18, p: m({ width: 38, height: 9.2, openness: 0.26, smile: 0.22, cornerLeft: -0.7, cornerRight: -0.7, lowerDroop: 0.14 }), e: 'outQuad' },
+    { d: 0.32, p: m({ openness: 0.08, smile: 0.28 }), e: 'outQuad' },
+    { d: 0.38, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'doubt_side_purse', name: 'Сомнение поджал вбок', cat: 'rare', w: 4, frames: [
+    { d: 0.20, p: m({ width: 32, height: 6.8, openness: 0.03, lipTight: 0.24, cornerLeft: 1.4, cornerRight: -0.4, smile: -0.06 }), e: 'outQuad' },
+    { d: 0.52, p: m({ lipTight: 0.30, cornerLeft: 1.6 }), e: 'hold' },
+    { d: 0.30, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'anticipation_bite_lip_fast', name: 'Предвкушение кусает быстро', cat: 'rare', w: 3, frames: [
+    { d: 0.12, p: m({ width: 34, height: 7.4, openness: 0.08, teethUpper: 0.22, cornerLeft: 0.4, cornerRight: 0.4, smile: 0.18, quiver: 0.18 }), e: 'outQuad' },
+    { d: 0.14, p: m({ teethUpper: 0.28, quiver: 0.28 }), e: 'linear' },
+    { d: 0.28, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'disbelief_mouth_agape_hold', name: 'Неверие рот открыт держит', cat: 'rare', w: 3, frames: [
+    { d: 0.16, p: m({ width: 36, height: 11.2, openness: 0.48, cornerLeft: 0.2, cornerRight: 0.2, lowerDroop: 0.22, innerDark: 0.86 }), e: 'outCubic' },
+    { d: 0.75, p: m({ openness: 0.42 }), e: 'hold' },
+    { d: 0.38, p: m({}), e: 'outQuad' },
+  ]},
+
+
 ];
 
 /* ---------------- procedural generator ---------------- */
 
 export function generateProceduralMouth(): MouthDef {
-  const cat = (['happy','sad','angry','surprised','playful','idle'] as MouthCat[])[Math.floor(Math.random()*6)];
+  const cat = (['happy','sad','angry','disgusted','surprised','playful','idle','eating','social'] as MouthCat[])[Math.floor(Math.random()*9)];
   const frames: MouthFrame[] = [];
   const n = 2 + Math.floor(Math.random()*3);
   for (let i = 0; i < n; i++) {
+    // реалистичные анатомические связи: улыбка → уголки вверх (corner -), грусть → вниз (corner +)
+    let smileBase = (Math.random()-0.5)*1.18;
+    let opennessBase = Math.random() > 0.45 ? Math.random()*0.52 : 0.02 * Math.random();
+    // категория-специфичные корректировки
+    if (cat==='happy') { smileBase = 0.28 + Math.random()*0.62; opennessBase = Math.random()*0.42; }
+    if (cat==='sad') { smileBase = -0.22 - Math.random()*0.58; opennessBase = Math.random()*0.32; }
+    if (cat==='angry') { smileBase = -0.14 - Math.random()*0.38; opennessBase = Math.random()*0.22; }
+    if (cat==='disgusted') { smileBase = -0.08 - Math.random()*0.32; opennessBase = Math.random()*0.18; }
+    if (cat==='surprised') { smileBase = (Math.random()-0.5)*0.28; opennessBase = 0.22 + Math.random()*0.42; }
+    if (cat==='playful') { smileBase = 0.18 + Math.random()*0.52; opennessBase = Math.random()*0.48; }
+    // уголки анатомически: smile>0 → corner -, smile<0 → corner +
+    const cornerBias = -smileBase * 2.8; // вверх при улыбке, вниз при грусти
+    const asym = (Math.random()-0.5)*1.2; // асимметрия
+    const cornerLeft = cornerBias + asym + (Math.random()-0.5)*0.9;
+    const cornerRight = cornerBias - asym + (Math.random()-0.5)*0.9;
     frames.push({
-      d: 0.12 + Math.random()*0.45,
+      d: 0.12 + Math.random()*0.42,
       e: (['outBack','outCubic','inOutQuad','outElastic','outQuad'] as Ease[])[Math.floor(Math.random()*5)],
       p: {
-        width: 28 + Math.random()*24,
-        height: 6 + Math.random()*9,
-        openness: Math.random() > 0.45 ? Math.random()*0.52 : 0,
-        smile: (Math.random()-0.5)*1.18,
-        upperRaise: Math.random() > 0.7 ? Math.random()*0.6 : 0,
-        lowerDroop: Math.random() > 0.7 ? Math.random()*0.5 : 0,
-        cornerLeft: (Math.random()-0.5)*6,
-        cornerRight: (Math.random()-0.5)*6,
-        teethUpper: Math.random() > 0.52 ? Math.random()*0.58 : 0,
-        teethLower: Math.random() > 0.6 ? Math.random()*0.5 : 0,
-        tongueOut: Math.random() > 0.68 ? Math.random()*0.48 : 0,
-        tongueWobble: (Math.random()-0.5)*0.8,
-        lipTight: Math.random() > 0.72 ? Math.random()*0.42 : 0,
-        quiver: Math.random() > 0.78 ? Math.random()*1.15 : 0,
-        drool: Math.random() > 0.88 ? Math.random()*0.32 : 0,
+        width: 27 + Math.random()*22,
+        height: 6 + Math.random()*7.5,
+        openness: opennessBase,
+        smile: smileBase,
+        upperRaise: cat==='disgusted'||cat==='angry' ? Math.random()*0.58 : Math.random() > 0.68 ? Math.random()*0.42 : 0,
+        lowerDroop: cat==='sad'||cat==='surprised' ? Math.random()*0.42 : Math.random() > 0.65 ? Math.random()*0.32 : 0,
+        cornerLeft,
+        cornerRight,
+        teethUpper: opennessBase > 0.14 && Math.random() > 0.46 ? Math.random()*0.62 : 0,
+        teethLower: opennessBase > 0.28 && Math.random() > 0.58 ? Math.random()*0.42 : 0,
+        tongueOut: cat==='playful'||cat==='disgusted' ? (Math.random() > 0.56 ? Math.random()*0.38 : 0) : (Math.random() > 0.78 ? Math.random()*0.28 : 0),
+        tongueWobble: (Math.random()-0.5)*0.62,
+        tongueCurl: (Math.random()-0.5)*0.42,
+        lipTight: cat==='angry' ? 0.18 + Math.random()*0.28 : Math.random() > 0.70 ? Math.random()*0.34 : 0,
+        quiver: cat==='sad' ? Math.random()*0.92 : Math.random() > 0.76 ? Math.random()*0.88 : 0,
+        drool: Math.random() > 0.90 ? Math.random()*0.22 : 0,
+        innerDark: 0.86 + Math.random()*0.08,
       }
     });
   }
-  frames.push({ d: 0.3 + Math.random()*0.3, p: {}, e: 'outQuad' });
+  frames.push({ d: 0.28 + Math.random()*0.28, p: {}, e: 'outQuad' });
   return {
     id: `mproc_${Math.random().toString(36).slice(2,7)}`,
     name: `Mouth · ${cat}`,
