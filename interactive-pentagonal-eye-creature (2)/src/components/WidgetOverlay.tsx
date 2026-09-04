@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, ChevronDown } from 'lucide-react';
+import { Sparkles, ChevronDown, Pencil, Check } from 'lucide-react';
 import { BEHAVIORS } from '../utils/eyeBehaviors';
 import { t, tp, tl } from '../utils/i18n';
 import type { RosterEntry } from './CreatureCanvas';
@@ -125,6 +125,8 @@ export const WidgetOverlay: React.FC<WidgetOverlayProps> = ({
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const [social, setSocial] = useState<string | null>(null);
   const [bond, setBond] = useState<Bond | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [draftName, setDraftName] = useState('');
 
   useEffect(() => {
     const updateTime = () => {
@@ -246,25 +248,14 @@ export const WidgetOverlay: React.FC<WidgetOverlayProps> = ({
                 boxShadow: `0 8px 32px ${r.tint}20, inset 0 1px 0 rgba(255,255,255,0.05)`,
               }}
             >
-              {/* верхняя полоска — точь-в-точь цвет самой полоски метрики: градиент как у StatRow */}
+              {/* верхняя полоска — цвет тела */}
               <div
                 className="absolute top-0 left-0 right-0 h-[3px]"
-                style={{
-                  background:
-                    r.tint === '#fb7185' || r.tint === '#f43f5e'
-                      ? 'linear-gradient(90deg,#fb7185,#f43f5e)'
-                      : r.tint === '#fbbf24' || r.tint === '#f59e0b'
-                      ? 'linear-gradient(90deg,#fbbf24,#f59e0b)'
-                      : 'linear-gradient(90deg,#38bdf8,#0ea5e9)',
-                }}
+                style={{ background: r.tint }}
               />
-              {/* Имя + тип + настроение */}
-              <button
-                onClick={() => setCollapsed((p) => ({ ...p, [r.id]: !p[r.id] }))}
-                className="w-full flex items-center justify-between gap-2 mb-2 text-left"
-                title={collapsed[r.id] ? tl('Expand metrics') : tl('Collapse metrics')}
-              >
-                <div className="flex items-center gap-1.5 min-w-0">
+              {/* Имя + тип + настроение — имя теперь редактируемое для всех (включая главного) */}
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <div className="flex items-center gap-1.5 min-w-0 flex-1">
                   <span
                     className="h-2.5 w-2.5 rounded-full shrink-0 border border-white/20 shadow-sm"
                     style={{ background: r.tint }}
@@ -272,30 +263,89 @@ export const WidgetOverlay: React.FC<WidgetOverlayProps> = ({
                   <span className="text-[13px] leading-none shrink-0">
                     {r.kind === 'child' ? '🍼' : '🔺'}
                   </span>
-                  <span className="text-[11.5px] font-bold text-white/95 truncate">
-                    {r.name}
-                  </span>
-                  {idx === 0 && (
+                  {editingId === r.id ? (
+                    <div className="flex items-center gap-1 flex-1 min-w-0">
+                      <input
+                        autoFocus
+                        value={draftName}
+                        onChange={(e) => setDraftName(e.target.value.slice(0, 14))}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            const v = draftName.trim().slice(0, 14) || r.name;
+                            (window as unknown as { pentaSetName?: (id: string, name: string) => void }).pentaSetName?.(r.id, v);
+                            setEditingId(null);
+                          }
+                          if (e.key === 'Escape') setEditingId(null);
+                        }}
+                        onBlur={() => {
+                          const v = draftName.trim().slice(0, 14);
+                          if (v && v !== r.name) (window as unknown as { pentaSetName?: (id: string, name: string) => void }).pentaSetName?.(r.id, v);
+                          setEditingId(null);
+                        }}
+                        className="flex-1 min-w-0 px-1.5 py-0.5 rounded-md bg-white/15 border border-white/20 text-[11.5px] font-bold text-white outline-none focus:border-white/40"
+                        placeholder={r.name}
+                      />
+                      <button
+                        onClick={() => {
+                          const v = draftName.trim().slice(0, 14) || r.name;
+                          (window as unknown as { pentaSetName?: (id: string, name: string) => void }).pentaSetName?.(r.id, v);
+                          setEditingId(null);
+                        }}
+                        className="p-1 rounded-md bg-white/15 hover:bg-white/25 text-white/80 shrink-0"
+                      >
+                        <Check className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <span
+                        className="text-[11.5px] font-bold text-white/95 truncate cursor-text hover:text-white flex items-center gap-1"
+                        onClick={() => {
+                          setEditingId(r.id);
+                          setDraftName(r.name);
+                        }}
+                        title={tl('Click to edit name')}
+                      >
+                        {r.name}
+                      </span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingId(r.id);
+                          setDraftName(r.name);
+                        }}
+                        className="p-0.5 rounded hover:bg-white/10 text-white/30 hover:text-white/70 shrink-0 transition-colors"
+                        title={tl('Edit name')}
+                      >
+                        <Pencil className="w-3 h-3" />
+                      </button>
+                    </>
+                  )}
+                  {idx === 0 && editingId !== r.id && (
                     <span className="shrink-0 text-[8px] font-bold uppercase tracking-wider text-emerald-300/70">
                       ★
                     </span>
                   )}
                 </div>
-                <div className="flex items-center gap-1 shrink-0">
+                <button
+                  onClick={() => setCollapsed((p) => ({ ...p, [r.id]: !p[r.id] }))}
+                  className="flex items-center gap-1 shrink-0 p-0.5"
+                  title={collapsed[r.id] ? tl('Expand metrics') : tl('Collapse metrics')}
+                >
                   <span className="text-[12px] leading-none">{MOOD_EMOJI[r.mood] ?? '✨'}</span>
-                  <span className="text-[10px] font-semibold text-rose-300/85">
+                  <span className="text-[10px] font-semibold text-rose-300/85 hidden sm:inline">
                     {tp(r.mood)}
                   </span>
                   <ChevronDown
                     className={`w-3.5 h-3.5 text-white/35 transition-transform ${collapsed[r.id] ? '-rotate-90' : ''}`}
                   />
-                </div>
-              </button>
+                </button>
+              </div>
 
-              {/* Меню цвета — каждому персонажу уже на сцене (главный + компаньоны) */}
+              {/* Меню цвета — каждому персонажу уже на сцене (главный + компаньоны), голубой удалён, палитра расширена */}
               <div className="flex items-center gap-1 mb-2 -mt-0.5 flex-wrap">
                 <span className="text-[7px] font-bold uppercase tracking-[0.14em] text-white/25 mr-1">Цвет:</span>
-                {['#fb7185', '#f43f5e', '#fbbf24', '#f59e0b', '#38bdf8', '#0ea5e9'].map((col) => (
+                {['#fb7185', '#f43f5e', '#fbbf24', '#f59e0b', '#a78bfa', '#e879f9', '#f472b6', '#34d399', '#facc15', '#a3e635'].map((col) => (
                   <button
                     key={col}
                     onClick={() => (window as unknown as { pentaSetTint?: (id: string, tint: string) => void }).pentaSetTint?.(r.id, col)}

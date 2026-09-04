@@ -44,16 +44,14 @@ export interface CreatureConfig {
 
 export function defaultConfig(kind: CreatureKind, index: number): CreatureConfig {
   const child = kind === 'child';
-  // Цвета тела — точь-в-точь как полоски метрик (счастье/энергия/любопытство)
-  const vivid = ['#fb7185', '#f43f5e', '#fbbf24', '#f59e0b', '#38bdf8', '#0ea5e9'];
+  // Цвета тела — яркая палитра без голубого, 10 вариантов
+  const vivid = ['#fb7185', '#f43f5e', '#fbbf24', '#f59e0b', '#a78bfa', '#e879f9', '#f472b6', '#34d399', '#facc15', '#a3e635'];
   return {
     id: `penta_${Date.now()}_${index}`,
     name: child ? 'Pip' : 'Penta II',
     kind,
     sizeFactor: child ? 0.55 : 0.95,
-    tint: child
-      ? vivid[Math.floor(Math.random() * 3)] // розово-янтарные для детей
-      : vivid[4 + Math.floor(Math.random() * 2)], // небесно-синие для взрослых, но тоже рандом
+    tint: vivid[Math.floor(Math.random() * vivid.length)],
     tempo: child ? 1.55 : 1,
     boldness: child ? 0.35 : 0.5 + Math.random() * 0.2,
     sociability: child ? 0.82 : 0.4 + Math.random() * 0.3,

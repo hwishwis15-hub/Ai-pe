@@ -42,6 +42,7 @@ interface CreatureCanvasProps {
   onBehaviorChange?: (name: string) => void;
   onStatsUpdate?: (stats: { happiness: number; energy: number; curiosity: number }) => void;
   onTintChange?: (id: string, tint: string) => void;
+  onNameChange?: (id: string, name: string) => void;
 }
 
 export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
@@ -53,6 +54,7 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
   onBehaviorChange,
   onStatsUpdate,
   onTintChange,
+  onNameChange,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const particleSysRef = useRef<ParticleSystem>(new ParticleSystem());
@@ -70,7 +72,7 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
   const cursorVelRef = useRef({ x: 0, y: 0 });
   const draggedRef = useRef<CreatureEntity | null>(null);
 
-  // ---- primary creature is created once — цвет точь-в-точь как полоски метрик ----
+  // ---- primary creature is created once — цвет точь-в-точь как полоски метрик (голубой убран, теперь тёплый розовый) ----
   if (creaturesRef.current.length === 0) {
     const primary = new CreatureEntity(
       {
@@ -78,7 +80,7 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
         name: 'Penta',
         kind: 'adult',
         sizeFactor: 1,
-        tint: '#38bdf8',
+        tint: '#fb7185',
         tempo: 1,
         boldness: 0.5,
         sociability: 0.55,
@@ -197,6 +199,17 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
         c.vScaleY = -0.12;
       }
       if (id !== 'penta_primary' && onTintChange) onTintChange(id, tint);
+    };
+
+    (window as unknown as { pentaSetName?: (id: string, name: string) => void }).pentaSetName = (id, name) => {
+      const clean = (name || '').trim().slice(0, 14);
+      if (!clean) return;
+      const c = creaturesRef.current.find((e) => e.cfg.id === id);
+      if (c) {
+        c.cfg.name = clean;
+        c.lastInteraction = performance.now();
+      }
+      if (id !== 'penta_primary' && onNameChange) onNameChange(id, clean);
     };
 
     const render = (now: number) => {
@@ -609,7 +622,7 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
       cancelAnimationFrame(animId);
       window.removeEventListener('resize', handleResize);
     };
-  }, [theme, settings, activeTool, onBehaviorChange, onStatsUpdate, onTintChange]);
+  }, [theme, settings, activeTool, onBehaviorChange, onStatsUpdate, onTintChange, onNameChange]);
 
   /* ---------------- pointer ---------------- */
 

@@ -16,8 +16,12 @@ const TINTS = [
   { label: 'Fire', v: '#f43f5e' },
   { label: 'Amber', v: '#fbbf24' },
   { label: 'Orange', v: '#f59e0b' },
-  { label: 'Sky', v: '#38bdf8' },
-  { label: 'Ocean', v: '#0ea5e9' },
+  { label: 'Violet', v: '#a78bfa' },
+  { label: 'Fuchsia', v: '#e879f9' },
+  { label: 'Pink', v: '#f472b6' },
+  { label: 'Emerald', v: '#34d399' },
+  { label: 'Yellow', v: '#facc15' },
+  { label: 'Lime', v: '#a3e635' },
 ];
 
 // Personality is LEARNED through lived experience — no manual sliders.
