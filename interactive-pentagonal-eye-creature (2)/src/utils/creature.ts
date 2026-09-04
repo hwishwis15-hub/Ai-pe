@@ -1380,6 +1380,7 @@ export class CreatureEntity {
     ctx.save();
     ctx.translate(this.x + chargeJitterX, this.y + eatLift + moodBounce + chargeJitterY);
     ctx.rotate(this.rotation);
+    try {
 
     const baseVerts = getBasePentagonVertices(curW, curH);
     const jig = this.jiggleScale;
@@ -1546,7 +1547,7 @@ export class CreatureEntity {
       : ep.glintStyle;
 
     const eyeSc = env.eyeScale ?? 1;
-    drawEye(ctx, {
+    try { drawEye(ctx, {
       x: lex, y: ley,
       width: ep.leftWidth * sm * eyeSc,
       height: ep.leftHeight * sm * eyeSc * (1 - squash * 0.5),
@@ -1559,9 +1560,9 @@ export class CreatureEntity {
       squint: clamp(Math.abs(g.x) / 140, 0, 0.6) * 0.35,
       bodyIsLight: env.themeCategory === 'light',
       glintIntensity: ep.glintIntensity * (env.glintBrightness ?? 1) * (this.eat ? 1.4 : 1),
-    });
+    }); } catch(e){ console.error('[PENTA] drawEye left', e); }
 
-    drawEye(ctx, {
+    try { drawEye(ctx, {
       x: rex, y: rey,
       width: ep.rightWidth * sm * eyeSc,
       height: ep.rightHeight * sm * eyeSc * (1 - squash * 0.5),
@@ -1574,7 +1575,7 @@ export class CreatureEntity {
       squint: clamp(Math.abs(g.x) / 140, 0, 0.6) * 0.35,
       bodyIsLight: env.themeCategory === 'light',
       glintIntensity: ep.glintIntensity * (env.glintBrightness ?? 1) * (this.eat ? 1.4 : 1),
-    });
+    }); } catch(e){ console.error('[PENTA] drawEye right', e); }
 
     // ---- realistic mouth (full-fledged, mood-driven) ----
     if (env.showMouths) {
@@ -1603,11 +1604,11 @@ export class CreatureEntity {
       // but we also add a tiny extra openness from the eat lift phase
       // (handled via the behavior itself)
 
-      drawMouth(ctx, mp as never, {
+      try { drawMouth(ctx, mp as never, {
         skin: mouthSkin,
         isLight: env.themeCategory === 'light',
         time: performance.now() * 0.001 + this.cfg.tempo * 7,
-      });
+      }); } catch(e){ console.error('[PENTA] drawMouth', e); }
 
       ctx.restore();
     }
@@ -1686,13 +1687,14 @@ export class CreatureEntity {
       ctx.restore();
     }
 
-    ctx.restore();
-    ctx.restore();
+    } catch(e){ console.error('[PENTA] creature draw', (e as Error)?.message, e); } finally { try{ ctx.restore(); }catch{} try{ ctx.restore(); }catch{} }
 
     // If in charge phase, overlay the radiant singularity on top
+    try {
     if (this.burst.phase === 'charge') {
       this.burst.draw(ctx);
     }
+    } catch(e){ console.error('[PENTA] burst draw', e); }
   }
 
 }

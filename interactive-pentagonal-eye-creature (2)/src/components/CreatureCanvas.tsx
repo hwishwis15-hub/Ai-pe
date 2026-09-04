@@ -329,40 +329,54 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
 
         // Contact does NOT force a meal — each creature decides for itself
         let eaten = false;
-        const nearby = creaturesRef.current.filter(
-          (c) => !c.eat && Math.hypot(food.x - c.x, food.y - c.y) < c.bodyW(settings.creatureScale) * 0.52
-        );
+        let nearby: typeof creaturesRef.current = [];
+        try {
+          nearby = creaturesRef.current.filter(
+            (c) => { try { return !c.eat && Math.hypot(food.x - c.x, food.y - c.y) < c.bodyW(settings.creatureScale) * 0.52; } catch { return false; } }
+          );
+        } catch { nearby = []; }
         for (const c of nearby) {
-          if (!c.wantsToEat(food.id, food.age, settings.appetite)) continue;
-          c.startMeal(food.x, food.y, food.color, {
-            fxSettings: { foodRipple: fxs.foodRipple, foodSound: fxs.foodSound },
-            onRipple: (rx, ry, s, n, col) => {
-              if (s > 0 && n > 0) particleSysRef.current.addRipple(rx, ry, col, s, n);
-            },
-            onBehavior: onBehaviorChange,
-          });
-          c.focusFoodId = null;
-          onBehaviorChange?.(`${c.cfg.name} is savouring it`);
-          onStatsUpdate?.({
-            happiness: Math.round(c.happiness),
-            energy: Math.round(c.energyStat),
-            curiosity: Math.round(c.curiosityStat),
-          });
+          try {
+            if (!c.wantsToEat(food.id, food.age, settings.appetite)) continue;
+          } catch { continue; }
+          try {
+            c.startMeal(food.x, food.y, food.color, {
+              fxSettings: { foodRipple: fxs.foodRipple, foodSound: fxs.foodSound },
+              onRipple: (rx, ry, s, n, col) => {
+                try { if (s > 0 && n > 0) particleSysRef.current.addRipple(rx, ry, col, s, n); } catch {}
+              },
+              onBehavior: onBehaviorChange,
+            });
+          } catch (e) { console.error('[PENTA] startMeal', e); continue; }
+          try { c.focusFoodId = null; } catch {}
+          try { onBehaviorChange?.(`${c.cfg.name} is savouring it`); } catch {}
+          try {
+            onStatsUpdate?.({
+              happiness: Math.round(c.happiness),
+              energy: Math.round(c.energyStat),
+              curiosity: Math.round(c.curiosityStat),
+            });
+          } catch {}
           // if somebody else was heading for this snack, they take it personally
-          for (const rival of creaturesRef.current) {
-            if (rival === c) continue;
-            const wasInterested =
-              rival.focusFoodId === food.id ||
-              Math.hypot(food.x - rival.x, food.y - rival.y) < 260;
-            if (wasInterested) {
-              socialRef.current.notifyFoodTheft(c.cfg.id, rival.cfg.id, c.cfg.name, rival.cfg.name);
-              rival.focusFoodId = null;
+          try {
+            for (const rival of creaturesRef.current) {
+              if (rival === c) continue;
+              let wasInterested = false;
+              try {
+                wasInterested =
+                  rival.focusFoodId === food.id ||
+                  Math.hypot(food.x - rival.x, food.y - rival.y) < 260;
+              } catch { wasInterested = false; }
+              if (wasInterested) {
+                try { socialRef.current.notifyFoodTheft(c.cfg.id, rival.cfg.id, c.cfg.name, rival.cfg.name); } catch {}
+                try { rival.focusFoodId = null; } catch {}
+              }
             }
-          }
+          } catch {}
           eaten = true;
           break;
         }
-        if (eaten) foodOrbsRef.current.splice(i, 1);
+        if (eaten) { try { foodOrbsRef.current.splice(i, 1); } catch {} }
       }
 
       /* ---------- laser ---------- */
@@ -475,13 +489,14 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
       }
 
       for (const c of list) {
+        try {
         // how much does it want company? closer bonds & low valence raise the pull
         const pull = list.length > 1
           ? Math.min(1, (1 - Math.max(-0.2, c.valence)) * 0.5 + settings.socialDrive * 0.3)
           : 0.15;
 
         c.update(dt, now, {
-          social: socialRef.current.directiveFor(c.cfg.id),
+          social: (()=>{ try{ return socialRef.current.directiveFor(c.cfg.id); } catch { return null; }})(),
           foodOrbs: foodInfo,
           width, height, mx, my,
           cursorVX: cursorVelRef.current.x,
@@ -518,32 +533,35 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
           },
           onBehavior: c === list[0] ? onBehaviorChange : undefined,
           onRipple: (rx, ry, scale, count, color) => {
-            if (scale <= 0 || count <= 0) return;
-            particleSysRef.current.addRipple(rx, ry, color, scale, count);
+            try { if (scale <= 0 || count <= 0) return;
+            particleSysRef.current.addRipple(rx, ry, color, scale, count); } catch {}
           },
         });
+        } catch (e) { console.error('[PENTA] c.update', c.cfg.id, e); }
       }
 
       // draw back-to-front by y so overlaps look right — тела без ников, ники рисуем отдельным верхним слоем
       [...list].sort((a, b) => a.y - b.y).forEach((c) => {
-        c.draw(ctx, {
-          mx, my,
-          globalScale: settings.creatureScale,
-          cornerRoundness: settings.cornerRoundness,
-          bodyMaterial: settings.bodyMaterial,
-          showShadow: settings.showShadow,
-          showRimLight: settings.showRimLight,
-          themeCategory: theme.category,
-          themeShadow: theme.shadowColor,
-          height,
-          eyeTracking: settings.eyeTracking,
-          blinkRate: settings.blinkRate,
-          saccadeAmount: settings.saccadeAmount,
-          glintBrightness: settings.glintBrightness,
-          eyeFreedom: settings.eyeFreedom,
-          showMouths: settings.showMouths,
-          showNicks: false,
-        });
+        try {
+          c.draw(ctx, {
+            mx, my,
+            globalScale: settings.creatureScale,
+            cornerRoundness: settings.cornerRoundness,
+            bodyMaterial: settings.bodyMaterial,
+            showShadow: settings.showShadow,
+            showRimLight: settings.showRimLight,
+            themeCategory: theme.category,
+            themeShadow: theme.shadowColor,
+            height,
+            eyeTracking: settings.eyeTracking,
+            blinkRate: settings.blinkRate,
+            saccadeAmount: settings.saccadeAmount,
+            glintBrightness: settings.glintBrightness,
+            eyeFreedom: settings.eyeFreedom,
+            showMouths: settings.showMouths,
+            showNicks: false,
+          });
+        } catch (e) { console.error('[PENTA] c.draw', c.cfg.id, e); }
       });
 
       // — НИКИ строго над каждым телом (включая главного Penta) — отдельным слоем поверх всех тел, всегда горизонтально и всегда видно

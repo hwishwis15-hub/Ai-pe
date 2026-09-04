@@ -205,7 +205,22 @@ function eyeSilhouettePath(
   const rx = -w / 2;
   const ry = -h / 2;
   ctx.beginPath();
-  ctx.roundRect(rx, ry, w, h, radius);
+  const rr = (ctx as unknown as { roundRect?: (x:number,y:number,w:number,h:number,r:number)=>void }).roundRect;
+  if (typeof rr === 'function') {
+    rr.call(ctx, rx, ry, w, h, radius);
+  } else {
+    const r = Math.min(radius, w/2, h/2);
+    ctx.moveTo(rx + r, ry);
+    // @ts-ignore
+    ctx.arcTo(rx + w, ry, rx + w, ry + h, r);
+    // @ts-ignore
+    ctx.arcTo(rx + w, ry + h, rx, ry + h, r);
+    // @ts-ignore
+    ctx.arcTo(rx, ry + h, rx, ry, r);
+    // @ts-ignore
+    ctx.arcTo(rx, ry, rx + w, ry, r);
+    ctx.closePath();
+  }
 }
 
 /**
