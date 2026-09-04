@@ -30,6 +30,7 @@ export interface RosterEntry {
   curiousityTrait: number;
   stubbornness: number;
   mouthName: string;
+  tint: string;
 }
 
 interface CreatureCanvasProps {
@@ -67,7 +68,7 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
   const cursorVelRef = useRef({ x: 0, y: 0 });
   const draggedRef = useRef<CreatureEntity | null>(null);
 
-  // ---- primary creature is created once ----
+  // ---- primary creature is created once — цвет точь-в-точь как полоски метрик ----
   if (creaturesRef.current.length === 0) {
     const primary = new CreatureEntity(
       {
@@ -75,7 +76,7 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
         name: 'Penta',
         kind: 'adult',
         sizeFactor: 1,
-        tint: '#FBFCFE',
+        tint: '#38bdf8',
         tempo: 1,
         boldness: 0.5,
         sociability: 0.55,
@@ -541,6 +542,7 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
         curiousityTrait: c.mind.personality.curiosity,
         stubbornness: c.temperament.stubborn,
         mouthName: c.mouth.getName(),
+        tint: c.cfg.tint,
       }));
       (window as unknown as Record<string, unknown>).pentaRoster = roster;
 

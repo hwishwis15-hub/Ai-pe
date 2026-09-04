@@ -239,8 +239,25 @@ export const WidgetOverlay: React.FC<WidgetOverlayProps> = ({
           {roster.map((r, idx) => (
             <div
               key={r.id}
-              className="w-[236px] rounded-2xl bg-slate-950/55 backdrop-blur-xl border border-white/10 shadow-lg px-3 py-2.5 animate-pop-in pointer-events-auto"
+              className="w-[236px] rounded-2xl backdrop-blur-xl border shadow-lg px-3 py-2.5 animate-pop-in pointer-events-auto overflow-hidden relative"
+              style={{
+                background: `linear-gradient(135deg, ${r.tint}1E, rgba(2,6,23,0.68))`,
+                borderColor: `${r.tint}55`,
+                boxShadow: `0 8px 32px ${r.tint}20, inset 0 1px 0 rgba(255,255,255,0.05)`,
+              }}
             >
+              {/* верхняя полоска — точь-в-точь цвет самой полоски метрики: градиент как у StatRow */}
+              <div
+                className="absolute top-0 left-0 right-0 h-[3px]"
+                style={{
+                  background:
+                    r.tint === '#fb7185' || r.tint === '#f43f5e'
+                      ? 'linear-gradient(90deg,#fb7185,#f43f5e)'
+                      : r.tint === '#fbbf24' || r.tint === '#f59e0b'
+                      ? 'linear-gradient(90deg,#fbbf24,#f59e0b)'
+                      : 'linear-gradient(90deg,#38bdf8,#0ea5e9)',
+                }}
+              />
               {/* Имя + тип + настроение */}
               <button
                 onClick={() => setCollapsed((p) => ({ ...p, [r.id]: !p[r.id] }))}
@@ -248,6 +265,10 @@ export const WidgetOverlay: React.FC<WidgetOverlayProps> = ({
                 title={collapsed[r.id] ? tl('Expand metrics') : tl('Collapse metrics')}
               >
                 <div className="flex items-center gap-1.5 min-w-0">
+                  <span
+                    className="h-2.5 w-2.5 rounded-full shrink-0 border border-white/20 shadow-sm"
+                    style={{ background: r.tint }}
+                  />
                   <span className="text-[13px] leading-none shrink-0">
                     {r.kind === 'child' ? '🍼' : '🔺'}
                   </span>

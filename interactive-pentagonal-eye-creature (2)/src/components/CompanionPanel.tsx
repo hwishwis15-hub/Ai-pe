@@ -12,12 +12,12 @@ interface Props {
 }
 
 const TINTS = [
-  { label: 'Snow', v: '#FBFCFE' },
-  { label: 'Warm', v: '#FFF7F2' },
-  { label: 'Rose', v: '#FFF1F5' },
-  { label: 'Mint', v: '#F1FFF8' },
-  { label: 'Sky', v: '#F0F8FF' },
-  { label: 'Lilac', v: '#F7F2FF' },
+  { label: 'Rose', v: '#fb7185' },
+  { label: 'Fire', v: '#f43f5e' },
+  { label: 'Amber', v: '#fbbf24' },
+  { label: 'Orange', v: '#f59e0b' },
+  { label: 'Sky', v: '#38bdf8' },
+  { label: 'Ocean', v: '#0ea5e9' },
 ];
 
 // Personality is LEARNED through lived experience — no manual sliders.
