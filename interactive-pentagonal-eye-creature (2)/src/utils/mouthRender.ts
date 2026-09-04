@@ -1,9 +1,9 @@
 // ============================================================
-//  PENTA — Organic Mouth Renderer v3
+//  PENTA — Organic Mouth Renderer v4 — Larger & Ultra-Detailed
 //  Полностью переработанный органичный рот: мягкие, живые
 //  губы без жёсткой геометрии, естественная полость, язык
 //  как у живого существа, зубы с микро-неровностями.
-//  Все формы — через органичные безье с живым шумом.
+//  Все формы — через органичные безье с живым шумом, чуть крупнее, ультра-детализировано для живых мимик.
 // ============================================================
 
 import { MouthParams } from './mouthBehaviors';
@@ -30,8 +30,8 @@ export function drawMouth(
   mp: MouthParams,
   env: MouthEnv
 ) {
-  const w = mp.width;
-  const hClosed = mp.height;
+  const w = mp.width * 1.14;
+  const hClosed = mp.height * 1.18;
   const open = Math.max(0, Math.min(1, mp.openness));
   const smile = Math.max(-1, Math.min(1, mp.smile));
   const upperRaise = mp.upperRaise;
@@ -60,11 +60,11 @@ export function drawMouth(
   const upperMidY = -hClosed * 0.38 - upperRaise * 6.5 + breath * 0.4 + organicNoise(t, 3, 0.6);
   const lowerMidY = hClosed * 0.38 + lowerDroop * 5.5 + breath * 0.5 + organicNoise(t, 5, 0.6);
 
-  const lipThick = hClosed * (0.68 - tight * 0.32) + Math.abs(smile) * 0.5;
+  const lipThick = hClosed * (0.76 - tight * 0.28) + Math.abs(smile) * 0.65;
 
   // внутренняя полость — органичный овал с мягкими краями
-  const innerW = w * (0.68 + open * 0.16) + organicNoise(t, 23, 0.5);
-  const innerH = open * (hClosed * 2.6 + 18 + lowerDroop * 5);
+  const innerW = w * (0.71 + open * 0.18) + organicNoise(t, 23, 0.6);
+  const innerH = open * (hClosed * 2.9 + 20 + lowerDroop * 6);
   const innerTopY = upperMidY + (open > 0.04 ? 2.2 : lipThick * 0.22);
   const innerBottomY = lowerMidY - (open > 0.04 ? 1.2 : lipThick * 0.22) + innerH * 0.52;
   const innerCenterY = (innerTopY + innerBottomY) / 2;
@@ -142,8 +142,8 @@ export function drawMouth(
     // ----- ЯЗЫК — максимально органичный -----
     if (mp.tongueOut > 0.015) {
       ctx.save();
-      const tongueH = mp.tongueOut * (innerH * 0.58 + 9) + organicNoise(t, 29, 0.4);
-      const tongueW = w * (0.26 + mp.tongueOut * 0.16);
+      const tongueH = mp.tongueOut * (innerH * 0.62 + 11) + organicNoise(t, 29, 0.5);
+      const tongueW = w * (0.30 + mp.tongueOut * 0.18);
       const wob = mp.tongueWobble * tongueW * 0.22 + organicNoise(t * 1.4, 31, 0.7);
       const curl = mp.tongueCurl;
       // язык чуть дрожит органично
@@ -283,6 +283,16 @@ export function drawMouth(
       gumGrad.addColorStop(1, 'rgba(218,138,148,0)');
       ctx.fillStyle = gumGrad;
       ctx.fillRect(leftTX, innerTopY - 0.5, totalW, 2.2);
+      // капилляры десны — ультра-деталь
+      ctx.strokeStyle = 'rgba(184,82,92,0.07)';
+      ctx.lineWidth = 0.3;
+      for(let gi=0;gi<3;gi++){
+        const gx = leftTX + totalW*(0.25+gi*0.25) + organicNoise(t,151+gi*7,0.35);
+        ctx.beginPath();
+        ctx.moveTo(gx, innerTopY+0.3);
+        ctx.quadraticCurveTo(gx+organicNoise(t,153+gi,0.2), innerTopY+1.1, gx, innerTopY+1.9);
+        ctx.stroke();
+      }
 
       ctx.restore();
     }
@@ -427,6 +437,14 @@ export function drawMouth(
   ctx.fillStyle = lg;
   ctx.fill();
 
+  // срединная бороздка нижней губы — едва заметная
+  ctx.strokeStyle = 'rgba(92,48,56,0.055)';
+  ctx.lineWidth = 0.4;
+  ctx.beginPath();
+  ctx.moveTo(organicNoise(t, 111, 0.2), lowerTopY + 0.6);
+  ctx.quadraticCurveTo(organicNoise(t, 111,0.35), (lowerTopY+lowerBottomY)/2, organicNoise(t,111,0.2), lowerBottomY - 0.8);
+  ctx.stroke();
+
   // органичный блик — мягкое пятно, не резкая точка, чуть смещается с дыханием
   const highlightX = organicNoise(t * 0.8, 113, 1.2);
   ctx.fillStyle = 'rgba(255,255,255,0.34)';
@@ -446,7 +464,65 @@ export function drawMouth(
 
   ctx.restore();
 
-  // ===== 4. УГОЛКИ — органичные ямочки при улыбке =====
+  // ===== 3.5 ФИЛЬТР (philtrum) — тонкая бороздка над верхней губой =====
+  if (open < 0.45 && tight < 0.55) {
+    ctx.save();
+    const philTop = upperTopY - lipThick * 0.42 - 2.5;
+    const philBot = upperTopY - cupidDepth * 0.2;
+    // вертикальная ложбинка
+    ctx.strokeStyle = 'rgba(92,48,56,0.09)';
+    ctx.lineWidth = 0.9;
+    ctx.beginPath();
+    ctx.moveTo(organicNoise(t, 119, 0.2), philTop);
+    ctx.bezierCurveTo(
+      organicNoise(t, 119, 0.3) - 0.8, philTop + (philBot-philTop)*0.45,
+      organicNoise(t, 119, 0.3) + 0.8, philTop + (philBot-philTop)*0.7,
+      organicNoise(t, 119, 0.25), philBot
+    );
+    ctx.stroke();
+    // боковые валики фильтрума
+    ctx.strokeStyle = 'rgba(92,48,56,0.045)';
+    ctx.lineWidth = 0.45;
+    [-1,1].forEach(s=>{
+      ctx.beginPath();
+      ctx.moveTo(s*2.2 + organicNoise(t, 121+s*2,0.15), philTop + 0.5);
+      ctx.quadraticCurveTo(s*2.6, (philTop+philBot)/2, s*1.4, philBot - 0.5);
+      ctx.stroke();
+    });
+    ctx.restore();
+  }
+
+  // ===== 3.7 ВНУТРЕННИЕ ЩЁКИ — боковые стенки при широком открытии =====
+  if (open > 0.32 && innerH > 8) {
+    ctx.save();
+    ctx.globalAlpha = 0.18 + open*0.08;
+    const cheekGrad = ctx.createLinearGradient(-innerW*0.5, innerCenterY, innerW*0.5, innerCenterY);
+    cheekGrad.addColorStop(0, 'rgba(62,32,42,0.55)');
+    cheekGrad.addColorStop(0.22, 'rgba(58,30,40,0.0)');
+    cheekGrad.addColorStop(0.78, 'rgba(58,30,40,0.0)');
+    cheekGrad.addColorStop(1, 'rgba(62,32,42,0.55)');
+    ctx.fillStyle = cheekGrad;
+    ctx.beginPath();
+    ctx.ellipse(0, innerCenterY, innerW*0.46, innerH*0.38, 0, 0, Math.PI*2);
+    ctx.fill();
+    // мягкая тень от зубов на щеку
+    ctx.fillStyle = 'rgba(0,0,0,0.08)';
+    ctx.beginPath();
+    ctx.ellipse(0, innerTopY + 3, innerW*0.32, 1.8, 0, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+    // маленький язычок (uvula hint) при очень широком зеве
+    if (open > 0.62 && innerH > 16) {
+      ctx.save();
+      ctx.fillStyle = 'rgba(196,82,96,0.22)';
+      ctx.beginPath();
+      ctx.ellipse(0, innerTopY + 4.5, 1.3, 2.8, 0, 0, Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  // ===== 4. УГОЛКИ — органичные ямочки при улыбке ===
   if (smile > 0.18) {
     ctx.save();
     ctx.fillStyle = `rgba(118,62,72,${0.05 + smile * 0.06})`;

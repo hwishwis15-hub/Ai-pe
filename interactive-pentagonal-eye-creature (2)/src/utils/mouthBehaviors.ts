@@ -47,8 +47,8 @@ export interface MouthDef {
 
 export function defaultMouth(): MouthParams {
   return {
-    width: 36,
-    height: 9,
+    width: 42,
+    height: 11,
     openness: 0,
     smile: 0,
     upperRaise: 0,
@@ -547,6 +547,384 @@ export const MOUTH_BEHAVIORS: MouthDef[] = [
     { d: 0.6, p: m({ quiver: 0.68 }), e: 'hold' },
     { d: 0.35, p: m({}), e: 'outQuad' },
   ]},
+
+  // ===================== ULTRA ORGANIC NEW COMPLEX BEHAVIORS — 58 lifelike extended mimics =====================
+  { id: 'smile_dawn_melting', name: 'Melting dawn smile', cat: 'happy', w: 5, frames: [
+    { d: 0.32, p: m({ width: 38, height: 9.2, smile: 0.22, openness: 0.03, upperRaise: 0.08, cornerLeft: -0.6, cornerRight: -0.9, innerDark: 0.93 }), e: 'inOutQuad' },
+    { d: 0.45, p: m({ width: 44, smile: 0.52, openness: 0.09, teethUpper: 0.18, cornerLeft: -1.8, cornerRight: -2.2, upperRaise: 0.14 }), e: 'outCubic' },
+    { d: 0.7, p: m({ width: 46, smile: 0.58, openness: 0.11, teethUpper: 0.22, innerDark: 0.91 }), e: 'linear' },
+    { d: 0.4, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'smile_bashful_shy', name: 'Bashful shy smile', cat: 'happy', w: 5, frames: [
+    { d: 0.18, p: m({ width: 33, height: 7.8, smile: 0.32, openness: 0.02, cornerLeft: -0.4, cornerRight: -2.8, lipTight: 0.18, lowerDroop: 0.1 }), e: 'outBack' },
+    { d: 0.55, p: m({ width: 36, smile: 0.42, openness: 0.05, teethUpper: 0.08, cornerRight: -3.2, upperRaise: 0.06 }), e: 'inOutQuad' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'grin_crooked_charm', name: 'Crooked charming grin', cat: 'happy', w: 4, frames: [
+    { d: 0.2, p: m({ width: 45, height: 9.8, smile: 0.62, openness: 0.24, teethUpper: 0.42, cornerLeft: -0.8, cornerRight: -3.8, upperRaise: 0.22, tongueWobble: 0.08 }), e: 'outBack' },
+    { d: 0.65, p: m({ smile: 0.66, openness: 0.22, teethUpper: 0.44 }), e: 'hold' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'laugh_silent_shake', name: 'Silent shoulder laugh', cat: 'happy', w: 4, frames: [
+    { d: 0.1, p: m({ width: 42, height: 9.5, smile: 0.78, openness: 0.48, teethUpper: 0.62, teethLower: 0.28, quiver: 1.1, upperRaise: 0.18 }), e: 'outQuad' },
+    { d: 0.08, p: m({ openness: 0.28, quiver: 0.7 }), e: 'inQuad' },
+    { d: 0.08, p: m({ openness: 0.52, quiver: 1.3, smile: 0.82 }), e: 'outQuad' },
+    { d: 0.08, p: m({ openness: 0.32, quiver: 0.9 }), e: 'inQuad' },
+    { d: 0.45, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'chuckle_nose_wrinkle', name: 'Chuckle with nose wrinkle', cat: 'happy', w: 4, frames: [
+    { d: 0.14, p: m({ width: 43, smile: 0.68, openness: 0.32, teethUpper: 0.48, upperRaise: 0.52, quiver: 0.6, cornerLeft: -1.2, cornerRight: -1.8 }), e: 'outBack' },
+    { d: 0.12, p: m({ openness: 0.18, upperRaise: 0.42 }), e: 'inQuad' },
+    { d: 0.14, p: m({ openness: 0.36, quiver: 0.85, upperRaise: 0.58 }), e: 'outBack' },
+    { d: 0.4, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'beam_adore_hold', name: 'Adoring beam hold', cat: 'happy', w: 3, frames: [
+    { d: 0.28, p: m({ width: 46, height: 9.0, smile: 0.58, openness: 0.14, teethUpper: 0.32, cornerLeft: -1.4, cornerRight: -1.6, innerDark: 0.9, upperRaise: 0.1 }), e: 'outCubic' },
+    { d: 1.1, p: m({ smile: 0.62, openness: 0.16, upperRaise: 0.12 }), e: 'hold' },
+    { d: 0.4, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'laugh_crescendo_build', name: 'Crescendo laugh build', cat: 'happy', w: 3, frames: [
+    { d: 0.18, p: m({ width: 40, smile: 0.48, openness: 0.18, teethUpper: 0.22, quiver: 0.35 }), e: 'outQuad' },
+    { d: 0.16, p: m({ width: 44, smile: 0.68, openness: 0.42, teethUpper: 0.52, quiver: 0.75 }), e: 'outBack' },
+    { d: 0.14, p: m({ width: 48, smile: 0.82, openness: 0.62, teethUpper: 0.68, teethLower: 0.42, tongueOut: 0.18, quiver: 1.1, upperRaise: 0.22 }), e: 'outCubic' },
+    { d: 0.5, p: m({ openness: 0.56, quiver: 0.85 }), e: 'linear' },
+    { d: 0.4, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'smile_nostalgic_soft', name: 'Nostalgic soft smile', cat: 'happy', w: 4, frames: [
+    { d: 0.42, p: m({ width: 37, height: 8.2, smile: 0.38, openness: 0.04, cornerLeft: -1.1, cornerRight: -1.4, lowerDroop: 0.12, innerDark: 0.94 }), e: 'inOutQuad' },
+    { d: 0.9, p: m({ smile: 0.44, openness: 0.06, lowerDroop: 0.16 }), e: 'linear' },
+    { d: 0.45, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'sorrow_quiver_chin', name: 'Chin quiver sorrow', cat: 'sad', w: 4, frames: [
+    { d: 0.24, p: m({ width: 34, height: 8.8, smile: -0.48, openness: 0.14, lowerDroop: 0.32, quiver: 1.2, cornerLeft: 2.2, cornerRight: 2.4, lipTight: 0.12 }), e: 'outQuad' },
+    { d: 0.6, p: m({ quiver: 1.65, lowerDroop: 0.42, smile: -0.52 }), e: 'linear' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'pout_child_defiant', name: 'Defiant child pout', cat: 'sad', w: 4, frames: [
+    { d: 0.22, p: m({ width: 29, height: 11.2, smile: -0.28, openness: 0.07, lowerDroop: 0.62, upperRaise: 0.18, lipTight: 0.22, cornerLeft: 1.2, cornerRight: 1.4 }), e: 'outBack' },
+    { d: 0.7, p: m({ lowerDroop: 0.68, lipTight: 0.26 }), e: 'hold' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'sob_catch_breath', name: 'Sob catch breath', cat: 'sad', w: 3, frames: [
+    { d: 0.14, p: m({ width: 36, height: 12.2, smile: -0.62, openness: 0.58, teethLower: 0.22, quiver: 1.65, drool: 0.18, upperRaise: 0.12 }), e: 'outQuad' },
+    { d: 0.1, p: m({ openness: 0.18, quiver: 0.9, drool: 0.12, smile: -0.42 }), e: 'inQuad' },
+    { d: 0.16, p: m({ openness: 0.62, quiver: 1.95, drool: 0.26, smile: -0.68, lowerDroop: 0.32 }), e: 'outCubic' },
+    { d: 0.5, p: m({ quiver: 1.35 }), e: 'linear' },
+    { d: 0.4, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'tearless_wail', name: 'Tearless wail', cat: 'sad', w: 3, frames: [
+    { d: 0.12, p: m({ width: 40, height: 14.5, smile: -0.58, openness: 0.68, teethUpper: 0.32, teethLower: 0.38, tongueOut: 0.22, quiver: 1.85, innerDark: 0.82, lowerDroop: 0.28 }), e: 'outBack' },
+    { d: 0.7, p: m({ openness: 0.62, quiver: 1.45 }), e: 'linear' },
+    { d: 0.45, p: m({}), e: 'outCubic' },
+  ]},
+  { id: 'lip_tremor_nervous', name: 'Nervous lip tremor', cat: 'sad', w: 4, frames: [
+    { d: 0.16, p: m({ width: 32, height: 7.2, smile: -0.22, openness: 0.05, lipTight: 0.38, quiver: 1.45, upperRaise: 0.12 }), e: 'outQuad' },
+    { d: 0.5, p: m({ quiver: 1.85, lipTight: 0.42 }), e: 'linear' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'sigh_heavy_droop', name: 'Heavy sigh droop', cat: 'sad', w: 4, frames: [
+    { d: 0.28, p: m({ width: 36, height: 8.5, smile: -0.18, openness: 0.22, lowerDroop: 0.48, upperRaise: 0.08, innerDark: 0.9, quiver: 0.22 }), e: 'inOutQuad' },
+    { d: 0.5, p: m({ openness: 0.28, lowerDroop: 0.52, innerDark: 0.86 }), e: 'linear' },
+    { d: 0.45, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'wobble_lower_lip_hold', name: 'Lower lip wobble hold', cat: 'sad', w: 3, frames: [
+    { d: 0.18, p: m({ width: 33, height: 8.2, smile: -0.38, openness: 0.12, lowerDroop: 0.42, quiver: 1.35, cornerLeft: 1.8, cornerRight: 1.9 }), e: 'outQuad' },
+    { d: 0.65, p: m({ quiver: 1.75, lowerDroop: 0.48 }), e: 'linear' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'snarl_hold_lip_curl', name: 'Lip curl hold snarl', cat: 'angry', w: 4, frames: [
+    { d: 0.16, p: m({ width: 43, height: 9.8, smile: -0.18, openness: 0.38, upperRaise: 0.68, teethUpper: 0.62, lowerDroop: 0.08, innerDark: 0.84, cornerLeft: -0.6, cornerRight: -1.2, quiver: 0.52 }), e: 'outBack' },
+    { d: 0.7, p: m({ upperRaise: 0.72, teethUpper: 0.64 }), e: 'hold' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'jaw_shift_grind', name: 'Jaw shift grind', cat: 'angry', w: 4, frames: [
+    { d: 0.14, p: m({ width: 37, height: 6.2, smile: -0.12, openness: 0.06, lipTight: 0.62, upperRaise: 0.22, cornerLeft: -2.2, cornerRight: 1.2, quiver: 0.65 }), e: 'inOutQuad' },
+    { d: 0.12, p: m({ cornerLeft: 1.4, cornerRight: -2.4, openness: 0.08, lipTight: 0.66 }), e: 'outQuad' },
+    { d: 0.5, p: m({ quiver: 0.85 }), e: 'linear' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'huff_nostril_mouth', name: 'Huff nostril flare', cat: 'angry', w: 3, frames: [
+    { d: 0.12, p: m({ width: 40, height: 7.8, smile: -0.22, openness: 0.18, upperRaise: 0.48, lowerDroop: 0.12, lipTight: 0.28, quiver: 0.55, teethUpper: 0.18 }), e: 'outBack' },
+    { d: 0.45, p: m({ openness: 0.28, upperRaise: 0.52 }), e: 'linear' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'clench_tick_rapid', name: 'Rapid clench tick', cat: 'angry', w: 3, frames: [
+    { d: 0.08, p: m({ width: 32, height: 5.2, smile: -0.08, openness: 0.02, lipTight: 0.72, quiver: 0.95, upperRaise: 0.18 }), e: 'inQuad' },
+    { d: 0.07, p: m({ lipTight: 0.78, quiver: 1.15 }), e: 'linear' },
+    { d: 0.08, p: m({ lipTight: 0.68, quiver: 0.85 }), e: 'linear' },
+    { d: 0.08, p: m({ lipTight: 0.76, quiver: 1.05 }), e: 'linear' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'sneer_contempt_hold', name: 'Contempt sneer hold', cat: 'angry', w: 3, frames: [
+    { d: 0.2, p: m({ width: 41, height: 8.2, smile: -0.12, openness: 0.14, cornerLeft: -3.2, cornerRight: 1.4, upperRaise: 0.58, teethUpper: 0.38 }), e: 'outCubic' },
+    { d: 0.75, p: m({ upperRaise: 0.62, teethUpper: 0.42 }), e: 'hold' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'grumble_throat_low', name: 'Throat grumble low', cat: 'angry', w: 3, frames: [
+    { d: 0.26, p: m({ width: 35, height: 9.2, smile: -0.28, openness: 0.18, innerDark: 0.86, quiver: 0.7, upperRaise: 0.18, lowerDroop: 0.18 }), e: 'outQuad' },
+    { d: 0.6, p: m({ quiver: 0.95, innerDark: 0.84 }), e: 'linear' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'sour_lemon_squint', name: 'Sour lemon squint', cat: 'disgusted', w: 2, frames: [
+    { d: 0.14, p: m({ width: 36, height: 7.2, smile: -0.52, openness: 0.12, upperRaise: 0.68, lowerDroop: 0.22, lipTight: 0.32, cornerLeft: 1.8, cornerRight: 1.9, teethUpper: 0.18, quiver: 0.55 }), e: 'outBack' },
+    { d: 0.6, p: m({ upperRaise: 0.72, lipTight: 0.36 }), e: 'hold' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'retch_suppressed', name: 'Suppressed retch', cat: 'disgusted', w: 2, frames: [
+    { d: 0.16, p: m({ width: 38, height: 11.5, smile: -0.32, openness: 0.42, tongueOut: 0.32, quiver: 1.15, drool: 0.22, teethUpper: 0.28, innerDark: 0.86 }), e: 'outQuad' },
+    { d: 0.2, p: m({ openness: 0.58, tongueOut: 0.48, quiver: 1.45, drool: 0.32 }), e: 'outCubic' },
+    { d: 0.35, p: m({ openness: 0.28, tongueOut: 0.18, quiver: 0.75 }), e: 'outQuad' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'tongue_flick_dismissive', name: 'Dismissive tongue flick', cat: 'disgusted', w: 2, frames: [
+    { d: 0.1, p: m({ width: 40, smile: -0.22, openness: 0.32, tongueOut: 0.42, tongueWobble: 0.18, upperRaise: 0.32, teethUpper: 0.22 }), e: 'outBack' },
+    { d: 0.12, p: m({ tongueOut: 0.52, tongueWobble: -0.12, upperRaise: 0.36 }), e: 'linear' },
+    { d: 0.08, p: m({ tongueOut: 0.18, openness: 0.14 }), e: 'inQuad' },
+    { d: 0.3, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'nose_wrinkle_deep_hold', name: 'Deep nose wrinkle hold', cat: 'disgusted', w: 2, frames: [
+    { d: 0.18, p: m({ width: 37, height: 9.2, smile: -0.48, openness: 0.2, upperRaise: 0.74, teethUpper: 0.38, tongueOut: 0.08, innerDark: 0.87 }), e: 'outBack' },
+    { d: 0.75, p: m({ upperRaise: 0.78 }), e: 'hold' },
+    { d: 0.4, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'bitter_shudder', name: 'Bitter shudder', cat: 'disgusted', w: 2, frames: [
+    { d: 0.12, p: m({ width: 42, smile: -0.36, openness: 0.38, upperRaise: 0.52, teethUpper: 0.34, quiver: 0.95, tongueOut: 0.18, drool: 0.12 }), e: 'outBack' },
+    { d: 0.35, p: m({ quiver: 1.25, upperRaise: 0.58, drool: 0.18 }), e: 'linear' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'gasp_soft_inhale', name: 'Soft inhale gasp', cat: 'surprised', w: 4, frames: [
+    { d: 0.14, p: m({ width: 28, height: 12.5, openness: 0.38, smile: 0.02, innerDark: 0.88, upperRaise: 0.1 }), e: 'outCubic' },
+    { d: 0.4, p: m({ openness: 0.42, innerDark: 0.86 }), e: 'linear' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'jaw_slack_amazed', name: 'Slack amazed jaw', cat: 'surprised', w: 4, frames: [
+    { d: 0.26, p: m({ width: 38, height: 13.5, openness: 0.52, lowerDroop: 0.55, innerDark: 0.83, teethLower: 0.18, quiver: 0.28 }), e: 'outBack' },
+    { d: 0.7, p: m({ openness: 0.48, lowerDroop: 0.58 }), e: 'hold' },
+    { d: 0.4, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'o_to_grin_transition', name: 'O to grin transition', cat: 'surprised', w: 3, frames: [
+    { d: 0.12, p: m({ width: 24, height: 14.2, openness: 0.52, innerDark: 0.84 }), e: 'outCubic' },
+    { d: 0.22, p: m({ width: 42, height: 9.2, smile: 0.52, openness: 0.18, teethUpper: 0.32 }), e: 'outBack' },
+    { d: 0.5, p: m({ smile: 0.58, openness: 0.16 }), e: 'linear' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'double_take_mouth', name: 'Double take mouth', cat: 'surprised', w: 3, frames: [
+    { d: 0.1, p: m({ width: 30, height: 11.2, openness: 0.38, innerDark: 0.86 }), e: 'outCubic' },
+    { d: 0.08, p: m({ openness: 0.08, smile: 0.05 }), e: 'inQuad' },
+    { d: 0.12, p: m({ width: 34, height: 13.8, openness: 0.62, teethUpper: 0.22, innerDark: 0.8 }), e: 'outCubic' },
+    { d: 0.5, p: m({ openness: 0.42 }), e: 'linear' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'breath_hold_surprise', name: 'Breath hold surprise', cat: 'surprised', w: 3, frames: [
+    { d: 0.08, p: m({ width: 26, height: 10.2, openness: 0.42, lipTight: 0.22, innerDark: 0.88 }), e: 'outCubic' },
+    { d: 0.6, p: m({ openness: 0.44, lipTight: 0.24, quiver: 0.35 }), e: 'hold' },
+    { d: 0.4, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'fish_pucker_pop', name: 'Fish pucker pop', cat: 'playful', w: 4, frames: [
+    { d: 0.16, p: m({ width: 22, height: 13.2, openness: 0.28, lipTight: 0.42, innerDark: 0.88, smile: 0.02 }), e: 'outBack' },
+    { d: 0.1, p: m({ width: 18, openness: 0.42, lipTight: 0.22, innerDark: 0.84 }), e: 'outCubic' },
+    { d: 0.14, p: m({ width: 28, openness: 0.12, smile: 0.32, lipTight: 0.18 }), e: 'outBack' },
+    { d: 0.3, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'raspberry_blow', name: 'Blow raspberry', cat: 'playful', w: 3, frames: [
+    { d: 0.12, p: m({ width: 36, height: 8.2, smile: 0.22, openness: 0.22, tongueOut: 0.38, tongueWobble: 0.22, lipTight: 0.18, quiver: 0.85 }), e: 'outBack' },
+    { d: 0.3, p: m({ tongueOut: 0.44, tongueWobble: -0.28, quiver: 1.15, lipTight: 0.12, drool: 0.12 }), e: 'linear' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'tongue_rolling_side_slow', name: 'Slow tongue roll side', cat: 'playful', w: 3, frames: [
+    { d: 0.18, p: m({ width: 38, openness: 0.32, tongueOut: 0.52, tongueWobble: 0.38, tongueCurl: 0.18, teethUpper: 0.18 }), e: 'outBack' },
+    { d: 0.45, p: m({ tongueWobble: -0.42, tongueOut: 0.58, tongueCurl: 0.22 }), e: 'inOutQuad' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'lip_pop_bubble', name: 'Lip pop bubble', cat: 'playful', w: 3, frames: [
+    { d: 0.14, p: m({ width: 26, height: 12.8, openness: 0.32, lipTight: 0.38, innerDark: 0.88 }), e: 'outBack' },
+    { d: 0.06, p: m({ width: 32, openness: 0.58, lipTight: 0.08, innerDark: 0.82 }), e: 'outCubic' },
+    { d: 0.14, p: m({ width: 24, openness: 0.14, lipTight: 0.32 }), e: 'inQuad' },
+    { d: 0.3, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'kiss_hearty_smooch', name: 'Hearty smooch', cat: 'playful', w: 3, frames: [
+    { d: 0.18, p: m({ width: 20, height: 13.5, openness: 0.24, lipTight: 0.48, smile: 0.08, innerDark: 0.9 }), e: 'outBack' },
+    { d: 0.12, p: m({ width: 18, openness: 0.38, lipTight: 0.28 }), e: 'outCubic' },
+    { d: 0.28, p: m({ width: 34, smile: 0.52, openness: 0.1, lipTight: 0.12 }), e: 'outElastic' },
+  ]},
+  { id: 'whistle_warble_updown', name: 'Warble whistle updown', cat: 'playful', w: 3, frames: [
+    { d: 0.18, p: m({ width: 20, height: 13.2, openness: 0.36, lipTight: 0.38, innerDark: 0.86, quiver: 0.38 }), e: 'outBack' },
+    { d: 0.22, p: m({ openness: 0.42, quiver: 0.62, width: 19 }), e: 'linear' },
+    { d: 0.22, p: m({ openness: 0.32, quiver: 0.42, width: 21 }), e: 'linear' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'chew_toy_mock', name: 'Mock chew toy', cat: 'playful', w: 3, frames: [
+    { d: 0.14, p: m({ width: 38, openness: 0.32, cornerLeft: -2.2, cornerRight: 1.2, teethUpper: 0.22, tongueOut: 0.18, quiver: 0.45 }), e: 'outQuad' },
+    { d: 0.12, p: m({ openness: 0.12, cornerLeft: 1.4, cornerRight: -2.4 }), e: 'inQuad' },
+    { d: 0.14, p: m({ openness: 0.36, cornerLeft: -2.8, quiver: 0.55 }), e: 'outQuad' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'mouth_breath_nasal_slow', name: 'Slow nasal mouth breath', cat: 'idle', w: 4, frames: [
+    { d: 0.9, p: m({ width: 34, height: 8.8, openness: 0.06, smile: 0.04, innerDark: 0.94, lowerDroop: 0.08 }), e: 'inOutQuad' },
+    { d: 1.0, p: m({ openness: 0.12, smile: 0.06, lowerDroop: 0.12, innerDark: 0.92 }), e: 'inOutQuad' },
+    { d: 0.4, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'lip_lick_contemplative_slow', name: 'Contemplative lip lick slow', cat: 'idle', w: 4, frames: [
+    { d: 0.22, p: m({ width: 35, height: 8.2, openness: 0.14, tongueOut: 0.32, tongueWobble: 0.28, smile: 0.12 }), e: 'outBack' },
+    { d: 0.32, p: m({ tongueWobble: -0.32, tongueOut: 0.38 }), e: 'inOutQuad' },
+    { d: 0.28, p: m({ tongueOut: 0.22, tongueWobble: 0.18, openness: 0.08 }), e: 'outQuad' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'yawn_stifle_suppress', name: 'Stifled yawn suppress', cat: 'idle', w: 3, frames: [
+    { d: 0.22, p: m({ width: 32, height: 10.2, openness: 0.32, lowerDroop: 0.28, lipTight: 0.18, innerDark: 0.88 }), e: 'inOutQuad' },
+    { d: 0.18, p: m({ openness: 0.12, lipTight: 0.42, width: 30 }), e: 'inQuad' },
+    { d: 0.4, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'hum_contemplative_closed', name: 'Closed hum contemplative', cat: 'idle', w: 3, frames: [
+    { d: 0.38, p: m({ width: 33, height: 7.2, smile: 0.18, openness: 0.04, lipTight: 0.22, quiver: 0.22, innerDark: 0.94 }), e: 'inOutQuad' },
+    { d: 0.7, p: m({ quiver: 0.32, smile: 0.22, openness: 0.06 }), e: 'linear' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'mutter_subvocal_rapid', name: 'Subvocal mutter rapid', cat: 'idle', w: 3, frames: [
+    { d: 0.08, p: m({ width: 31, openness: 0.14, quiver: 0.42, cornerLeft: -0.8, cornerRight: 0.6 }), e: 'outQuad' },
+    { d: 0.06, p: m({ openness: 0.22, width: 33, cornerLeft: 0.6, cornerRight: -0.8 }), e: 'inOutQuad' },
+    { d: 0.07, p: m({ openness: 0.08, width: 30 }), e: 'inOutQuad' },
+    { d: 0.06, p: m({ openness: 0.18, width: 32 }), e: 'inOutQuad' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'breathe_through_sleepy', name: 'Sleepy mouth breathe through', cat: 'idle', w: 3, frames: [
+    { d: 0.7, p: m({ width: 34, openness: 0.14, lowerDroop: 0.22, drool: 0.12, innerDark: 0.92, quiver: 0.18 }), e: 'inOutQuad' },
+    { d: 0.9, p: m({ openness: 0.18, lowerDroop: 0.28, drool: 0.18 }), e: 'inOutQuad' },
+    { d: 0.4, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'nibble_delicate_front', name: 'Delicate front nibble', cat: 'eating', w: 4, frames: [
+    { d: 0.1, p: m({ width: 33, height: 7.2, openness: 0.14, teethUpper: 0.32, teethLower: 0.12, smile: 0.12, cornerLeft: -0.6, cornerRight: -0.6 }), e: 'outBack' },
+    { d: 0.08, p: m({ openness: 0.04, lipTight: 0.22 }), e: 'inQuad' },
+    { d: 0.1, p: m({ openness: 0.16, teethUpper: 0.34 }), e: 'outBack' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'savor_eyes_shut_mmm_long', name: 'Long eyes-shut savor', cat: 'eating', w: 4, frames: [
+    { d: 0.42, p: m({ width: 37, height: 7.8, smile: 0.58, openness: 0.06, teethUpper: 0.06, innerDark: 0.94, quiver: 0.18, lowerDroop: 0.1 }), e: 'outCubic' },
+    { d: 1.0, p: m({ smile: 0.62, openness: 0.04, quiver: 0.26, innerDark: 0.95 }), e: 'linear' },
+    { d: 0.4, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'crunch_crispy_wide', name: 'Crispy crunch wide', cat: 'eating', w: 3, frames: [
+    { d: 0.08, p: m({ width: 44, height: 9.8, openness: 0.52, teethUpper: 0.52, teethLower: 0.38, smile: 0.22, innerDark: 0.84, quiver: 0.45 }), e: 'outCubic' },
+    { d: 0.06, p: m({ openness: 0.08, lipTight: 0.38, width: 42 }), e: 'inQuad' },
+    { d: 0.1, p: m({ openness: 0.48, teethUpper: 0.48, quiver: 0.55 }), e: 'outCubic' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'slurp_noodle_pull_slow', name: 'Noodle slurp pull', cat: 'eating', w: 3, frames: [
+    { d: 0.14, p: m({ width: 32, height: 8.2, openness: 0.32, tongueOut: 0.28, tongueCurl: 0.22, lipTight: 0.18, innerDark: 0.88 }), e: 'outBack' },
+    { d: 0.28, p: m({ openness: 0.38, tongueOut: 0.42, tongueCurl: -0.18, lipTight: 0.08 }), e: 'linear' },
+    { d: 0.22, p: m({ openness: 0.08, lipTight: 0.32, tongueOut: 0.08 }), e: 'inQuad' },
+    { d: 0.3, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'smack_lips_after', name: 'Lip smack after', cat: 'eating', w: 4, frames: [
+    { d: 0.12, p: m({ width: 38, openness: 0.22, smile: 0.28, lipTight: 0.12, tongueOut: 0.08 }), e: 'outBack' },
+    { d: 0.08, p: m({ openness: 0.04, lipTight: 0.38, width: 36 }), e: 'inQuad' },
+    { d: 0.1, p: m({ openness: 0.18, lipTight: 0.08, smile: 0.32 }), e: 'outBack' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'chew_gum_bubble_pop_big', name: 'Big gum bubble pop', cat: 'eating', w: 3, frames: [
+    { d: 0.16, p: m({ width: 40, openness: 0.22, smile: 0.18, cornerLeft: -1.4, cornerRight: -1.2, teethUpper: 0.12 }), e: 'outQuad' },
+    { d: 0.18, p: m({ width: 44, height: 10.2, openness: 0.38, smile: 0.22, innerDark: 0.86, tongueOut: 0.12 }), e: 'outBack' },
+    { d: 0.06, p: m({ openness: 0.08, lipTight: 0.28, width: 38 }), e: 'inQuad' },
+    { d: 0.4, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'lick_lips_slow_sensual', name: 'Slow sensual lip lick', cat: 'eating', w: 4, frames: [
+    { d: 0.28, p: m({ width: 38, height: 8.2, openness: 0.18, tongueOut: 0.42, tongueWobble: 0.42, tongueCurl: 0.12, smile: 0.22 }), e: 'outCubic' },
+    { d: 0.42, p: m({ tongueWobble: -0.42, tongueOut: 0.48, tongueCurl: 0.08 }), e: 'inOutQuad' },
+    { d: 0.32, p: m({ tongueOut: 0.28, openness: 0.1 }), e: 'outQuad' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'whisper_conspiratorial_side', name: 'Conspiratorial whisper side', cat: 'social', w: 4, frames: [
+    { d: 0.16, p: m({ width: 32, height: 7.2, openness: 0.12, cornerLeft: -2.8, cornerRight: 0.8, smile: 0.18, upperRaise: 0.08, quiver: 0.18 }), e: 'outCubic' },
+    { d: 0.6, p: m({ openness: 0.16, cornerLeft: -3.2, quiver: 0.22 }), e: 'hold' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'coo_affectionate_soft', name: 'Affectionate coo soft', cat: 'social', w: 4, frames: [
+    { d: 0.22, p: m({ width: 36, height: 8.5, smile: 0.48, openness: 0.16, teethUpper: 0.12, cornerLeft: -1.2, cornerRight: -1.4, upperRaise: 0.08, innerDark: 0.92 }), e: 'outBack' },
+    { d: 0.6, p: m({ smile: 0.52, openness: 0.14, teethUpper: 0.14 }), e: 'hold' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'mock_gasp_playful_shock', name: 'Mock playful gasp', cat: 'social', w: 3, frames: [
+    { d: 0.08, p: m({ width: 28, height: 12.2, openness: 0.48, smile: 0.18, innerDark: 0.86, upperRaise: 0.14, teethUpper: 0.12 }), e: 'outCubic' },
+    { d: 0.22, p: m({ openness: 0.52, smile: 0.22, teethUpper: 0.16 }), e: 'hold' },
+    { d: 0.35, p: m({ width: 40, smile: 0.42, openness: 0.14 }), e: 'outBack' },
+  ]},
+  { id: 'murmur_agreement_soft', name: 'Soft agreement murmur', cat: 'social', w: 3, frames: [
+    { d: 0.14, p: m({ width: 34, height: 7.2, smile: 0.28, openness: 0.1, quiver: 0.28, innerDark: 0.92 }), e: 'outQuad' },
+    { d: 0.45, p: m({ openness: 0.14, quiver: 0.35, smile: 0.32 }), e: 'linear' },
+    { d: 0.3, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'bluff_pout_negotiate', name: 'Bluff pout negotiate', cat: 'social', w: 3, frames: [
+    { d: 0.2, p: m({ width: 30, height: 9.8, smile: -0.18, openness: 0.08, lowerDroop: 0.42, lipTight: 0.18, cornerLeft: 0.8, cornerRight: 1.1 }), e: 'outBack' },
+    { d: 0.6, p: m({ lowerDroop: 0.46, lipTight: 0.22 }), e: 'hold' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'greet_big_warm_wide', name: 'Warm wide greet', cat: 'social', w: 4, frames: [
+    { d: 0.18, p: m({ width: 44, height: 9.2, smile: 0.62, openness: 0.22, teethUpper: 0.38, teethLower: 0.08, cornerLeft: -1.8, cornerRight: -1.9, upperRaise: 0.12 }), e: 'outBack' },
+    { d: 0.6, p: m({ smile: 0.66, openness: 0.18, teethUpper: 0.42 }), e: 'hold' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'stutter_lip_quiver_word', name: 'Stutter word quiver', cat: 'rare', w: 2, frames: [
+    { d: 0.07, p: m({ width: 33, openness: 0.18, quiver: 0.95, lipTight: 0.22, cornerLeft: -0.8, cornerRight: 0.6 }), e: 'outQuad' },
+    { d: 0.06, p: m({ openness: 0.06, quiver: 0.62, lipTight: 0.32 }), e: 'inQuad' },
+    { d: 0.07, p: m({ openness: 0.22, quiver: 1.05, cornerLeft: 0.6, cornerRight: -0.8 }), e: 'outQuad' },
+    { d: 0.06, p: m({ openness: 0.08, quiver: 0.72 }), e: 'inQuad' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'sneeze_buildup_inhale', name: 'Sneeze buildup inhale', cat: 'rare', w: 1, frames: [
+    { d: 0.18, p: m({ width: 34, height: 8.2, smile: -0.08, openness: 0.12, upperRaise: 0.42, quiver: 0.45, innerDark: 0.9 }), e: 'inOutQuad' },
+    { d: 0.12, p: m({ width: 38, height: 10.2, openness: 0.42, upperRaise: 0.62, teethUpper: 0.28, quiver: 0.85, innerDark: 0.86 }), e: 'outCubic' },
+    { d: 0.08, p: m({ width: 44, height: 12.2, openness: 0.62, upperRaise: 0.72, teethUpper: 0.42, quiver: 1.15, drool: 0.08 }), e: 'outCubic' },
+    { d: 0.35, p: m({ openness: 0.18, quiver: 0.45 }), e: 'outQuad' },
+  ]},
+  { id: 'hiccup_jolt_single', name: 'Single hiccup jolt', cat: 'rare', w: 1, frames: [
+    { d: 0.06, p: m({ width: 32, height: 10.2, openness: 0.42, innerDark: 0.86, lowerDroop: 0.12, quiver: 0.85 }), e: 'outCubic' },
+    { d: 0.06, p: m({ openness: 0.06, lipTight: 0.32, quiver: 0.42 }), e: 'inQuad' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'hiccup_chain_three', name: 'Three hiccup chain', cat: 'rare', w: 1, frames: [
+    { d: 0.06, p: m({ width: 32, openness: 0.38, innerDark: 0.86 }), e: 'outCubic' },
+    { d: 0.05, p: m({ openness: 0.06 }), e: 'inQuad' },
+    { d: 0.06, p: m({ width: 33, openness: 0.42 }), e: 'outCubic' },
+    { d: 0.05, p: m({ openness: 0.06 }), e: 'inQuad' },
+    { d: 0.06, p: m({ width: 34, openness: 0.45 }), e: 'outCubic' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'yawn_contagious_chain_long', name: 'Contagious yawn chain long', cat: 'rare', w: 1, frames: [
+    { d: 0.42, p: m({ width: 30, height: 12.2, openness: 0.42, lowerDroop: 0.32, innerDark: 0.86, tongueOut: 0.08 }), e: 'inOutQuad' },
+    { d: 0.38, p: m({ width: 27, height: 16.5, openness: 0.68, lowerDroop: 0.68, tongueOut: 0.28, innerDark: 0.78, drool: 0.08, quiver: 0.22 }), e: 'inOutCubic' },
+    { d: 0.45, p: m({ openness: 0.62, lowerDroop: 0.62, drool: 0.14 }), e: 'hold' },
+    { d: 0.5, p: m({}), e: 'outCubic' },
+  ]},
+  { id: 'shiver_chatter_teeth_cold', name: 'Cold chatter teeth', cat: 'rare', w: 1, frames: [
+    { d: 0.08, p: m({ width: 34, openness: 0.22, teethUpper: 0.32, teethLower: 0.22, quiver: 1.42, lowerDroop: 0.12, cornerLeft: 1.2, cornerRight: 1.4 }), e: 'outQuad' },
+    { d: 0.07, p: m({ openness: 0.08, quiver: 0.88 }), e: 'inQuad' },
+    { d: 0.08, p: m({ openness: 0.26, quiver: 1.62 }), e: 'outQuad' },
+    { d: 0.07, p: m({ openness: 0.1, quiver: 1.0 }), e: 'inQuad' },
+    { d: 0.45, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'breath_hold_puff_cheeks_big', name: 'Puff cheeks breath hold', cat: 'rare', w: 2, frames: [
+    { d: 0.22, p: m({ width: 38, height: 10.2, openness: 0.08, lipTight: 0.38, lowerDroop: 0.12, upperRaise: 0.08, quiver: 0.28, innerDark: 0.93 }), e: 'outCubic' },
+    { d: 0.9, p: m({ lipTight: 0.42, quiver: 0.42, width: 40 }), e: 'hold' },
+    { d: 0.12, p: m({ width: 36, openness: 0.38, lipTight: 0.08, quiver: 0.62 }), e: 'outCubic' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'sniff_inhale_mouth_closed', name: 'Sniff inhale mouth closed', cat: 'idle', w: 3, frames: [
+    { d: 0.14, p: m({ width: 32, height: 7.2, openness: 0.04, lipTight: 0.32, upperRaise: 0.22, innerDark: 0.95 }), e: 'inQuad' },
+    { d: 0.22, p: m({ openness: 0.08, lipTight: 0.28, upperRaise: 0.28 }), e: 'outQuad' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'tongue_tip_bite_gentle', name: 'Gentle tongue tip bite', cat: 'playful', w: 3, frames: [
+    { d: 0.16, p: m({ width: 34, openness: 0.14, tongueOut: 0.22, teethUpper: 0.18, lipTight: 0.12, smile: 0.12 }), e: 'outBack' },
+    { d: 0.45, p: m({ tongueOut: 0.26, teethUpper: 0.22 }), e: 'hold' },
+    { d: 0.3, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'lip_twitch_single', name: 'Single lip twitch', cat: 'idle', w: 3, frames: [
+    { d: 0.08, p: m({ width: 34, smile: 0.08, openness: 0.04, cornerLeft: -1.2, quiver: 0.42 }), e: 'outQuad' },
+    { d: 0.15, p: m({ cornerLeft: 0.4, quiver: 0.22 }), e: 'linear' },
+    { d: 0.3, p: m({}), e: 'outQuad' },
+  ]},
+
+
 ];
 
 /* ---------------- procedural generator ---------------- */
