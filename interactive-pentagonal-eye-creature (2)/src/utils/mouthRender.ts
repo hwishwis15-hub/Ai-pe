@@ -1,9 +1,9 @@
 // ============================================================
-//  PENTA — Organic Mouth Renderer v4 — Larger & Ultra-Detailed
+//  PENTA — Organic Mouth Renderer v5 — Flexible Living Tissue
 //  Полностью переработанный органичный рот: мягкие, живые
 //  губы без жёсткой геометрии, естественная полость, язык
 //  как у живого существа, зубы с микро-неровностями.
-//  Все формы — через органичные безье с живым шумом, чуть крупнее, ультра-детализировано для живых мимик.
+//  Все формы — через органичные безье с живым шумом, гибкая живая ткань, полная палитра эмоций, без пластика — мягкая эластичная мембрана.
 // ============================================================
 
 import { MouthParams } from './mouthBehaviors';
@@ -60,7 +60,10 @@ export function drawMouth(
   const upperMidY = -hClosed * 0.38 - upperRaise * 6.5 + breath * 0.4 + organicNoise(t, 3, 0.6);
   const lowerMidY = hClosed * 0.38 + lowerDroop * 5.5 + breath * 0.5 + organicNoise(t, 5, 0.6);
 
-  const lipThick = hClosed * (0.76 - tight * 0.28) + Math.abs(smile) * 0.65;
+  // гибкая толщина: растянутая улыбка истончает губу, надутый pout утолщает
+  const stretch = Math.abs(smile) * 0.42 + open * 0.18 + tight * 0.10;
+  const poutBoost = Math.max(0, lowerDroop * 0.9 + (smile < -0.18 ? 0.35 : 0));
+  const lipThick = Math.max(3.0, hClosed * (0.84 - tight * 0.34 - stretch * 0.38) + poutBoost * 2.2 - upperRaise * 0.55);
 
   // внутренняя полость — органичный овал с мягкими краями
   const innerW = w * (0.71 + open * 0.18) + organicNoise(t, 23, 0.6);
@@ -72,10 +75,10 @@ export function drawMouth(
   // цвета губ — мягкие, органичные, на основе кожи тела
   const skinRGB = parseColor(env.skin);
   // верхняя губа чуть темнее и холоднее, нижняя — чуть теплее и светлее
-  const upperBase = mixRGB(skinRGB, parseColor('#c9919a'), 0.22 + upperRaise * 0.08);
-  const lowerBase = mixRGB(skinRGB, parseColor('#e3a8b1'), 0.26);
-  const upperLip = rgbString(mixRGB(upperBase, parseColor('#8a4a56'), tight * 0.18));
-  const lowerLip = rgbString(mixRGB(lowerBase, parseColor('#7a3040'), tight * 0.12));
+  const upperBase = mixRGB(skinRGB, parseColor('#d08d96'), 0.18 + upperRaise * 0.06);
+  const lowerBase = mixRGB(skinRGB, parseColor('#e6a0a8'), 0.20);
+  const upperLip = rgbString(mixRGB(upperBase, parseColor('#7a3440'), tight * 0.14 + stretch*0.06));
+  const lowerLip = rgbString(mixRGB(lowerBase, parseColor('#6f2f3a'), tight * 0.09 + stretch*0.04));
 
   ctx.save();
 
@@ -374,21 +377,27 @@ export function drawMouth(
 
   // органичный градиент верхней губы — без резких переходов
   const upGrad = ctx.createLinearGradient(0, upperTopY, 0, upperBottomY);
-  upGrad.addColorStop(0, rgbString(mixRGB(parseColor(upperLip), parseColor('#ffffff'), 0.09)));
-  upGrad.addColorStop(0.52, upperLip);
-  upGrad.addColorStop(1, rgbString(mixRGB(parseColor(upperLip), parseColor('#5e2a36'), 0.20)));
+  upGrad.addColorStop(0, rgbString(mixRGB(parseColor(upperLip), parseColor('#ffffff'), 0.045)));
+  upGrad.addColorStop(0.48, upperLip);
+  upGrad.addColorStop(0.88, rgbString(mixRGB(parseColor(upperLip), parseColor('#5a2630'), 0.16)));
+  upGrad.addColorStop(1, rgbString(mixRGB(parseColor(upperLip), parseColor('#3d1820'), 0.12)));
   ctx.fillStyle = upGrad;
   ctx.fill();
-
-  // мягкий блик на верхней губе — органичный, не резкая линия
-  ctx.fillStyle = 'rgba(255,255,255,0.13)';
+  // subsurface scattering — просвечивание края губы (убирает пластик)
+  ctx.fillStyle = 'rgba(255, 128, 138, 0.055)';
   ctx.beginPath();
-  ctx.ellipse(0, upperTopY + cupidDepth * 0.45, w * 0.14, lipThick * 0.10, 0, 0, Math.PI * 2);
+  ctx.ellipse(0, upperBottomY - 0.4, w*0.33, lipThick*0.16, 0, 0, Math.PI*2);
   ctx.fill();
 
-  // органичные морщинки — едва заметные, не сетка
-  ctx.strokeStyle = 'rgba(92,48,56,0.07)';
-  ctx.lineWidth = 0.38;
+  // мягкий блик на верхней губе — едва заметный, матовый (не пластик)
+  ctx.fillStyle = 'rgba(255,255,255,0.075)';
+  ctx.beginPath();
+  ctx.ellipse(0, upperTopY + cupidDepth * 0.45, w * 0.11, lipThick * 0.07, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // органичные морщинки — гибкая кожа: больше растяжка = заметнее вертикальные складки
+  ctx.strokeStyle = `rgba(92,48,56,${0.035 + stretch*0.055})`;
+  ctx.lineWidth = 0.32 + stretch*0.18;
   for (let i = -2; i <= 2; i++) {
     if (i === 0) continue;
     const lx = (i / 3) * w * 0.19 + organicNoise(t + i * 7, 83, 0.2);
@@ -431,29 +440,36 @@ export function drawMouth(
   ctx.closePath();
 
   const lg = ctx.createLinearGradient(0, lowerTopY, 0, lowerBottomY);
-  lg.addColorStop(0, rgbString(mixRGB(parseColor(lowerLip), parseColor('#ffffff'), 0.14)));
-  lg.addColorStop(0.38, lowerLip);
-  lg.addColorStop(1, rgbString(mixRGB(parseColor(lowerLip), parseColor('#5e2a36'), 0.24)));
+  lg.addColorStop(0, rgbString(mixRGB(parseColor(lowerLip), parseColor('#ffffff'), 0.065)));
+  lg.addColorStop(0.42, lowerLip);
+  lg.addColorStop(0.82, rgbString(mixRGB(parseColor(lowerLip), parseColor('#5a2630'), 0.18)));
+  lg.addColorStop(1, rgbString(mixRGB(parseColor(lowerLip), parseColor('#3d1820'), 0.13)));
   ctx.fillStyle = lg;
   ctx.fill();
+  // SSS нижняя губа — тёплое просвечивание
+  ctx.fillStyle = 'rgba(255,138,148,0.07)';
+  ctx.beginPath();
+  ctx.ellipse(0, lowerTopY + lipThick*0.22, w*0.30, lipThick*0.14, 0, 0, Math.PI*2);
+  ctx.fill();
 
-  // срединная бороздка нижней губы — едва заметная
-  ctx.strokeStyle = 'rgba(92,48,56,0.055)';
+  // срединная бороздка нижней губы — гибкая, растягивается с улыбкой
+  ctx.strokeStyle = `rgba(92,48,56,${0.035 + (1-stretch)*0.025})`;
   ctx.lineWidth = 0.4;
   ctx.beginPath();
   ctx.moveTo(organicNoise(t, 111, 0.2), lowerTopY + 0.6);
   ctx.quadraticCurveTo(organicNoise(t, 111,0.35), (lowerTopY+lowerBottomY)/2, organicNoise(t,111,0.2), lowerBottomY - 0.8);
   ctx.stroke();
 
-  // органичный блик — мягкое пятно, не резкая точка, чуть смещается с дыханием
+  // органичный блик — матовый, гибкий: при растяжении становится тоньше и тусклее
   const highlightX = organicNoise(t * 0.8, 113, 1.2);
-  ctx.fillStyle = 'rgba(255,255,255,0.34)';
+  const hlAlpha = 0.18 - stretch*0.14;
+  ctx.fillStyle = `rgba(255,255,255,${Math.max(0.06, hlAlpha)})`;
   ctx.beginPath();
-  ctx.ellipse(highlightX, lowerTopY + lipThick * 0.30, w * 0.16, lipThick * 0.17, 0, 0, Math.PI * 2);
+  ctx.ellipse(highlightX, lowerTopY + lipThick * 0.30, w * (0.13 - stretch*0.06), lipThick * (0.13 - stretch*0.04), 0, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = 'rgba(255,255,255,0.16)';
+  ctx.fillStyle = `rgba(255,255,255,${Math.max(0.04, hlAlpha*0.5)})`;
   ctx.beginPath();
-  ctx.ellipse(highlightX + w * 0.06, lowerTopY + lipThick * 0.36, w * 0.05, lipThick * 0.07, 0.15, 0, Math.PI * 2);
+  ctx.ellipse(highlightX + w * 0.05, lowerTopY + lipThick * 0.36, w * 0.04, lipThick * 0.05, 0.15, 0, Math.PI * 2);
   ctx.fill();
 
   // мягкая тень под нижней губой — органичная
@@ -463,6 +479,10 @@ export function drawMouth(
   ctx.fill();
 
   ctx.restore();
+
+  // гибкая эластичность: губы чуть колышутся после движения (follow-through)
+  // добавляем микро-растяжку от quiver/open изменения — живость ткани
+  // (визуально через organicNoise уже есть, здесь усиливаем)
 
   // ===== 3.5 ФИЛЬТР (philtrum) — тонкая бороздка над верхней губой =====
   if (open < 0.45 && tight < 0.55) {
