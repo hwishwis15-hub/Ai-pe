@@ -59,14 +59,14 @@ export function drawMouth(
   const stretch = Math.abs(smile) * 0.18 + open * 0.10;
   const lipThick = Math.max(2.8, hClosed * (0.58 - tight * 0.18 - stretch * 0.18) );
 
-  // полость — чёткая одиночная
-  const innerW = w * (0.66 + open * 0.14) + organicNoise(t, 23, 0.35);
-  const innerH = open * (hClosed * 2.2 + 14 + lowerDroop * 3.5);
-  // ЧЁТКО: при закрытом рте губы смыкаются в одну линию без щели (без второго рта)
-  const isClosed = open <= 0.035;
+  // полость — чёткая одиночная, без раздвоения: края полости точно совпадают с краями губ
+  const innerW = w * (0.64 + open * 0.13) + organicNoise(t, 23, 0.28);
+  const innerH = open * (hClosed * 2.1 + 12 + lowerDroop * 3.0);
+  const isClosed = open <= 0.038;
   const midLine = (upperMidY + lowerMidY) * 0.5;
-  const innerTopY = isClosed ? midLine : upperMidY + 1.6;
-  const innerBottomY = isClosed ? midLine : lowerMidY - 0.8 + innerH * 0.48;
+  // при открытом — полость ровно между губами, без нахлёста и без щели
+  const innerTopY = isClosed ? midLine : upperMidY + 1.45;
+  const innerBottomY = isClosed ? midLine : lowerMidY - 0.75 + innerH * 0.50;
   const innerCenterY = (innerTopY + innerBottomY) / 2;
 
   const skinRGB = parseColor(env.skin);
@@ -123,14 +123,27 @@ export function drawMouth(
     ctx.fill();
     ctx.restore();
 
-    // ----- ЯЗЫК — чёткий, не раздутый -----
-    if (mp.tongueOut > 0.02) {
+    // ----- ЯЗЫК — чёткий, не раздутый, строго внутри полости (не создаёт второй рот) -----
+    if (mp.tongueOut > 0.025) {
       ctx.save();
-      const tongueH = mp.tongueOut * (innerH * 0.55 + 8) + organicNoise(t, 29, 0.3);
-      const tongueW = w * (0.24 + mp.tongueOut * 0.12);
-      const wob = mp.tongueWobble * tongueW * 0.18 + organicNoise(t * 1.4, 31, 0.4);
+      // клип по полости — чтобы язык не вылазил ниже губы как второй рот
+      ctx.beginPath();
+      const clipLeftX = leftCorner.x + innerW * 0.08;
+      const clipRightX = rightCorner.x - innerW * 0.08;
+      ctx.moveTo(clipLeftX, innerTopY);
+      ctx.bezierCurveTo(clipLeftX+innerW*0.16, innerTopY, -innerW*0.10, innerTopY, 0, innerTopY);
+      ctx.bezierCurveTo(innerW*0.10, innerTopY, clipRightX-innerW*0.16, innerTopY, clipRightX, innerTopY);
+      ctx.bezierCurveTo(clipRightX-innerW*0.07, innerBottomY, innerW*0.12, innerBottomY, 0, innerBottomY);
+      ctx.bezierCurveTo(-innerW*0.12, innerBottomY, clipLeftX+innerW*0.07, innerBottomY, clipLeftX, innerTopY);
+      ctx.closePath();
+      ctx.clip();
+      const tongueH = mp.tongueOut * (innerH * 0.52 + 7) + organicNoise(t, 29, 0.22);
+      const tongueW = w * (0.22 + mp.tongueOut * 0.10);
+      const wob = mp.tongueWobble * tongueW * 0.14 + organicNoise(t * 1.4, 31, 0.28);
       const curl = mp.tongueCurl;
-      ctx.translate(wob, innerBottomY - tongueH * 0.30 + organicNoise(t, 41, 0.35));
+      // держим язык внутри, не ниже края полости
+      const tongueCenterY = innerBottomY - tongueH*0.42;
+      ctx.translate(wob, tongueCenterY + organicNoise(t, 41, 0.22));
 
       const topY = -tongueH * 0.5;
       const bottomY = tongueH * 0.5;
@@ -181,7 +194,7 @@ export function drawMouth(
     }
 
     // ----- ВЕРХНИЕ ЗУБЫ — чёткие, ровные -----
-    if (mp.teethUpper > 0.022 && open > 0.055) {
+    if (mp.teethUpper > 0.028 && open > 0.068) {
       ctx.save();
       ctx.beginPath();
       const th = mp.teethUpper * (innerH * 0.32 + 2.8);
@@ -219,7 +232,7 @@ export function drawMouth(
     }
 
     // ----- НИЖНИЕ ЗУБЫ -----
-    if (mp.teethLower > 0.022 && open > 0.12) {
+    if (mp.teethLower > 0.03 && open > 0.14) {
       ctx.save();
       ctx.beginPath();
       const th = mp.teethLower * (innerH * 0.22 + 2.0);
@@ -250,36 +263,36 @@ export function drawMouth(
   ctx.save();
   ctx.beginPath();
   const upperTopY = upperMidY - lipThick * 0.42;
-  const cupidDepth = lipThick * 0.12;
-  const leftHumpX = -w * 0.13 + organicNoise(t, 61, 0.18);
-  const rightHumpX = w * 0.13 + organicNoise(t, 67, 0.18);
+  const cupidDepth = lipThick * 0.11;
+  const leftHumpX = -w * 0.12 + organicNoise(t, 61, 0.14);
+  const rightHumpX = w * 0.12 + organicNoise(t, 67, 0.14);
 
   ctx.moveTo(leftCorner.x, leftCorner.y);
   ctx.bezierCurveTo(
-    leftCorner.x + w * 0.18, leftCorner.y - lipThick * 0.14,
-    leftHumpX, upperTopY - cupidDepth * 0.12,
-    -w * 0.05, upperTopY + cupidDepth * 0.18
+    leftCorner.x + w * 0.17, leftCorner.y - lipThick * 0.12,
+    leftHumpX, upperTopY - cupidDepth * 0.10,
+    -w * 0.045, upperTopY + cupidDepth * 0.16
   );
   ctx.bezierCurveTo(
-    -w * 0.02, upperTopY + cupidDepth * 0.42,
-    w * 0.02, upperTopY + cupidDepth * 0.42,
-    w * 0.05, upperTopY + cupidDepth * 0.18
+    -w * 0.018, upperTopY + cupidDepth * 0.38,
+    w * 0.018, upperTopY + cupidDepth * 0.38,
+    w * 0.045, upperTopY + cupidDepth * 0.16
   );
   ctx.bezierCurveTo(
-    rightHumpX, upperTopY - cupidDepth * 0.12,
-    rightCorner.x - w * 0.18, rightCorner.y - lipThick * 0.14,
+    rightHumpX, upperTopY - cupidDepth * 0.10,
+    rightCorner.x - w * 0.17, rightCorner.y - lipThick * 0.12,
     rightCorner.x, rightCorner.y
   );
-  // нижний край — ЧЁТКАЯ линия смыкания (один рот!)
-  const upperBottomY = isClosed ? midLine : upperMidY + 1.2;
+  // нижний край — ТОЧНО по краю полости, без раздвоения
+  const upperBottomY = isClosed ? midLine : innerTopY;
   ctx.bezierCurveTo(
-    rightCorner.x - w * 0.16, upperBottomY,
-    w * 0.05, upperBottomY,
+    rightCorner.x - w * 0.15, upperBottomY,
+    w * 0.045, upperBottomY,
     0, upperBottomY
   );
   ctx.bezierCurveTo(
-    -w * 0.05, upperBottomY,
-    leftCorner.x + w * 0.16, upperBottomY,
+    -w * 0.045, upperBottomY,
+    leftCorner.x + w * 0.15, upperBottomY,
     leftCorner.x, leftCorner.y
   );
   ctx.closePath();
@@ -311,8 +324,8 @@ export function drawMouth(
   // ===== 3. НИЖНЯЯ ГУБА — нормальная, не раздутая, чёткая =====
   ctx.save();
   ctx.beginPath();
-  const lowerTopY = isClosed ? midLine : lowerMidY - 0.9;
-  const lowerBottomY = lowerMidY + lipThick * 0.68;
+  const lowerTopY = isClosed ? midLine : innerBottomY;
+  const lowerBottomY = lowerMidY + lipThick * 0.62;
   const smileShift = smile * w * 0.015;
   ctx.moveTo(leftCorner.x, leftCorner.y);
   ctx.bezierCurveTo(
