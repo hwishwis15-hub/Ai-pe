@@ -1,22 +1,30 @@
 // ============================================================
-//  PENTA — Realistic Mouth Renderer
-//  Full-fledged, non-primitive mouth with lips, teeth, tongue,
-//  inner cavity shading, saliva glints and drool.
+//  PENTA — Organic Mouth Renderer v3
+//  Полностью переработанный органичный рот: мягкие, живые
+//  губы без жёсткой геометрии, естественная полость, язык
+//  как у живого существа, зубы с микро-неровностями.
+//  Все формы — через органичные безье с живым шумом.
 // ============================================================
 
 import { MouthParams } from './mouthBehaviors';
 import { mixRGB, parseColor, rgbString } from './eyes';
 
 export interface MouthEnv {
-  skin: string;          // body-sampled colour for seamless lip blend
+  skin: string;
   isLight: boolean;
-  time: number;          // seconds
+  time: number;
 }
 
-/**
- * Draws a single realistic mouth centred at (0,0) in the current transform.
- * `mp` is the animated parameter set from MouthBehaviorEngine.
- */
+// органичный шум — мягкий, не резкий
+// стабильный псевдо-рандом без мерцания — на основе seed, не Math.random
+function stableRand(seed: number) {
+  const s = Math.sin(seed * 127.1 + seed * 0.3) * 43758.5453;
+  return s - Math.floor(s);
+}
+function organicNoise(t: number, seed: number, amp = 1) {
+  return Math.sin(t * 0.7 + seed) * 0.5 * amp + Math.sin(t * 1.3 + seed * 1.7) * 0.3 * amp + Math.sin(t * 2.1 + seed * 0.9) * 0.2 * amp;
+}
+
 export function drawMouth(
   ctx: CanvasRenderingContext2D,
   mp: MouthParams,
@@ -31,442 +39,483 @@ export function drawMouth(
   const tight = mp.lipTight;
   const quiver = mp.quiver;
   const drool = mp.drool;
+  const t = env.time;
 
-  // --- corner positions with smile + asymmetry + quiver ---
-  const cornerBaseY = -smile * w * 0.13;
-  const q = (amp: number) => (quiver ? (Math.random() - 0.5) * amp * quiver : 0);
+  // --- органичные уголки с живым дыханием ---
+  // smile тянет уголки, quiver добавляет живую дрожь, organicNoise — дыхание
+  const breath = Math.sin(t * 1.1) * 0.6 + Math.sin(t * 0.6) * 0.4;
+  const micro = organicNoise(t, 7, quiver * 0.8);
 
+  const cornerBaseY = -smile * w * 0.11 + breath * 0.3;
   const leftCorner = {
-    x: -w / 2 + q(1.2),
-    y: cornerBaseY + mp.cornerLeft + q(1.5),
+    x: -w / 2 + (mp.cornerLeft * 0.6) + organicNoise(t, 11, quiver * 0.7) + micro * 0.4,
+    y: cornerBaseY + mp.cornerLeft * 0.35 + organicNoise(t, 13, quiver * 0.9) + micro * 0.5,
   };
   const rightCorner = {
-    x: w / 2 + q(1.2),
-    y: cornerBaseY + mp.cornerRight + q(1.5),
+    x: w / 2 + (mp.cornerRight * 0.6) + organicNoise(t, 17, quiver * 0.7) - micro * 0.4,
+    y: cornerBaseY + mp.cornerRight * 0.35 + organicNoise(t, 19, quiver * 0.9) - micro * 0.5,
   };
 
-  // mid points
-  const upperMidY = -hClosed * 0.42 - upperRaise * 8 + q(0.9);
-  const lowerMidY = hClosed * 0.42 + lowerDroop * 6 + q(0.9);
+  // органичная середина губ с мягким изгибом
+  const upperMidY = -hClosed * 0.38 - upperRaise * 6.5 + breath * 0.4 + organicNoise(t, 3, 0.6);
+  const lowerMidY = hClosed * 0.38 + lowerDroop * 5.5 + breath * 0.5 + organicNoise(t, 5, 0.6);
 
-  // lip thickness modulated by tightness
-  const lipThick = hClosed * (0.75 - tight * 0.45);
+  const lipThick = hClosed * (0.68 - tight * 0.32) + Math.abs(smile) * 0.5;
 
-  // inner cavity dimensions
-  const innerW = w * (0.72 + open * 0.14);
-  const innerH = open * (hClosed * 2.8 + 20 + lowerDroop * 6);
+  // внутренняя полость — органичный овал с мягкими краями
+  const innerW = w * (0.68 + open * 0.16) + organicNoise(t, 23, 0.5);
+  const innerH = open * (hClosed * 2.6 + 18 + lowerDroop * 5);
+  const innerTopY = upperMidY + (open > 0.04 ? 2.2 : lipThick * 0.22);
+  const innerBottomY = lowerMidY - (open > 0.04 ? 1.2 : lipThick * 0.22) + innerH * 0.52;
+  const innerCenterY = (innerTopY + innerBottomY) / 2;
 
-  const innerTopY = upperMidY + (open > 0.05 ? 2 : lipThick * 0.25);
-  const innerBottomY = lowerMidY - (open > 0.05 ? 1 : lipThick * 0.25) + innerH * 0.55;
-
-  // skin-derived lip colours
+  // цвета губ — мягкие, органичные, на основе кожи тела
   const skinRGB = parseColor(env.skin);
-  const upperLipRGB = mixRGB(skinRGB, parseColor('#d8a0a8'), 0.18 + (upperRaise * 0.15));
-  const lowerLipRGB = mixRGB(skinRGB, parseColor('#e8b0b8'), 0.22);
-  const upperLip = rgbString(upperLipRGB);
-  const lowerLip = rgbString(lowerLipRGB);
+  // верхняя губа чуть темнее и холоднее, нижняя — чуть теплее и светлее
+  const upperBase = mixRGB(skinRGB, parseColor('#c9919a'), 0.22 + upperRaise * 0.08);
+  const lowerBase = mixRGB(skinRGB, parseColor('#e3a8b1'), 0.26);
+  const upperLip = rgbString(mixRGB(upperBase, parseColor('#8a4a56'), tight * 0.18));
+  const lowerLip = rgbString(mixRGB(lowerBase, parseColor('#7a3040'), tight * 0.12));
 
   ctx.save();
 
-  // ----- 1. INNER CAVITY (only when open) -----
-  if (open > 0.03 && innerH > 1) {
-    // cavity shape with smile-curved corners
+  // ===== 1. ВНУТРЕННЯЯ ПОЛОСТЬ — мягкая, органичная, без жёстких углов =====
+  if (open > 0.025 && innerH > 0.8) {
     ctx.save();
+    // органичный путь полости с мягкими изгибами улыбки
     ctx.beginPath();
-    // top edge of cavity
-    ctx.moveTo(leftCorner.x + innerW * 0.08, innerTopY);
-    ctx.quadraticCurveTo(0, innerTopY - (smile > 0 ? 2 : -1), rightCorner.x - innerW * 0.08, innerTopY);
-    // bottom edge
-    ctx.quadraticCurveTo(0, innerBottomY + (smile < 0 ? 6 : 2), leftCorner.x + innerW * 0.08, innerTopY);
+    const leftX = leftCorner.x + innerW * 0.09;
+    const rightX = rightCorner.x - innerW * 0.09;
+    // верхняя дуга — следует за улыбкой, с лёгким органичным прогибом
+    const smileOffset = smile * 1.8;
+    ctx.moveTo(leftX, innerTopY);
+    ctx.bezierCurveTo(
+      leftX + innerW * 0.18, innerTopY - 1.2 + smileOffset * 0.3,
+      -innerW * 0.12, innerTopY - 0.8 + smileOffset * 0.2,
+      0, innerTopY + smileOffset * 0.15
+    );
+    ctx.bezierCurveTo(
+      innerW * 0.12, innerTopY - 0.8 + smileOffset * 0.2,
+      rightX - innerW * 0.18, innerTopY - 1.2 + smileOffset * 0.3,
+      rightX, innerTopY
+    );
+    // нижняя дуга — более округлая, органичная
+    const bottomSmile = smile < 0 ? 5 : 1.5;
+    ctx.bezierCurveTo(
+      rightX - innerW * 0.08, innerBottomY + bottomSmile * 0.2,
+      innerW * 0.14, innerBottomY + bottomSmile,
+      0, innerBottomY + bottomSmile * 0.4
+    );
+    ctx.bezierCurveTo(
+      -innerW * 0.14, innerBottomY + bottomSmile,
+      leftX + innerW * 0.08, innerBottomY + bottomSmile * 0.2,
+      leftX, innerTopY
+    );
     ctx.closePath();
 
-    // volumetric dark gradient with realistic throat depth
-    const cavGrad = ctx.createRadialGradient(0, (innerTopY + innerBottomY) / 2, 0, 0, (innerTopY + innerBottomY) / 2, innerW * 0.9);
-    cavGrad.addColorStop(0, `rgba(8,6,14,${0.88 + mp.innerDark * 0.12})`);
-    cavGrad.addColorStop(0.32, `rgba(18,14,26,${0.96})`);
-    cavGrad.addColorStop(0.72, `rgba(28,18,36,${0.98})`);
-    cavGrad.addColorStop(1, `rgba(42,22,52,${0.98})`);
+    // органичный градиент полости — мягкий, без резких переходов, как у живого
+    const cavGrad = ctx.createRadialGradient(0, innerCenterY, 0, 0, innerCenterY, innerW * 0.85);
+    const dark = 0.86 + mp.innerDark * 0.14;
+    cavGrad.addColorStop(0, `rgba(14,10,20,${0.92 * dark})`);
+    cavGrad.addColorStop(0.28, `rgba(22,16,30,${0.98 * dark})`);
+    cavGrad.addColorStop(0.62, `rgba(32,20,38,0.98)`);
+    cavGrad.addColorStop(1, `rgba(48,28,52,0.98)`);
     ctx.fillStyle = cavGrad;
     ctx.fill();
 
-    // throat depth + uvula shadow
-    const throatGrad = ctx.createLinearGradient(0, innerTopY, 0, innerBottomY);
-    throatGrad.addColorStop(0, 'rgba(0,0,0,0.18)');
-    throatGrad.addColorStop(0.45, 'rgba(0,0,0,0)');
-    throatGrad.addColorStop(0.82, 'rgba(0,0,0,0.32)');
-    throatGrad.addColorStop(1, 'rgba(0,0,0,0.52)');
-    ctx.fillStyle = throatGrad;
+    // мягкая тень глубины — органичная, не линейная
+    ctx.fillStyle = 'rgba(0,0,0,0.22)';
+    ctx.beginPath();
+    ctx.ellipse(0, innerCenterY + innerH * 0.12, innerW * 0.38, innerH * 0.18, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // uvula hint when wide open
-    if (open > 0.65) {
-      ctx.fillStyle = 'rgba(180,100,110,0.35)';
+    // язычок — органичный, с живой текстурой
+    if (open > 0.12) {
+      ctx.fillStyle = 'rgba(0,0,0,0.14)';
       ctx.beginPath();
-      ctx.ellipse(0, innerTopY + innerH * 0.32, 3.2, 5.5, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, innerTopY + innerH * 0.1, innerW * 0.18, 2.2, 0, 0, Math.PI * 2);
       ctx.fill();
     }
 
     ctx.restore();
 
-    // ----- tongue -----
-    if (mp.tongueOut > 0.02) {
+    // ----- ЯЗЫК — максимально органичный -----
+    if (mp.tongueOut > 0.015) {
       ctx.save();
-      const tongueH = mp.tongueOut * (innerH * 0.62 + 10);
-      const tongueW = w * (0.28 + mp.tongueOut * 0.18);
-      const wob = mp.tongueWobble * tongueW * 0.25;
+      const tongueH = mp.tongueOut * (innerH * 0.58 + 9) + organicNoise(t, 29, 0.4);
+      const tongueW = w * (0.26 + mp.tongueOut * 0.16);
+      const wob = mp.tongueWobble * tongueW * 0.22 + organicNoise(t * 1.4, 31, 0.7);
       const curl = mp.tongueCurl;
-      ctx.translate(wob, innerBottomY - tongueH * 0.35);
+      // язык чуть дрожит органично
+      const tongueQuat = organicNoise(t * 2.3, 37, quiver * 0.12);
+      ctx.translate(wob + tongueQuat, innerBottomY - tongueH * 0.32 + organicNoise(t, 41, 0.6));
 
-      // tongue body with curl
-      ctx.beginPath();
       const topY = -tongueH * 0.5;
       const bottomY = tongueH * 0.5;
-      ctx.moveTo(-tongueW * 0.42, topY);
+
+      // органичная форма языка — не симметричный овал, а живая капля с изгибом
+      ctx.beginPath();
+      ctx.moveTo(-tongueW * 0.38, topY + tongueH * 0.08);
       ctx.bezierCurveTo(
-        -tongueW * 0.5, topY + tongueH * 0.2 + curl * 8,
-        -tongueW * 0.35, bottomY - tongueH * 0.15 + curl * 6,
-        0, bottomY + curl * 4
+        -tongueW * 0.48, topY + tongueH * 0.22 + curl * 6,
+        -tongueW * 0.32, bottomY - tongueH * 0.08 + curl * 4,
+        0, bottomY + curl * 2.5
       );
       ctx.bezierCurveTo(
-        tongueW * 0.35, bottomY - tongueH * 0.15 + curl * 6,
-        tongueW * 0.5, topY + tongueH * 0.2 + curl * 8,
-        tongueW * 0.42, topY
+        tongueW * 0.32, bottomY - tongueH * 0.08 + curl * 4,
+        tongueW * 0.48, topY + tongueH * 0.22 + curl * 6,
+        tongueW * 0.38, topY + tongueH * 0.08
       );
-      ctx.quadraticCurveTo(0, topY - 4, -tongueW * 0.42, topY);
+      // верх с мягкой ямкой посередине — как у настоящего языка
+      ctx.bezierCurveTo(
+        tongueW * 0.18, topY - 1.5,
+        -tongueW * 0.18, topY - 1.5,
+        -tongueW * 0.38, topY + tongueH * 0.08
+      );
       ctx.closePath();
 
+      // градиент языка — живой, с теплыми переходами
       const tongueGrad = ctx.createLinearGradient(0, topY, 0, bottomY);
-      tongueGrad.addColorStop(0, '#e8909a');
-      tongueGrad.addColorStop(0.5, '#f4a8b2');
-      tongueGrad.addColorStop(1, '#c86a78');
+      tongueGrad.addColorStop(0, '#e78e9a');
+      tongueGrad.addColorStop(0.32, '#f0a0ac');
+      tongueGrad.addColorStop(0.62, '#f4acb8');
+      tongueGrad.addColorStop(1, '#c66e7a');
       ctx.fillStyle = tongueGrad;
       ctx.fill();
 
-      // tongue midline + papillae texture
-      ctx.strokeStyle = 'rgba(120,40,50,0.32)';
-      ctx.lineWidth = 0.85;
+      // центральная бороздка языка — органичная, не прямая
+      ctx.strokeStyle = 'rgba(128,48,58,0.22)';
+      ctx.lineWidth = 0.9;
       ctx.beginPath();
-      ctx.moveTo(0, topY + 3);
-      ctx.lineTo(0, bottomY - 3);
+      ctx.moveTo(organicNoise(t, 43, 0.3), topY + 4);
+      ctx.bezierCurveTo(
+        organicNoise(t, 43, 0.4), topY + tongueH * 0.35,
+        organicNoise(t, 43, 0.4), topY + tongueH * 0.65,
+        organicNoise(t, 43, 0.3), bottomY - 4
+      );
       ctx.stroke();
-      // papillae dots
-      ctx.fillStyle = 'rgba(140,60,70,0.18)';
-      for (let i = 0; i < 7; i++) {
-        const py = topY + (i / 7) * tongueH * 0.7 + Math.random() * 2;
-        const px = (Math.random() - 0.5) * tongueW * 0.3;
+
+      // боковые бороздки — едва заметные
+      ctx.strokeStyle = 'rgba(128,48,58,0.10)';
+      ctx.lineWidth = 0.45;
+      [-1, 1].forEach(s => {
         ctx.beginPath();
-        ctx.arc(px, py, 0.6 + Math.random() * 0.7, 0, Math.PI * 2);
+        ctx.moveTo(s * tongueW * 0.14, topY + tongueH * 0.22);
+        ctx.quadraticCurveTo(s * tongueW * 0.18, topY + tongueH * 0.48, s * tongueW * 0.12, bottomY - tongueH * 0.12);
+        ctx.stroke();
+      });
+
+      // сосочки — органичные, разного размера, не сетка — стабильные
+      ctx.fillStyle = 'rgba(138,58,68,0.16)';
+      for (let i = 0; i < 9; i++) {
+        const py = topY + (0.15 + stableRand(301 + i*13) * 0.65) * tongueH;
+        const px = (stableRand(311 + i*19) - 0.5) * tongueW * 0.32;
+        const r = 0.5 + stableRand(321 + i*23) * 0.9;
+        ctx.beginPath();
+        ctx.arc(px + organicNoise(t + i, 47, 0.15), py, r, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // saliva glints on tongue — two layers
-      ctx.fillStyle = 'rgba(255,255,255,0.58)';
+      // влажные блики — органичные, не симметричные
+      ctx.fillStyle = 'rgba(255,255,255,0.52)';
       ctx.beginPath();
-      ctx.ellipse(-tongueW * 0.14, topY + tongueH * 0.28, tongueW * 0.09, tongueH * 0.07, -0.32, 0, Math.PI * 2);
+      ctx.ellipse(-tongueW * 0.12 + organicNoise(t, 53, 0.4), topY + tongueH * 0.26, tongueW * 0.08, tongueH * 0.06, -0.28, 0, Math.PI * 2);
       ctx.fill();
-      ctx.fillStyle = 'rgba(255,255,255,0.32)';
+      ctx.fillStyle = 'rgba(255,255,255,0.26)';
       ctx.beginPath();
-      ctx.ellipse(tongueW * 0.12, topY + tongueH * 0.42, tongueW * 0.05, tongueH * 0.04, 0.4, 0, Math.PI * 2);
+      ctx.ellipse(tongueW * 0.10, topY + tongueH * 0.44, tongueW * 0.045, tongueH * 0.035, 0.35, 0, Math.PI * 2);
       ctx.fill();
 
-      // wet edge around tongue
-      ctx.strokeStyle = 'rgba(200,120,130,0.22)';
-      ctx.lineWidth = 0.7;
+      // мокрый край языка
+      ctx.strokeStyle = 'rgba(198,110,122,0.18)';
+      ctx.lineWidth = 0.6;
       ctx.stroke();
 
       ctx.restore();
     }
 
-    // ----- upper teeth -----
-    if (mp.teethUpper > 0.02 && open > 0.08) {
+    // ----- ВЕРХНИЕ ЗУБЫ — органичные, чуть неровные -----
+    if (mp.teethUpper > 0.018 && open > 0.06) {
       ctx.save();
       ctx.beginPath();
-      const th = mp.teethUpper * (innerH * 0.38 + 4);
-      ctx.moveTo(leftCorner.x + innerW * 0.1, innerTopY);
-      ctx.quadraticCurveTo(0, innerTopY - 1, rightCorner.x - innerW * 0.1, innerTopY);
-      ctx.lineTo(rightCorner.x - innerW * 0.1, innerTopY + th);
-      ctx.quadraticCurveTo(0, innerTopY + th + 2, leftCorner.x + innerW * 0.1, innerTopY + th);
+      const th = mp.teethUpper * (innerH * 0.36 + 3.5);
+      const leftTX = leftCorner.x + innerW * 0.11;
+      const rightTX = rightCorner.x - innerW * 0.11;
+      ctx.moveTo(leftTX, innerTopY);
+      ctx.quadraticCurveTo(0, innerTopY - 0.8, rightTX, innerTopY);
+      ctx.lineTo(rightTX, innerTopY + th);
+      ctx.quadraticCurveTo(0, innerTopY + th + 1.2, leftTX, innerTopY + th);
       ctx.closePath();
       ctx.clip();
 
+      // зубы — не плоский прямоугольник, а мягкий градиент с объёмом
       const teethGrad = ctx.createLinearGradient(0, innerTopY, 0, innerTopY + th);
-      teethGrad.addColorStop(0, '#ffffff');
-      teethGrad.addColorStop(0.6, '#f8fafc');
-      teethGrad.addColorStop(1, '#e2e8f0');
+      teethGrad.addColorStop(0, '#fefefe');
+      teethGrad.addColorStop(0.55, '#f7f8fa');
+      teethGrad.addColorStop(1, '#e6e9ee');
       ctx.fillStyle = teethGrad;
-      ctx.fillRect(leftCorner.x, innerTopY - 2, w, th + 4);
+      ctx.fillRect(leftTX - 2, innerTopY - 2, innerW + 4, th + 4);
 
-      // individual tooth separators + subtle enamel shading
-      ctx.strokeStyle = 'rgba(100,116,139,0.20)';
-      ctx.lineWidth = 0.7;
-      const toothCount = 6;
+      // каждый зуб чуть разной ширины и с микро-неровностью — стабильно, без мерцания
+      const toothCount = stableRand(101 + w*0.1 + innerTopY) > 0.5 ? 6 : 5;
+      const totalW = rightTX - leftTX;
       for (let i = 1; i < toothCount; i++) {
-        const tx = leftCorner.x + innerW * 0.1 + (innerW * 0.8 * i) / toothCount;
+        const wobble = (stableRand(211 + i*17) - 0.5) * 2.2;
+        const tx = leftTX + (totalW * i) / toothCount + wobble;
+        // разделитель — не прямая линия, а мягкая
+        ctx.strokeStyle = 'rgba(148,163,184,0.13)';
+        ctx.lineWidth = 0.55;
         ctx.beginPath();
-        ctx.moveTo(tx, innerTopY + 1);
-        ctx.lineTo(tx + (Math.random() - 0.5) * 1.4, innerTopY + th - 1);
+        ctx.moveTo(tx, innerTopY + 0.8);
+        ctx.bezierCurveTo(tx + wobble * 0.3, innerTopY + th * 0.4, tx - wobble * 0.2, innerTopY + th * 0.7, tx, innerTopY + th - 0.8);
         ctx.stroke();
-        // tiny enamel highlight on each tooth edge
-        ctx.strokeStyle = 'rgba(255,255,255,0.35)';
-        ctx.lineWidth = 0.4;
-        ctx.beginPath();
-        ctx.moveTo(tx + 1.2, innerTopY + 2);
-        ctx.lineTo(tx + 1.2, innerTopY + th * 0.6);
-        ctx.stroke();
-        ctx.strokeStyle = 'rgba(100,116,139,0.20)';
-        ctx.lineWidth = 0.7;
+
+        // микро-блик на эмали — органичный
+        if (i % 2 === 0) {
+          ctx.fillStyle = 'rgba(255,255,255,0.18)';
+          ctx.fillRect(tx + 1, innerTopY + 1.5, 0.7, th * 0.45);
+        }
       }
 
-      // gum line with slight pink gradient
-      const gumGrad = ctx.createLinearGradient(0, innerTopY - 2, 0, innerTopY + 3);
-      gumGrad.addColorStop(0, 'rgba(220,140,150,0.45)');
-      gumGrad.addColorStop(1, 'rgba(180,110,120,0.15)');
+      // десна — мягкая, органичная, не резкая линия
+      const gumGrad = ctx.createLinearGradient(0, innerTopY - 1, 0, innerTopY + 2.5);
+      gumGrad.addColorStop(0, 'rgba(218,138,148,0.32)');
+      gumGrad.addColorStop(1, 'rgba(218,138,148,0)');
       ctx.fillStyle = gumGrad;
-      ctx.fillRect(leftCorner.x + innerW * 0.08, innerTopY - 1, innerW * 0.84, 3.5);
-
-      ctx.strokeStyle = 'rgba(180,120,130,0.38)';
-      ctx.lineWidth = 0.9;
-      ctx.beginPath();
-      ctx.moveTo(leftCorner.x + innerW * 0.08, innerTopY + 1.2);
-      ctx.quadraticCurveTo(0, innerTopY - 0.6, rightCorner.x - innerW * 0.08, innerTopY + 1.2);
-      ctx.stroke();
+      ctx.fillRect(leftTX, innerTopY - 0.5, totalW, 2.2);
 
       ctx.restore();
     }
 
-    // ----- lower teeth -----
-    if (mp.teethLower > 0.02 && open > 0.18) {
+    // ----- НИЖНИЕ ЗУБЫ -----
+    if (mp.teethLower > 0.018 && open > 0.14) {
       ctx.save();
       ctx.beginPath();
-      const th = mp.teethLower * (innerH * 0.28 + 3);
-      ctx.moveTo(leftCorner.x + innerW * 0.14, innerBottomY - th);
-      ctx.quadraticCurveTo(0, innerBottomY - th - 1, rightCorner.x - innerW * 0.14, innerBottomY - th);
-      ctx.lineTo(rightCorner.x - innerW * 0.14, innerBottomY);
-      ctx.quadraticCurveTo(0, innerBottomY + 1, leftCorner.x + innerW * 0.14, innerBottomY);
+      const th = mp.teethLower * (innerH * 0.26 + 2.5);
+      const leftBX = leftCorner.x + innerW * 0.14;
+      const rightBX = rightCorner.x - innerW * 0.14;
+      ctx.moveTo(leftBX, innerBottomY - th);
+      ctx.quadraticCurveTo(0, innerBottomY - th - 0.6, rightBX, innerBottomY - th);
+      ctx.lineTo(rightBX, innerBottomY);
+      ctx.quadraticCurveTo(0, innerBottomY + 0.6, leftBX, innerBottomY);
       ctx.closePath();
       ctx.clip();
 
       const teethGrad = ctx.createLinearGradient(0, innerBottomY - th, 0, innerBottomY);
-      teethGrad.addColorStop(0, '#f1f5f9');
-      teethGrad.addColorStop(1, '#cbd5e1');
+      teethGrad.addColorStop(0, '#f1f4f7');
+      teethGrad.addColorStop(1, '#d4dae3');
       ctx.fillStyle = teethGrad;
-      ctx.fillRect(leftCorner.x, innerBottomY - th, w, th + 2);
+      ctx.fillRect(leftBX - 2, innerBottomY - th, innerW, th + 2);
 
-      ctx.strokeStyle = 'rgba(100,116,139,0.16)';
-      ctx.lineWidth = 0.6;
+      ctx.strokeStyle = 'rgba(148,163,184,0.11)';
+      ctx.lineWidth = 0.5;
       const toothCount = 4;
       for (let i = 1; i < toothCount; i++) {
-        const tx = leftCorner.x + innerW * 0.14 + (innerW * 0.72 * i) / toothCount;
+        const tx = leftBX + ((rightBX - leftBX) * i) / toothCount + (stableRand(501 + i*17) - 0.5) * 1.6;
         ctx.beginPath();
         ctx.moveTo(tx, innerBottomY - th);
         ctx.lineTo(tx, innerBottomY);
         ctx.stroke();
       }
-
       ctx.restore();
     }
   }
 
-  // ----- 2. UPPER LIP (M-shaped with philtrum dip + realistic volume) -----
+  // ===== 2. ВЕРХНЯЯ ГУБА — мягкая, органичная, без жёсткой М =====
   ctx.save();
   ctx.beginPath();
-  // top contour
-  const upperTopY = upperMidY - lipThick * (0.55 - tight * 0.2);
-  const dip = lipThick * 0.22 * (1 - tight * 0.5);
+  const upperTopY = upperMidY - lipThick * (0.52 - tight * 0.16);
+  // органичный изгиб верхней губы: мягкая дуга с едва заметным купидоном
+  const cupidDepth = lipThick * 0.14 * (1 - tight * 0.4);
+  const leftHumpX = -w * 0.16 + organicNoise(t, 61, 0.3);
+  const rightHumpX = w * 0.16 + organicNoise(t, 67, 0.3);
+
   ctx.moveTo(leftCorner.x, leftCorner.y);
-  // left hump of M
+  // левая часть верхней губы — мягкая
   ctx.bezierCurveTo(
-    leftCorner.x + w * 0.18, leftCorner.y - lipThick * 0.4,
-    -w * 0.18, upperTopY - dip * 0.2,
-    -w * 0.08, upperTopY + dip * 0.3
+    leftCorner.x + w * 0.20, leftCorner.y - lipThick * 0.22 + organicNoise(t, 71, 0.4),
+    leftHumpX, upperTopY - cupidDepth * 0.15,
+    -w * 0.07, upperTopY + cupidDepth * 0.25
   );
-  // philtrum dip
+  // купидонов желобок — очень мягкий
   ctx.bezierCurveTo(
-    -w * 0.02, upperTopY + dip,
-    w * 0.02, upperTopY + dip,
-    w * 0.08, upperTopY + dip * 0.3
+    -w * 0.03, upperTopY + cupidDepth * 0.6,
+    w * 0.03, upperTopY + cupidDepth * 0.6,
+    w * 0.07, upperTopY + cupidDepth * 0.25
   );
-  // right hump
   ctx.bezierCurveTo(
-    w * 0.18, upperTopY - dip * 0.2,
-    rightCorner.x - w * 0.18, rightCorner.y - lipThick * 0.4,
+    rightHumpX, upperTopY - cupidDepth * 0.15,
+    rightCorner.x - w * 0.20, rightCorner.y - lipThick * 0.22,
     rightCorner.x, rightCorner.y
   );
-  // bottom edge back
-  const upperBottomY = upperMidY + (open > 0.05 ? 1.5 : lipThick * 0.28);
+  // нижний край верхней губы — мягкая линия смыкания
+  const upperBottomY = upperMidY + (open > 0.04 ? 1.8 : lipThick * 0.24);
   ctx.bezierCurveTo(
-    rightCorner.x - w * 0.22, upperBottomY + (rightCorner.y - leftCorner.y) * 0.2,
-    w * 0.08, upperBottomY,
+    rightCorner.x - w * 0.20, upperBottomY + organicNoise(t, 73, 0.3),
+    w * 0.06, upperBottomY,
     0, upperBottomY
   );
   ctx.bezierCurveTo(
-    -w * 0.08, upperBottomY,
-    leftCorner.x + w * 0.22, upperBottomY + (leftCorner.y - rightCorner.y) * 0.2,
+    -w * 0.06, upperBottomY,
+    leftCorner.x + w * 0.20, upperBottomY + organicNoise(t, 79, 0.3),
     leftCorner.x, leftCorner.y
   );
   ctx.closePath();
 
-  // upper lip volume gradient — slightly darker at bottom edge
+  // органичный градиент верхней губы — без резких переходов
   const upGrad = ctx.createLinearGradient(0, upperTopY, 0, upperBottomY);
-  upGrad.addColorStop(0, rgbString(mixRGB(parseColor(upperLip), parseColor('#ffffff'), 0.12)));
-  upGrad.addColorStop(0.55, upperLip);
-  upGrad.addColorStop(1, rgbString(mixRGB(parseColor(upperLip), parseColor('#5a1a2a'), 0.28)));
+  upGrad.addColorStop(0, rgbString(mixRGB(parseColor(upperLip), parseColor('#ffffff'), 0.09)));
+  upGrad.addColorStop(0.52, upperLip);
+  upGrad.addColorStop(1, rgbString(mixRGB(parseColor(upperLip), parseColor('#5e2a36'), 0.20)));
   ctx.fillStyle = upGrad;
   ctx.fill();
 
-  // philtrum ridge — two faint vertical highlights
-  ctx.strokeStyle = 'rgba(255,255,255,0.22)';
-  ctx.lineWidth = 0.6;
-  [-1, 1].forEach((side) => {
-    ctx.beginPath();
-    ctx.moveTo(side * w * 0.04, upperTopY - lipThick * 0.35);
-    ctx.quadraticCurveTo(side * w * 0.02, upperTopY + dip * 0.4, side * w * 0.06, upperBottomY);
-    ctx.stroke();
-  });
-
-  // cupid's bow highlight
-  ctx.strokeStyle = 'rgba(255,255,255,0.58)';
-  ctx.lineWidth = 0.9;
+  // мягкий блик на верхней губе — органичный, не резкая линия
+  ctx.fillStyle = 'rgba(255,255,255,0.13)';
   ctx.beginPath();
-  ctx.moveTo(-w * 0.18, upperTopY + dip * 0.15);
-  ctx.quadraticCurveTo(0, upperTopY + dip * 0.6, w * 0.18, upperTopY + dip * 0.15);
-  ctx.stroke();
+  ctx.ellipse(0, upperTopY + cupidDepth * 0.45, w * 0.14, lipThick * 0.10, 0, 0, Math.PI * 2);
+  ctx.fill();
 
-  // realistic lip wrinkles — radiating from vermillion border
-  ctx.strokeStyle = 'rgba(90,40,50,0.14)';
-  ctx.lineWidth = 0.45;
-  for (let i = -3; i <= 3; i++) {
+  // органичные морщинки — едва заметные, не сетка
+  ctx.strokeStyle = 'rgba(92,48,56,0.07)';
+  ctx.lineWidth = 0.38;
+  for (let i = -2; i <= 2; i++) {
     if (i === 0) continue;
-    const lx = (i / 4) * w * 0.28;
-    const len = lipThick * (0.35 + Math.abs(i) * 0.08);
+    const lx = (i / 3) * w * 0.19 + organicNoise(t + i * 7, 83, 0.2);
     ctx.beginPath();
-    ctx.moveTo(lx, upperTopY + dip * 0.45);
-    ctx.lineTo(lx + (Math.random() - 0.5) * 1.8, upperTopY + dip * 0.45 + len);
+    ctx.moveTo(lx, upperTopY + cupidDepth * 0.3);
+    ctx.quadraticCurveTo(lx + organicNoise(t, 89, 0.3), upperTopY + cupidDepth * 0.8, lx, upperBottomY - 0.5);
     ctx.stroke();
   }
 
-  // upper lip shadow under nose
-  ctx.fillStyle = 'rgba(15,23,42,0.12)';
-  ctx.beginPath();
-  ctx.ellipse(0, upperTopY - lipThick * 0.25, w * 0.22, lipThick * 0.18, 0, 0, Math.PI * 2);
-  ctx.fill();
-
   ctx.restore();
 
-  // ----- 3. LOWER LIP (fuller, with realistic volume & wet highlight) -----
+  // ===== 3. НИЖНЯЯ ГУБА — пухлая, органичная, живая =====
   ctx.save();
   ctx.beginPath();
-  const lowerTopY = lowerMidY - (open > 0.05 ? 1 : lipThick * 0.22);
-  const lowerBottomY = lowerMidY + lipThick * (0.9 - tight * 0.35);
+  const lowerTopY = lowerMidY - (open > 0.04 ? 1.1 : lipThick * 0.20);
+  const lowerBottomY = lowerMidY + lipThick * (0.88 - tight * 0.28);
+  // органичная форма нижней губы — мягкий овал с лёгкой асимметрией улыбки
+  const smileShift = smile * w * 0.02;
   ctx.moveTo(leftCorner.x, leftCorner.y);
   ctx.bezierCurveTo(
-    leftCorner.x + w * 0.22, lowerTopY,
-    -w * 0.12, lowerTopY,
-    0, lowerTopY
+    leftCorner.x + w * 0.20, lowerTopY + organicNoise(t, 97, 0.3),
+    -w * 0.13, lowerTopY + smileShift,
+    0, lowerTopY + smileShift * 0.5
   );
   ctx.bezierCurveTo(
-    w * 0.12, lowerTopY,
-    rightCorner.x - w * 0.22, lowerTopY,
+    w * 0.13, lowerTopY + smileShift,
+    rightCorner.x - w * 0.20, lowerTopY + organicNoise(t, 101, 0.3),
     rightCorner.x, rightCorner.y
   );
   ctx.bezierCurveTo(
-    rightCorner.x - w * 0.18, lowerBottomY,
-    w * 0.12, lowerBottomY + (smile > 0 ? -2 : 2),
+    rightCorner.x - w * 0.16, lowerBottomY + organicNoise(t, 103, 0.4),
+    w * 0.10, lowerBottomY + (smile > 0 ? -1.2 : 1.0) + organicNoise(t, 107, 0.3),
     0, lowerBottomY
   );
   ctx.bezierCurveTo(
-    -w * 0.12, lowerBottomY + (smile > 0 ? -2 : 2),
-    leftCorner.x + w * 0.18, lowerBottomY,
+    -w * 0.10, lowerBottomY + (smile > 0 ? -1.2 : 1.0),
+    leftCorner.x + w * 0.16, lowerBottomY + organicNoise(t, 109, 0.4),
     leftCorner.x, leftCorner.y
   );
   ctx.closePath();
 
-  // lower lip volume — three-stop gradient for 3D fullness
   const lg = ctx.createLinearGradient(0, lowerTopY, 0, lowerBottomY);
-  lg.addColorStop(0, rgbString(mixRGB(parseColor(lowerLip), parseColor('#ffffff'), 0.18)));
-  lg.addColorStop(0.42, lowerLip);
-  lg.addColorStop(1, rgbString(mixRGB(parseColor(lowerLip), parseColor('#5a1a2a'), 0.32)));
+  lg.addColorStop(0, rgbString(mixRGB(parseColor(lowerLip), parseColor('#ffffff'), 0.14)));
+  lg.addColorStop(0.38, lowerLip);
+  lg.addColorStop(1, rgbString(mixRGB(parseColor(lowerLip), parseColor('#5e2a36'), 0.24)));
   ctx.fillStyle = lg;
   ctx.fill();
 
-  // central tubercle bulge highlight
-  ctx.fillStyle = 'rgba(255,255,255,0.42)';
+  // органичный блик — мягкое пятно, не резкая точка, чуть смещается с дыханием
+  const highlightX = organicNoise(t * 0.8, 113, 1.2);
+  ctx.fillStyle = 'rgba(255,255,255,0.34)';
   ctx.beginPath();
-  ctx.ellipse(0, lowerTopY + lipThick * 0.32, w * 0.19, lipThick * 0.20, 0, 0, Math.PI * 2);
+  ctx.ellipse(highlightX, lowerTopY + lipThick * 0.30, w * 0.16, lipThick * 0.17, 0, 0, Math.PI * 2);
   ctx.fill();
-  // secondary smaller glint
-  ctx.fillStyle = 'rgba(255,255,255,0.22)';
+  ctx.fillStyle = 'rgba(255,255,255,0.16)';
   ctx.beginPath();
-  ctx.ellipse(w * 0.08, lowerTopY + lipThick * 0.38, w * 0.07, lipThick * 0.09, 0.2, 0, Math.PI * 2);
+  ctx.ellipse(highlightX + w * 0.06, lowerTopY + lipThick * 0.36, w * 0.05, lipThick * 0.07, 0.15, 0, Math.PI * 2);
   ctx.fill();
 
-  // lower lip vertical crease (mentolabial)
-  ctx.strokeStyle = 'rgba(90,40,50,0.13)';
-  ctx.lineWidth = 0.5;
+  // мягкая тень под нижней губой — органичная
+  ctx.fillStyle = 'rgba(0,0,0,0.07)';
   ctx.beginPath();
-  ctx.moveTo(0, lowerTopY + lipThick * 0.15);
-  ctx.lineTo(0, lowerBottomY - lipThick * 0.15);
-  ctx.stroke();
-
-  // lower lip rim shadow
-  ctx.strokeStyle = 'rgba(60,20,30,0.22)';
-  ctx.lineWidth = 1;
-  ctx.stroke();
+  ctx.ellipse(0, lowerBottomY + 1.2, w * 0.28, lipThick * 0.13, 0, 0, Math.PI * 2);
+  ctx.fill();
 
   ctx.restore();
 
-  // ----- 4. CORNER DIMPLES / SHADOWS when smiling -----
-  if (smile > 0.25) {
+  // ===== 4. УГОЛКИ — органичные ямочки при улыбке =====
+  if (smile > 0.18) {
     ctx.save();
-    ctx.fillStyle = `rgba(120,60,70,${0.08 + smile * 0.08})`;
-    [-1, 1].forEach((side) => {
-      const cx = side * w * 0.52;
-      const cy = cornerBaseY + (side < 0 ? mp.cornerLeft : mp.cornerRight) * 0.5 - 2;
+    ctx.fillStyle = `rgba(118,62,72,${0.05 + smile * 0.06})`;
+    [-1, 1].forEach(side => {
+      const cx = side * w * 0.50 + organicNoise(t, side > 0 ? 127 : 131, 0.3);
+      const cy = cornerBaseY + (side < 0 ? mp.cornerLeft : mp.cornerRight) * 0.3 - 1.5;
       ctx.beginPath();
-      ctx.ellipse(cx, cy, 3.5, 2.2, side * 0.4, 0, Math.PI * 2);
+      ctx.ellipse(cx, cy, 2.8 + smile * 0.8, 1.6 + smile * 0.4, side * 0.32, 0, Math.PI * 2);
       ctx.fill();
+      // микро-морщинка у уголка
+      ctx.strokeStyle = `rgba(118,62,72,${0.06 + smile * 0.04})`;
+      ctx.lineWidth = 0.4;
+      ctx.beginPath();
+      ctx.moveTo(cx - side * 1.2, cy - 0.8);
+      ctx.quadraticCurveTo(cx, cy + 0.2, cx - side * 0.8, cy + 1.2);
+      ctx.stroke();
     });
     ctx.restore();
   }
 
-  // ----- 5. DROOL / SALIVA -----
-  if (drool > 0.02) {
+  // ===== 5. СЛЮНА — органичные нити, не прямые =====
+  if (drool > 0.015) {
     ctx.save();
-    ctx.globalAlpha = 0.55 * drool;
-    ctx.fillStyle = 'rgba(180,220,255,0.85)';
-    ctx.strokeStyle = 'rgba(140,190,255,0.9)';
-    ctx.lineWidth = 0.8;
-    // one or two drool threads from corners or center
-    const threads = drool > 0.5 ? 2 : 1;
+    ctx.globalAlpha = 0.42 * Math.min(1, drool * 1.2);
+    const droolLenBase = drool * (7 + organicNoise(t, 137, 2));
+    const threads = drool > 0.45 ? 2 : 1;
     for (let i = 0; i < threads; i++) {
-      const side = i === 0 ? -0.6 : 0.6;
-      const sx = w * side * 0.5;
-      const sy = lowerBottomY;
-      const len = drool * (8 + Math.random() * 18);
+      const side = i === 0 ? -0.55 : 0.55;
+      const sx = w * side * 0.48 + organicNoise(t, 139 + i * 10, 0.6);
+      const sy = lowerBottomY - 0.5;
+      const len = droolLenBase * (0.85 + stableRand(401 + i*31) * 0.35) + organicNoise(t * 1.5, 149 + i * 5, 1.2);
+      const wob = organicNoise(t * 1.8, 151 + i * 7, 0.8);
+
+      // нить — органичная, чуть колышется
+      ctx.strokeStyle = 'rgba(175,215,255,0.88)';
+      ctx.lineWidth = 0.7 + drool * 0.5;
+      ctx.lineCap = 'round';
       ctx.beginPath();
       ctx.moveTo(sx, sy);
       ctx.bezierCurveTo(
-        sx + (Math.random() - 0.5) * 4, sy + len * 0.3,
-        sx + (Math.random() - 0.5) * 3, sy + len * 0.7,
-        sx + (Math.random() - 0.5) * 2, sy + len
+        sx + wob * 0.6, sy + len * 0.28,
+        sx - wob * 0.4, sy + len * 0.62,
+        sx + wob * 0.3, sy + len
       );
       ctx.stroke();
-      // droplet at end
+
+      // капля — органичная, не идеальный круг, чуть вытянута
+      ctx.fillStyle = 'rgba(175,215,255,0.92)';
       ctx.beginPath();
-      ctx.arc(sx + (Math.random() - 0.5) * 2, sy + len, 1.8 + drool * 1.5, 0, Math.PI * 2);
+      ctx.ellipse(sx + wob * 0.3, sy + len, 1.6 + drool * 1.3, 2.0 + drool * 1.6, wob * 0.08, 0, Math.PI * 2);
+      ctx.fill();
+      // блик на капле
+      ctx.fillStyle = 'rgba(255,255,255,0.85)';
+      ctx.beginPath();
+      ctx.arc(sx + wob * 0.3 - 0.6, sy + len - 0.7, 0.5, 0, Math.PI * 2);
       ctx.fill();
     }
     ctx.restore();
   }
 
-  // ----- 6. TEARS connection: if mouth is sobbing, draw quivering chin -----
-  if (mp.quiver > 1.8 && mp.smile < -0.3) {
+  // ===== 6. ПОДБОРОДОК — органичная дрожь при плаче =====
+  if (mp.quiver > 1.6 && mp.smile < -0.22) {
     ctx.save();
-    ctx.strokeStyle = `rgba(100,50,60,${0.08 + Math.min(0.12, mp.quiver * 0.02)})`;
-    ctx.lineWidth = 0.6;
+    ctx.strokeStyle = `rgba(102,52,62,${0.06 + Math.min(0.09, mp.quiver * 0.015)})`;
+    ctx.lineWidth = 0.55;
     ctx.beginPath();
-    ctx.moveTo(-w * 0.25, lowerBottomY + 2);
-    ctx.quadraticCurveTo(0, lowerBottomY + 6 + Math.sin(env.time * 13) * 1.5, w * 0.25, lowerBottomY + 2);
+    const qA = organicNoise(t * 3.2, 167, mp.quiver * 0.25);
+    ctx.moveTo(-w * 0.22, lowerBottomY + 1.8 + qA * 0.4);
+    ctx.quadraticCurveTo(qA * 0.6, lowerBottomY + 5 + qA, w * 0.22, lowerBottomY + 1.8 - qA * 0.4);
     ctx.stroke();
     ctx.restore();
   }
