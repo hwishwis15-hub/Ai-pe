@@ -213,6 +213,7 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
     };
 
     const render = (now: number) => {
+      try {
       const dt = Math.min((now - lastTime) / 1000, 0.1);
       lastTime = now;
       const width = window.innerWidth;
@@ -548,12 +549,14 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
       // — НИКИ строго над каждым телом (включая главного Penta) — отдельным слоем поверх всех тел, всегда горизонтально и всегда видно
       if (settings.showNicks) {
         for (const c of [...list].sort((a, b) => a.y - b.y)) {
-          if (c.isBursting()) continue;
-          const curH = c.bodyH(settings.creatureScale);
-          const eatLift = (c as unknown as { eat: { lift: number } | null }).eat ? ((c as unknown as { eat: { lift: number } }).eat!.lift) : 0;
-          const bounce = (c as unknown as { mind: { bodyBounce: number }; hoverBobScale: number }).mind.bodyBounce * ((c as unknown as { hoverBobScale: number }).hoverBobScale ?? 1);
-          const jitterY = (c as unknown as { burst: { phase: string } }).burst.phase === 'charge' ? (Math.random() - 0.5) * 4 : 0;
-          const jitterX = (c as unknown as { burst: { phase: string } }).burst.phase === 'charge' ? (Math.random() - 0.5) * 4 : 0;
+          try {
+            if (c.isBursting()) continue;
+            const curH = c.bodyH(settings.creatureScale);
+            const eatLift = c.eat?.lift ?? 0;
+            // @ts-ignore — bodyBounce и hoverBobScale публичны в рантайме
+            const bounce = (c.mind as unknown as { bodyBounce: number }).bodyBounce * (c.hoverBobScale ?? 1);
+            const jitterY = c.burst.phase === 'charge' ? (Math.random() - 0.5) * 4 : 0;
+            const jitterX = c.burst.phase === 'charge' ? (Math.random() - 0.5) * 4 : 0;
           const nx = c.x + jitterX;
           const ny = c.y + eatLift + bounce + jitterY - curH / 2 - 22;
           ctx.save();
@@ -605,6 +608,7 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
           ctx.textBaseline = 'middle';
           ctx.fillText(name, 0, 0.5);
           ctx.restore();
+          } catch { /* nick must never break the game */ }
         }
       }
 
@@ -677,6 +681,7 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
         }
       }
 
+      } catch (e) { console.error('[PENTA] render', e); }
       animId = requestAnimationFrame(render);
     };
 

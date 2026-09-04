@@ -13,7 +13,7 @@ import {
   drawEye, makeStops, projectOnGradient, sampleStops,
   rgbString, mixRGB, parseColor, resolveGazeShift,
 } from './eyes';
-import { EatState, beginEating, stepEating, eatEyeCue } from './eating';
+import { EatState, beginEating, stepEating, eatEyeCue, rollDisliked } from './eating';
 import { soundFx } from './audio';
 import { SocialDirective, SocialActor } from './social';
 import { rollImpact, rollMealFX, ImpactFX } from './impact';
@@ -475,11 +475,7 @@ export class CreatureEntity {
     // decide if THIS bite is disliked — very rare, and more likely when already full or child
     const isChild = this.cfg.kind === 'child';
     const dislikeRoll = isChild ? this.fullness * 0.08 + 0.05 : 0;
-    const disliked = (() => {
-      // import is dynamic to avoid circular
-      const { rollDisliked } = require('./eating') as { rollDisliked: (f: number) => boolean };
-      return rollDisliked(this.fullness) || Math.random() < dislikeRoll;
-    })();
+    const disliked = rollDisliked(this.fullness) || Math.random() < dislikeRoll;
 
     this.eat = beginEating(fx, fy, color, disliked);
     this.mealsEaten++;
