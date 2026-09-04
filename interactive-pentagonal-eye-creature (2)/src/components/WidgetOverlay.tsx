@@ -148,7 +148,7 @@ export const WidgetOverlay: React.FC<WidgetOverlayProps> = ({
       if (rs) setRoster(rs);
     };
     updateTime();
-    const interval = setInterval(updateTime, 1000);
+    const interval = setInterval(updateTime, 250);
     return () => clearInterval(interval);
   }, []);
 
