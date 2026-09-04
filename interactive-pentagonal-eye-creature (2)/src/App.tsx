@@ -72,6 +72,7 @@ export function App() {
     showTears: true,
     showDrool: true,
     foodSize: 1,
+    ballSize: 1,
 
     allowGames: true,
     allowFoodDrama: true,
@@ -83,6 +84,7 @@ export function App() {
     cursorGlow: true,
     showBonds: true,
     foodLifetime: 100,
+    ballLifetime: 120,
     showNicks: true,
   });
 
@@ -148,6 +150,8 @@ export function App() {
       setActiveTool('food');
     } else if (e.key === '4') {
       setActiveTool('tickle');
+    } else if (e.key === '5') {
+      setActiveTool('ball');
     } else if (e.key === '6') {
       setActiveTool('burst');
     } else if (e.key.toLowerCase() === 'x') {

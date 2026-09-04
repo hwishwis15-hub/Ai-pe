@@ -1135,6 +1135,231 @@ ACTIONS.push(
       return { squish: Math.sin(t * 1.7) * 0.015 };
     },
   },
+  {
+    id: 'chase_ball',
+    label: 'Chasing the ball',
+    travel: true,
+    w: 28,
+    cost: 0.06,
+    init: () => ({ nz: 0, cap: 10 + Math.random()*8, predict: 0.2 + Math.random()*0.35 }),
+    update: (c, d, t, dt, ctx) => {
+      const balls = (ctx as any).balls as { x:number; y:number; vx:number; vy:number; carriedBy:string|null }[];
+      const focus = (ctx as any).focusBall as { x:number; y:number; vx:number; vy:number } | null;
+      const target = focus ?? (balls && balls.length ? balls.reduce((best:any, b:any) => {
+        const d0 = Math.hypot(b.x - c.x, b.y - c.y);
+        const bd = best ? Math.hypot(best.x - c.x, best.y - c.y) : Infinity;
+        return d0 < bd ? b : best;
+      }, null as any) : null);
+      if (!target) return { done: true };
+      const predX = target.x + (target.vx ?? 0) * d.predict * 18;
+      const predY = target.y + (target.vy ?? 0) * d.predict * 18;
+      const dist = seekNoisy(c, predX, predY, 52 * dt * 60 * 0.02, d.cap ?? 14, 0.28, d, t);
+      contain(c, ctx, 0.5);
+      if (dist < 55) return { done: Math.random() < 0.04, squish: -0.06 };
+      return { squish: -0.03 };
+    },
+  },
+  {
+    id: 'dribble_ball',
+    label: 'Dribbling the ball',
+    travel: true,
+    w: 22,
+    cost: 0.08,
+    init: () => ({ nz: 0, cap: 8 + Math.random()*6, tap: 0 }),
+    update: (c, d, t, dt, ctx) => {
+      const balls = (ctx as any).balls as { x:number; y:number }[];
+      if (!balls || !balls.length) return { done: true };
+      d.tap -= dt;
+      const b = balls.reduce((best:any, cur:any) => Math.hypot(cur.x - c.x, cur.y - c.y) < Math.hypot(best.x - c.x, best.y - c.y) ? cur : best, balls[0]);
+      const dist = Math.hypot(b.x - c.x, b.y - c.y);
+      if (dist > 120) {
+        seekNoisy(c, b.x, b.y, 40 * dt * 60 * 0.02, d.cap ?? 10, 0.32, d, t);
+      } else {
+        const ang = Math.atan2(c.vy || 1, c.vx || 1) + Math.sin(t*2.2)*0.3;
+        const tx = c.x + Math.cos(ang) * 42;
+        const ty = c.y + Math.sin(ang) * 42;
+        seekNoisy(c, tx, ty, 26 * dt * 60 * 0.02, d.cap ?? 9, 0.42, d, t);
+        if (d.tap <= 0 && dist < 70 && Math.random() < 0.08) {
+          d.tap = 0.22 + Math.random()*0.23;
+          kick(c, 3 + Math.random()*4, ang + (Math.random()-0.5)*0.8);
+        }
+      }
+      contain(c, ctx, 0.45);
+      return { squish: Math.sin(t*9) * 0.04 };
+    },
+  },
+  {
+    id: 'carry_ball',
+    label: 'Carrying the ball',
+    travel: true,
+    w: 18,
+    cost: 0.07,
+    init: () => ({ nz: 0, cap: 6 + Math.random()*4 }),
+    update: (c, d, t, dt, ctx) => {
+      wander(c, d, 18 * dt * 60, 0.22);
+      contain(c, ctx, 0.35);
+      if (Math.random() < 0.008) {
+        const a = Math.random()*Math.PI*2;
+        kick(c, 5 + Math.random()*6, a);
+        return { done: Math.random() < 0.5, squish: -0.08 };
+      }
+      return { squish: Math.sin(t*2.1)*0.02 };
+    },
+  },
+  {
+    id: 'toss_ball',
+    label: 'Tossing the ball',
+    travel: false,
+    w: 14,
+    cost: 0.06,
+    init: () => ({ nz: 0, phase: 0 }),
+    update: (c, d, t, dt, ctx) => {
+      d.phase += dt;
+      if (d.phase < 0.22) {
+        c.vx *= 0.88; c.vy *= 0.88;
+        c.targetX = c.x + c.vx; c.targetY = c.y + c.vy;
+        return { squish: 0.08, rot: Math.sin(t*6) * 0.08 };
+      } else if (d.phase < 0.4) {
+        const a = Math.atan2(ctx.cursor.y - c.y, ctx.cursor.x - c.x) + (Math.random()-0.5)*1.0;
+        kick(c, 7 + Math.random()*7, a);
+        return { squish: -0.10, done: Math.random() < 0.35 };
+      }
+      return { done: true };
+    },
+  },
+  {
+    id: 'fetch_ball',
+    label: 'Fetching the ball',
+    travel: true,
+    w: 24,
+    cost: 0.07,
+    init: () => ({ nz: 0, cap: 11 + Math.random()*6 }),
+    update: (c, d, t, dt, ctx) => {
+      const balls = (ctx as any).balls as { x:number; y:number }[];
+      if (!balls || !balls.length) return { done: true };
+      const b = balls.reduce((best:any, cur:any) => Math.hypot(cur.x - c.x, cur.y - c.y) < Math.hypot(best.x - c.x, best.y - c.y) ? cur : best, balls[0]);
+      const dist = Math.hypot(b.x - c.x, b.y - c.y);
+      if (dist > 52) {
+        seekNoisy(c, b.x, b.y, 48 * dt * 60 * 0.02, d.cap ?? 13, 0.24, d, t);
+      } else {
+        c.vx *= 0.84; c.vy *= 0.84;
+        c.vx += (Math.random()-0.5)*2; c.vy += (Math.random()-0.5)*2;
+        c.targetX = c.x + c.vx; c.targetY = c.y + c.vy;
+        if (Math.random() < 0.025) return { done: true, squish: 0.06 };
+      }
+      contain(c, ctx, 0.5);
+      return {};
+    },
+  },
+  {
+    id: 'juggle_ball',
+    label: 'Juggling the ball',
+    travel: true,
+    w: 16,
+    cost: 0.09,
+    init: () => ({ nz: 0, cap: 7 + Math.random()*5, bounces: 0, next: 0 }),
+    update: (c, d, t, dt, ctx) => {
+      d.next -= dt;
+      const balls = (ctx as any).balls as { x:number; y:number }[];
+      if (!balls || !balls.length) return { done: true };
+      const b = balls[0];
+      const tx = b.x + Math.sin(t*1.8) * 22;
+      const ty = b.y + 42;
+      seekNoisy(c, tx, ty, 36 * dt * 60 * 0.02, d.cap ?? 9, 0.3, d, t);
+      if (Math.hypot(b.x - c.x, b.y - c.y) < 70 && d.next <= 0) {
+        d.next = 0.28 + Math.random()*0.27;
+        kick(c, 4 + Math.random()*5, -Math.PI/2 + (Math.random()-0.5)*1.0);
+        d.bounces = (d.bounces ?? 0) + 1;
+        if (d.bounces > 5 && Math.random() < 0.4) return { done: true };
+      }
+      contain(c, ctx, 0.45);
+      return { squish: Math.sin(t*11) * 0.05 };
+    },
+  },
+  {
+    id: 'pass_ball',
+    label: 'Passing to friend',
+    travel: true,
+    w: 20,
+    cost: 0.08,
+    init: () => ({ nz: 0, cap: 9 + Math.random()*6 }),
+    update: (c, d, t, dt, ctx) => {
+      const p = P_(ctx);
+      if (!p) return { done: true };
+      const balls = (ctx as any).balls as { x:number; y:number }[];
+      if (!balls || !balls.length) return { done: true };
+      const b = balls[0];
+      const toPartner = Math.hypot(p.x - b.x, p.y - b.y) < Math.hypot(c.x - b.x, c.y - b.y);
+      if (toPartner) {
+        seekNoisy(c, b.x, b.y, 44 * dt * 60 * 0.02, d.cap ?? 12, 0.26, d, t);
+      } else {
+        const ang = Math.atan2(p.y - c.y, p.x - c.x);
+        if (Math.hypot(b.x - c.x, b.y - c.y) < 62 && Math.random() < 0.06) {
+          kick(c, 7 + Math.random()*6, ang + (Math.random()-0.5)*0.6);
+          return { done: Math.random() < 0.5, squish: -0.07 };
+        }
+        seekNoisy(c, b.x, b.y, 40 * dt * 60 * 0.02, d.cap ?? 11, 0.28, d, t);
+      }
+      contain(c, ctx, 0.5);
+      return {};
+    },
+  },
+  {
+    id: 'guard_ball',
+    label: 'Guarding the ball',
+    travel: true,
+    w: 14,
+    cost: 0.05,
+    init: () => ({ nz: 0, cap: 6 + Math.random()*4 }),
+    update: (c, d, t, dt, ctx) => {
+      const balls = (ctx as any).balls as { x:number; y:number }[];
+      const p = P_(ctx);
+      if (!balls || !balls.length) return { done: true };
+      const b = balls[0];
+      const guardX = p ? (b.x + p.x)/2 : (b.x + ctx.cursor.x)/2;
+      const guardY = p ? (b.y + p.y)/2 : (b.y + ctx.cursor.y)/2;
+      const tx = guardX + Math.sin(t*0.9)*18;
+      const ty = guardY + Math.cos(t*0.9)*18;
+      seekNoisy(c, tx, ty, 28 * dt * 60 * 0.02, d.cap ?? 8, 0.32, d, t);
+      contain(c, ctx, 0.4);
+      return { squish: Math.sin(t*3)*0.02 };
+    },
+  },
+  {
+    id: 'pounce_ball',
+    label: 'Pouncing on the ball',
+    travel: true,
+    w: 20,
+    cost: 0.10,
+    init: (c, ctx) => {
+      const balls = (ctx as any).balls as { x:number; y:number }[];
+      const b = balls && balls.length ? balls[0] : { x: ctx.cursor.x, y: ctx.cursor.y };
+      const a = Math.atan2(b.y - c.y, b.x - c.x);
+      kick(c, 14 + Math.random()*8, a);
+      return { cap: 16 + Math.random()*6, hit: 0 };
+    },
+    update: (c, d, _t, dt, ctx) => {
+      const balls = (ctx as any).balls as { x:number; y:number }[];
+      if (!balls || !balls.length) return { done: true };
+      const b = balls[0];
+      const dist = Math.hypot(b.x - c.x, b.y - c.y);
+      if (dist < 70 && !d.hit) {
+        d.hit = 1;
+        const a = Math.atan2(c.y - b.y, c.x - b.x);
+        kick(c, 6 + Math.random()*6, a);
+        return { squish: 0.12, done: Math.random() < 0.4 };
+      }
+      if (d.hit) {
+        c.vx *= 0.94; c.vy *= 0.94;
+        c.targetX = c.x + c.vx; c.targetY = c.y + c.vy;
+        return { done: Math.random() < 0.05 };
+      }
+      c.vy += 0.22 * dt * 60 * 0.2;
+      c.targetX = c.x + c.vx; c.targetY = c.y + c.vy;
+      contain(c, ctx, 0.6);
+      return { squish: -0.05 };
+    },
+  },
 );
 
 function pickCorner(w: number, h: number, mx: number, my: number) {
@@ -1180,6 +1405,10 @@ export function pickAction(
     if (a.travel && !ctx.canTravel && opts.allowTravel !== true) return false;
     if (a.id === 'seek_food' && ctx.food.length === 0) return false;
     if (a.id === 'chase_laser' && ctx.tool !== 'laser') return false;
+    if (a.id.endsWith('_ball') && (ctx as any).balls?.length === 0 && ctx.tool !== 'ball') {
+      // ball actions still possible autonomously if playfulness high, but lower weight
+      if (Math.random() < 0.7) return false;
+    }
     return true;
   });
   if (!pool.length) return null;

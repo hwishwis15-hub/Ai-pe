@@ -35,7 +35,7 @@ export interface MouthFrame {
 
 export type MouthCat =
   | 'happy' | 'sad' | 'angry' | 'disgusted' | 'surprised'
-  | 'playful' | 'idle' | 'eating' | 'social' | 'rare' | 'neutral';
+  | 'playful' | 'idle' | 'eating' | 'social' | 'rare' | 'ball' | 'neutral';
 
 export interface MouthDef {
   id: string;
@@ -1400,12 +1400,518 @@ export const MOUTH_BEHAVIORS: MouthDef[] = [
   ]},
 
 
+
+  // ============================================================
+  //  BALL — 100 реалистичных мимик с мячом (одиночная и совместная игра)
+  //  Уголки вверх при радости/аззарте, вниз при досаде — анатомия как выше
+  // ============================================================
+  { id: 'ball_bite_hold_001', name: 'Кусь держит мяч #1', cat: 'ball', w: 5, frames: [
+    { d: 0.18, p: m({ width: 41.0, height: 7.9, smile: 0.20, openness: 0.16, teethUpper: 0.57, tongueOut: 0.06, cornerLeft: 0.2, cornerRight: -1.7, upperRaise: 0.20, lowerDroop: 0.02, lipTight: 0.03, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.33, p: m({ smile: 0.16, openness: 0.20, teethUpper: 0.58, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.47, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_toss_up_002', name: 'Подброс вверх ртом #2', cat: 'ball', w: 6, frames: [
+    { d: 0.14, p: m({ width: 32.1, height: 10.3, smile: 0.22, openness: 0.38, teethUpper: 0.16, tongueOut: 0.25, cornerLeft: -1.2, cornerRight: -1.1, upperRaise: 0.09, lowerDroop: 0.06, lipTight: 0.15, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.39, p: m({ smile: 0.24, openness: 0.35, teethUpper: 0.11, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.34, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_excited_pant_003', name: 'Взволнованное пыхтит с мячом #3', cat: 'ball', w: 3, frames: [
+    { d: 0.13, p: m({ width: 38.9, height: 11.6, smile: 0.60, openness: 0.40, teethUpper: 0.43, tongueOut: 0.21, cornerLeft: -1.9, cornerRight: -2.1, upperRaise: 0.02, lowerDroop: 0.15, lipTight: 0.16, quiver: 0.48, drool: 0.02 }), e: 'outQuad' },
+    { d: 0.51, p: m({ smile: 0.64, openness: 0.36, teethUpper: 0.41, quiver: 0.48 }), e: 'inOutQuad' },
+    { d: 0.34, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_dribble_tap_004', name: 'Тюкает носом #4', cat: 'ball', w: 6, frames: [
+    { d: 0.12, p: m({ width: 33.9, height: 10.1, smile: 0.35, openness: 0.17, teethUpper: 0.11, tongueOut: 0.00, cornerLeft: -1.2, cornerRight: -1.3, upperRaise: 0.11, lowerDroop: 0.02, lipTight: 0.00, quiver: 0.14, drool: 0.04 }), e: 'outQuad' },
+    { d: 0.37, p: m({ smile: 0.41, openness: 0.20, teethUpper: 0.06, quiver: 0.14 }), e: 'inOutQuad' },
+    { d: 0.43, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_catch_snap_005', name: 'Ловит щелчком #5', cat: 'ball', w: 2, frames: [
+    { d: 0.12, p: m({ width: 40.3, height: 7.0, smile: 0.23, openness: 0.40, teethUpper: 0.39, tongueOut: 0.01, cornerLeft: -0.6, cornerRight: -0.1, upperRaise: 0.03, lowerDroop: 0.02, lipTight: 0.06, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.37, p: m({ smile: 0.24, openness: 0.43, teethUpper: 0.35, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.32, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_chew_gnaw_006', name: 'Грызёт мяч #6', cat: 'ball', w: 5, frames: [
+    { d: 0.21, p: m({ width: 41.1, height: 11.1, smile: 0.09, openness: 0.07, teethUpper: 0.26, tongueOut: 0.06, cornerLeft: 0.1, cornerRight: 0.6, upperRaise: 0.03, lowerDroop: 0.04, lipTight: 0.04, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.51, p: m({ smile: 0.08, openness: 0.04, teethUpper: 0.29, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.38, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_blow_push_007', name: 'Дует толкает #7', cat: 'ball', w: 2, frames: [
+    { d: 0.2, p: m({ width: 44.4, height: 7.2, smile: 0.10, openness: 0.15, teethUpper: 0.03, tongueOut: 0.00, cornerLeft: -0.2, cornerRight: 0.0, upperRaise: 0.02, lowerDroop: 0.06, lipTight: 0.17, quiver: 0.01, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.38, p: m({ smile: 0.13, openness: 0.12, teethUpper: 0.00, quiver: 0.01 }), e: 'inOutQuad' },
+    { d: 0.3, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_frustrated_growl_008', name: 'Рычит досада мяч #8', cat: 'ball', w: 5, frames: [
+    { d: 0.2, p: m({ width: 32.0, height: 11.8, smile: -0.23, openness: 0.16, teethUpper: 0.49, tongueOut: 0.01, cornerLeft: 2.0, cornerRight: 0.3, upperRaise: 0.09, lowerDroop: 0.05, lipTight: 0.05, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.24, p: m({ smile: -0.19, openness: 0.19, teethUpper: 0.44, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.3, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_joy_bark_009', name: 'Радостный гав с мячом #9', cat: 'ball', w: 4, frames: [
+    { d: 0.12, p: m({ width: 35.7, height: 9.1, smile: 0.69, openness: 0.53, teethUpper: 0.55, tongueOut: 0.15, cornerLeft: -2.5, cornerRight: -2.3, upperRaise: 0.11, lowerDroop: 0.07, lipTight: 0.04, quiver: 0.00, drool: 0.07 }), e: 'outQuad' },
+    { d: 0.25, p: m({ smile: 0.73, openness: 0.52, teethUpper: 0.61, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.38, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_focus_stare_010', name: 'Сосредоточен на мяче #10', cat: 'ball', w: 4, frames: [
+    { d: 0.22, p: m({ width: 35.3, height: 9.5, smile: 0.07, openness: 0.10, teethUpper: 0.09, tongueOut: 0.00, cornerLeft: -0.4, cornerRight: -0.6, upperRaise: 0.10, lowerDroop: 0.00, lipTight: 0.19, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.51, p: m({ smile: 0.08, openness: 0.11, teethUpper: 0.11, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.28, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_bite_hold_011', name: 'Кусь держит мяч #11', cat: 'ball', w: 2, frames: [
+    { d: 0.15, p: m({ width: 39.5, height: 7.2, smile: 0.27, openness: 0.18, teethUpper: 0.51, tongueOut: 0.04, cornerLeft: -0.5, cornerRight: -0.3, upperRaise: 0.16, lowerDroop: 0.10, lipTight: 0.14, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.46, p: m({ smile: 0.28, openness: 0.14, teethUpper: 0.51, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.31, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_toss_up_012', name: 'Подброс вверх ртом #12', cat: 'ball', w: 3, frames: [
+    { d: 0.17, p: m({ width: 44.6, height: 8.9, smile: 0.21, openness: 0.43, teethUpper: 0.15, tongueOut: 0.18, cornerLeft: -0.9, cornerRight: -1.1, upperRaise: 0.18, lowerDroop: 0.06, lipTight: 0.09, quiver: 0.24, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.52, p: m({ smile: 0.21, openness: 0.41, teethUpper: 0.16, quiver: 0.24 }), e: 'inOutQuad' },
+    { d: 0.42, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_excited_pant_013', name: 'Взволнованное пыхтит с мячом #13', cat: 'ball', w: 6, frames: [
+    { d: 0.22, p: m({ width: 36.2, height: 8.2, smile: 0.70, openness: 0.36, teethUpper: 0.37, tongueOut: 0.20, cornerLeft: -1.6, cornerRight: -2.1, upperRaise: 0.03, lowerDroop: 0.20, lipTight: 0.17, quiver: 0.00, drool: 0.01 }), e: 'outQuad' },
+    { d: 0.29, p: m({ smile: 0.72, openness: 0.37, teethUpper: 0.33, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_dribble_tap_014', name: 'Тюкает носом #14', cat: 'ball', w: 4, frames: [
+    { d: 0.16, p: m({ width: 37.2, height: 9.2, smile: 0.37, openness: 0.22, teethUpper: 0.18, tongueOut: 0.04, cornerLeft: -1.2, cornerRight: -1.2, upperRaise: 0.10, lowerDroop: 0.03, lipTight: 0.11, quiver: 0.00, drool: 0.04 }), e: 'outQuad' },
+    { d: 0.26, p: m({ smile: 0.39, openness: 0.25, teethUpper: 0.19, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.32, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_catch_snap_015', name: 'Ловит щелчком #15', cat: 'ball', w: 3, frames: [
+    { d: 0.16, p: m({ width: 42.0, height: 7.1, smile: 0.20, openness: 0.42, teethUpper: 0.40, tongueOut: 0.04, cornerLeft: 0.7, cornerRight: -1.6, upperRaise: 0.13, lowerDroop: 0.11, lipTight: 0.15, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.28, p: m({ smile: 0.17, openness: 0.38, teethUpper: 0.36, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.39, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_chew_gnaw_016', name: 'Грызёт мяч #16', cat: 'ball', w: 6, frames: [
+    { d: 0.19, p: m({ width: 35.4, height: 9.0, smile: 0.05, openness: 0.06, teethUpper: 0.23, tongueOut: 0.08, cornerLeft: 0.5, cornerRight: 0.2, upperRaise: 0.02, lowerDroop: 0.07, lipTight: 0.07, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.34, p: m({ smile: 0.08, openness: 0.09, teethUpper: 0.24, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.41, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_blow_push_017', name: 'Дует толкает #17', cat: 'ball', w: 2, frames: [
+    { d: 0.19, p: m({ width: 46.4, height: 7.6, smile: 0.04, openness: 0.11, teethUpper: 0.00, tongueOut: 0.00, cornerLeft: 0.2, cornerRight: -0.0, upperRaise: 0.09, lowerDroop: 0.11, lipTight: 0.01, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.49, p: m({ smile: 0.04, openness: 0.15, teethUpper: 0.04, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.43, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_frustrated_growl_018', name: 'Рычит досада мяч #18', cat: 'ball', w: 5, frames: [
+    { d: 0.12, p: m({ width: 42.0, height: 8.6, smile: -0.27, openness: 0.19, teethUpper: 0.56, tongueOut: 0.00, cornerLeft: 0.9, cornerRight: 1.0, upperRaise: 0.23, lowerDroop: 0.11, lipTight: 0.09, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.29, p: m({ smile: -0.27, openness: 0.18, teethUpper: 0.55, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.4, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_joy_bark_019', name: 'Радостный гав с мячом #19', cat: 'ball', w: 5, frames: [
+    { d: 0.18, p: m({ width: 38.6, height: 9.4, smile: 0.74, openness: 0.51, teethUpper: 0.57, tongueOut: 0.15, cornerLeft: -2.0, cornerRight: -2.3, upperRaise: 0.08, lowerDroop: 0.15, lipTight: 0.15, quiver: 0.00, drool: 0.03 }), e: 'outQuad' },
+    { d: 0.32, p: m({ smile: 0.80, openness: 0.49, teethUpper: 0.54, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.34, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_focus_stare_020', name: 'Сосредоточен на мяче #20', cat: 'ball', w: 4, frames: [
+    { d: 0.19, p: m({ width: 37.4, height: 9.9, smile: 0.05, openness: 0.06, teethUpper: 0.02, tongueOut: 0.04, cornerLeft: -0.3, cornerRight: -0.2, upperRaise: 0.11, lowerDroop: 0.02, lipTight: 0.01, quiver: 0.05, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.4, p: m({ smile: 0.10, openness: 0.05, teethUpper: 0.00, quiver: 0.05 }), e: 'inOutQuad' },
+    { d: 0.47, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_bite_hold_021', name: 'Кусь держит мяч #21', cat: 'ball', w: 3, frames: [
+    { d: 0.15, p: m({ width: 43.2, height: 8.1, smile: 0.23, openness: 0.23, teethUpper: 0.51, tongueOut: 0.07, cornerLeft: -0.8, cornerRight: -0.8, upperRaise: 0.14, lowerDroop: 0.01, lipTight: 0.03, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.33, p: m({ smile: 0.26, openness: 0.20, teethUpper: 0.55, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.3, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_toss_up_022', name: 'Подброс вверх ртом #22', cat: 'ball', w: 4, frames: [
+    { d: 0.13, p: m({ width: 45.1, height: 8.8, smile: 0.20, openness: 0.46, teethUpper: 0.15, tongueOut: 0.19, cornerLeft: -0.3, cornerRight: -2.1, upperRaise: 0.12, lowerDroop: 0.02, lipTight: 0.11, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.27, p: m({ smile: 0.24, openness: 0.43, teethUpper: 0.13, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.29, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_excited_pant_023', name: 'Взволнованное пыхтит с мячом #23', cat: 'ball', w: 2, frames: [
+    { d: 0.19, p: m({ width: 46.4, height: 7.7, smile: 0.57, openness: 0.30, teethUpper: 0.40, tongueOut: 0.15, cornerLeft: -2.0, cornerRight: -1.8, upperRaise: 0.08, lowerDroop: 0.16, lipTight: 0.03, quiver: 0.00, drool: 0.01 }), e: 'outQuad' },
+    { d: 0.39, p: m({ smile: 0.62, openness: 0.28, teethUpper: 0.40, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.4, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_dribble_tap_024', name: 'Тюкает носом #24', cat: 'ball', w: 6, frames: [
+    { d: 0.19, p: m({ width: 38.6, height: 11.8, smile: 0.36, openness: 0.17, teethUpper: 0.14, tongueOut: 0.01, cornerLeft: -0.9, cornerRight: -1.1, upperRaise: 0.02, lowerDroop: 0.10, lipTight: 0.04, quiver: 0.19, drool: 0.06 }), e: 'outQuad' },
+    { d: 0.35, p: m({ smile: 0.33, openness: 0.14, teethUpper: 0.09, quiver: 0.19 }), e: 'inOutQuad' },
+    { d: 0.3, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_catch_snap_025', name: 'Ловит щелчком #25', cat: 'ball', w: 5, frames: [
+    { d: 0.12, p: m({ width: 35.4, height: 9.0, smile: 0.26, openness: 0.34, teethUpper: 0.32, tongueOut: 0.01, cornerLeft: -0.6, cornerRight: -0.7, upperRaise: 0.04, lowerDroop: 0.05, lipTight: 0.21, quiver: 0.39, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.51, p: m({ smile: 0.28, openness: 0.34, teethUpper: 0.32, quiver: 0.39 }), e: 'inOutQuad' },
+    { d: 0.46, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_chew_gnaw_026', name: 'Грызёт мяч #26', cat: 'ball', w: 2, frames: [
+    { d: 0.13, p: m({ width: 44.9, height: 8.0, smile: -0.03, openness: 0.12, teethUpper: 0.23, tongueOut: 0.05, cornerLeft: 0.3, cornerRight: 0.6, upperRaise: 0.13, lowerDroop: 0.01, lipTight: 0.21, quiver: 0.15, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.41, p: m({ smile: -0.08, openness: 0.08, teethUpper: 0.19, quiver: 0.15 }), e: 'inOutQuad' },
+    { d: 0.45, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_blow_push_027', name: 'Дует толкает #27', cat: 'ball', w: 6, frames: [
+    { d: 0.16, p: m({ width: 39.1, height: 7.3, smile: 0.14, openness: 0.12, teethUpper: 0.05, tongueOut: 0.00, cornerLeft: 0.1, cornerRight: -0.2, upperRaise: 0.09, lowerDroop: 0.00, lipTight: 0.14, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.27, p: m({ smile: 0.14, openness: 0.13, teethUpper: 0.03, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_frustrated_growl_028', name: 'Рычит досада мяч #28', cat: 'ball', w: 6, frames: [
+    { d: 0.15, p: m({ width: 46.3, height: 7.6, smile: -0.27, openness: 0.22, teethUpper: 0.51, tongueOut: 0.03, cornerLeft: 1.3, cornerRight: 1.0, upperRaise: 0.29, lowerDroop: 0.06, lipTight: 0.03, quiver: 0.24, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.38, p: m({ smile: -0.21, openness: 0.24, teethUpper: 0.51, quiver: 0.24 }), e: 'inOutQuad' },
+    { d: 0.29, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_joy_bark_029', name: 'Радостный гав с мячом #29', cat: 'ball', w: 2, frames: [
+    { d: 0.16, p: m({ width: 40.0, height: 9.8, smile: 0.66, openness: 0.51, teethUpper: 0.51, tongueOut: 0.09, cornerLeft: -1.5, cornerRight: -3.3, upperRaise: 0.02, lowerDroop: 0.19, lipTight: 0.14, quiver: 0.00, drool: 0.04 }), e: 'outQuad' },
+    { d: 0.5, p: m({ smile: 0.68, openness: 0.53, teethUpper: 0.49, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.29, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_focus_stare_030', name: 'Сосредоточен на мяче #30', cat: 'ball', w: 4, frames: [
+    { d: 0.21, p: m({ width: 34.6, height: 7.8, smile: 0.03, openness: 0.13, teethUpper: 0.07, tongueOut: 0.02, cornerLeft: -0.3, cornerRight: -0.2, upperRaise: 0.07, lowerDroop: 0.05, lipTight: 0.03, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.39, p: m({ smile: 0.01, openness: 0.13, teethUpper: 0.06, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.29, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_bite_hold_031', name: 'Кусь держит мяч #31', cat: 'ball', w: 3, frames: [
+    { d: 0.15, p: m({ width: 37.1, height: 10.9, smile: 0.23, openness: 0.19, teethUpper: 0.50, tongueOut: 0.05, cornerLeft: -0.4, cornerRight: -0.6, upperRaise: 0.24, lowerDroop: 0.07, lipTight: 0.02, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.51, p: m({ smile: 0.25, openness: 0.19, teethUpper: 0.47, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.44, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_toss_up_032', name: 'Подброс вверх ртом #32', cat: 'ball', w: 5, frames: [
+    { d: 0.21, p: m({ width: 37.1, height: 11.1, smile: 0.21, openness: 0.46, teethUpper: 0.21, tongueOut: 0.26, cornerLeft: -0.9, cornerRight: -1.0, upperRaise: 0.17, lowerDroop: 0.08, lipTight: 0.05, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.25, p: m({ smile: 0.19, openness: 0.48, teethUpper: 0.27, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.28, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_excited_pant_033', name: 'Взволнованное пыхтит с мячом #33', cat: 'ball', w: 5, frames: [
+    { d: 0.15, p: m({ width: 34.9, height: 10.4, smile: 0.53, openness: 0.38, teethUpper: 0.38, tongueOut: 0.14, cornerLeft: -1.9, cornerRight: -1.6, upperRaise: 0.00, lowerDroop: 0.21, lipTight: 0.06, quiver: 0.00, drool: 0.04 }), e: 'outQuad' },
+    { d: 0.47, p: m({ smile: 0.50, openness: 0.35, teethUpper: 0.45, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.36, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_dribble_tap_034', name: 'Тюкает носом #34', cat: 'ball', w: 2, frames: [
+    { d: 0.18, p: m({ width: 40.3, height: 11.7, smile: 0.29, openness: 0.15, teethUpper: 0.19, tongueOut: 0.02, cornerLeft: -1.0, cornerRight: -1.0, upperRaise: 0.11, lowerDroop: 0.11, lipTight: 0.16, quiver: 0.18, drool: 0.01 }), e: 'outQuad' },
+    { d: 0.32, p: m({ smile: 0.25, openness: 0.12, teethUpper: 0.16, quiver: 0.18 }), e: 'inOutQuad' },
+    { d: 0.3, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_catch_snap_035', name: 'Ловит щелчком #35', cat: 'ball', w: 6, frames: [
+    { d: 0.22, p: m({ width: 33.8, height: 11.9, smile: 0.17, openness: 0.44, teethUpper: 0.36, tongueOut: 0.05, cornerLeft: -0.5, cornerRight: -0.5, upperRaise: 0.06, lowerDroop: 0.05, lipTight: 0.03, quiver: 0.33, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.3, p: m({ smile: 0.20, openness: 0.44, teethUpper: 0.43, quiver: 0.33 }), e: 'inOutQuad' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_chew_gnaw_036', name: 'Грызёт мяч #36', cat: 'ball', w: 5, frames: [
+    { d: 0.19, p: m({ width: 44.3, height: 7.1, smile: 0.04, openness: 0.06, teethUpper: 0.19, tongueOut: 0.05, cornerLeft: 0.9, cornerRight: -0.7, upperRaise: 0.10, lowerDroop: 0.06, lipTight: 0.12, quiver: 0.13, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.27, p: m({ smile: 0.02, openness: 0.05, teethUpper: 0.11, quiver: 0.13 }), e: 'inOutQuad' },
+    { d: 0.32, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_blow_push_037', name: 'Дует толкает #37', cat: 'ball', w: 3, frames: [
+    { d: 0.19, p: m({ width: 40.9, height: 8.0, smile: 0.11, openness: 0.19, teethUpper: 0.00, tongueOut: 0.01, cornerLeft: -0.3, cornerRight: -0.1, upperRaise: 0.08, lowerDroop: 0.10, lipTight: 0.07, quiver: 0.02, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.26, p: m({ smile: 0.16, openness: 0.22, teethUpper: 0.04, quiver: 0.02 }), e: 'inOutQuad' },
+    { d: 0.36, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_frustrated_growl_038', name: 'Рычит досада мяч #38', cat: 'ball', w: 3, frames: [
+    { d: 0.19, p: m({ width: 46.2, height: 9.5, smile: -0.16, openness: 0.16, teethUpper: 0.51, tongueOut: 0.00, cornerLeft: 1.4, cornerRight: 0.9, upperRaise: 0.28, lowerDroop: 0.05, lipTight: 0.17, quiver: 0.17, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.31, p: m({ smile: -0.21, openness: 0.14, teethUpper: 0.52, quiver: 0.17 }), e: 'inOutQuad' },
+    { d: 0.33, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_joy_bark_039', name: 'Радостный гав с мячом #39', cat: 'ball', w: 2, frames: [
+    { d: 0.19, p: m({ width: 47.9, height: 7.0, smile: 0.75, openness: 0.42, teethUpper: 0.50, tongueOut: 0.10, cornerLeft: -2.5, cornerRight: -2.3, upperRaise: 0.04, lowerDroop: 0.08, lipTight: 0.06, quiver: 0.40, drool: 0.06 }), e: 'outQuad' },
+    { d: 0.26, p: m({ smile: 0.72, openness: 0.45, teethUpper: 0.49, quiver: 0.40 }), e: 'inOutQuad' },
+    { d: 0.32, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_focus_stare_040', name: 'Сосредоточен на мяче #40', cat: 'ball', w: 6, frames: [
+    { d: 0.15, p: m({ width: 32.6, height: 10.4, smile: 0.14, openness: 0.16, teethUpper: 0.06, tongueOut: 0.05, cornerLeft: -0.3, cornerRight: -0.4, upperRaise: 0.11, lowerDroop: 0.01, lipTight: 0.02, quiver: 0.06, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.51, p: m({ smile: 0.18, openness: 0.17, teethUpper: 0.10, quiver: 0.06 }), e: 'inOutQuad' },
+    { d: 0.33, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_bite_hold_041', name: 'Кусь держит мяч #41', cat: 'ball', w: 2, frames: [
+    { d: 0.15, p: m({ width: 37.2, height: 9.3, smile: 0.25, openness: 0.23, teethUpper: 0.54, tongueOut: 0.07, cornerLeft: -0.5, cornerRight: -0.4, upperRaise: 0.27, lowerDroop: 0.09, lipTight: 0.15, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.28, p: m({ smile: 0.29, openness: 0.21, teethUpper: 0.53, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_toss_up_042', name: 'Подброс вверх ртом #42', cat: 'ball', w: 6, frames: [
+    { d: 0.21, p: m({ width: 43.8, height: 7.5, smile: 0.36, openness: 0.42, teethUpper: 0.22, tongueOut: 0.22, cornerLeft: -0.8, cornerRight: -1.1, upperRaise: 0.25, lowerDroop: 0.11, lipTight: 0.17, quiver: 0.31, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.34, p: m({ smile: 0.36, openness: 0.44, teethUpper: 0.22, quiver: 0.31 }), e: 'inOutQuad' },
+    { d: 0.47, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_excited_pant_043', name: 'Взволнованное пыхтит с мячом #43', cat: 'ball', w: 2, frames: [
+    { d: 0.22, p: m({ width: 32.8, height: 11.4, smile: 0.53, openness: 0.38, teethUpper: 0.38, tongueOut: 0.18, cornerLeft: -1.2, cornerRight: -2.7, upperRaise: 0.11, lowerDroop: 0.22, lipTight: 0.17, quiver: 0.25, drool: 0.06 }), e: 'outQuad' },
+    { d: 0.44, p: m({ smile: 0.56, openness: 0.35, teethUpper: 0.42, quiver: 0.25 }), e: 'inOutQuad' },
+    { d: 0.4, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_dribble_tap_044', name: 'Тюкает носом #44', cat: 'ball', w: 3, frames: [
+    { d: 0.2, p: m({ width: 47.3, height: 10.2, smile: 0.38, openness: 0.22, teethUpper: 0.25, tongueOut: 0.00, cornerLeft: -1.0, cornerRight: -0.9, upperRaise: 0.12, lowerDroop: 0.05, lipTight: 0.20, quiver: 0.00, drool: 0.07 }), e: 'outQuad' },
+    { d: 0.29, p: m({ smile: 0.44, openness: 0.24, teethUpper: 0.27, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.31, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_catch_snap_045', name: 'Ловит щелчком #45', cat: 'ball', w: 6, frames: [
+    { d: 0.16, p: m({ width: 34.0, height: 11.6, smile: 0.23, openness: 0.40, teethUpper: 0.32, tongueOut: 0.00, cornerLeft: -0.5, cornerRight: -0.1, upperRaise: 0.07, lowerDroop: 0.03, lipTight: 0.10, quiver: 0.25, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.35, p: m({ smile: 0.20, openness: 0.43, teethUpper: 0.28, quiver: 0.25 }), e: 'inOutQuad' },
+    { d: 0.34, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_chew_gnaw_046', name: 'Грызёт мяч #46', cat: 'ball', w: 4, frames: [
+    { d: 0.19, p: m({ width: 34.2, height: 11.1, smile: 0.08, openness: 0.17, teethUpper: 0.21, tongueOut: 0.10, cornerLeft: 0.0, cornerRight: 0.5, upperRaise: 0.12, lowerDroop: 0.03, lipTight: 0.06, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.46, p: m({ smile: 0.05, openness: 0.14, teethUpper: 0.17, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.41, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_blow_push_047', name: 'Дует толкает #47', cat: 'ball', w: 6, frames: [
+    { d: 0.16, p: m({ width: 33.9, height: 8.0, smile: 0.06, openness: 0.14, teethUpper: 0.00, tongueOut: 0.00, cornerLeft: -0.2, cornerRight: 0.3, upperRaise: 0.14, lowerDroop: 0.03, lipTight: 0.19, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.26, p: m({ smile: 0.01, openness: 0.17, teethUpper: 0.00, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_frustrated_growl_048', name: 'Рычит досада мяч #48', cat: 'ball', w: 2, frames: [
+    { d: 0.13, p: m({ width: 36.8, height: 8.5, smile: -0.18, openness: 0.18, teethUpper: 0.45, tongueOut: 0.01, cornerLeft: 1.5, cornerRight: 1.2, upperRaise: 0.12, lowerDroop: 0.04, lipTight: 0.04, quiver: 0.21, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.35, p: m({ smile: -0.15, openness: 0.22, teethUpper: 0.51, quiver: 0.21 }), e: 'inOutQuad' },
+    { d: 0.48, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_joy_bark_049', name: 'Радостный гав с мячом #49', cat: 'ball', w: 4, frames: [
+    { d: 0.2, p: m({ width: 46.7, height: 7.4, smile: 0.63, openness: 0.44, teethUpper: 0.53, tongueOut: 0.16, cornerLeft: -2.5, cornerRight: -2.5, upperRaise: 0.10, lowerDroop: 0.09, lipTight: 0.16, quiver: 0.71, drool: 0.07 }), e: 'outQuad' },
+    { d: 0.33, p: m({ smile: 0.68, openness: 0.44, teethUpper: 0.52, quiver: 0.71 }), e: 'inOutQuad' },
+    { d: 0.37, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_focus_stare_050', name: 'Сосредоточен на мяче #50', cat: 'ball', w: 4, frames: [
+    { d: 0.16, p: m({ width: 32.1, height: 9.1, smile: 0.05, openness: 0.14, teethUpper: 0.10, tongueOut: 0.02, cornerLeft: 0.8, cornerRight: -1.4, upperRaise: 0.05, lowerDroop: 0.01, lipTight: 0.15, quiver: 0.11, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.34, p: m({ smile: 0.09, openness: 0.10, teethUpper: 0.11, quiver: 0.11 }), e: 'inOutQuad' },
+    { d: 0.29, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_bite_hold_051', name: 'Кусь держит мяч #51', cat: 'ball', w: 3, frames: [
+    { d: 0.15, p: m({ width: 46.1, height: 11.7, smile: 0.22, openness: 0.22, teethUpper: 0.48, tongueOut: 0.10, cornerLeft: -0.3, cornerRight: -0.7, upperRaise: 0.22, lowerDroop: 0.03, lipTight: 0.19, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.45, p: m({ smile: 0.17, openness: 0.24, teethUpper: 0.56, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.39, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_toss_up_052', name: 'Подброс вверх ртом #52', cat: 'ball', w: 3, frames: [
+    { d: 0.18, p: m({ width: 42.6, height: 11.6, smile: 0.26, openness: 0.45, teethUpper: 0.19, tongueOut: 0.19, cornerLeft: -1.2, cornerRight: -1.4, upperRaise: 0.11, lowerDroop: 0.04, lipTight: 0.21, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.5, p: m({ smile: 0.32, openness: 0.43, teethUpper: 0.22, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.47, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_excited_pant_053', name: 'Взволнованное пыхтит с мячом #53', cat: 'ball', w: 3, frames: [
+    { d: 0.16, p: m({ width: 34.8, height: 8.4, smile: 0.71, openness: 0.35, teethUpper: 0.37, tongueOut: 0.18, cornerLeft: -1.8, cornerRight: -1.6, upperRaise: 0.03, lowerDroop: 0.16, lipTight: 0.01, quiver: 0.26, drool: 0.04 }), e: 'outQuad' },
+    { d: 0.3, p: m({ smile: 0.68, openness: 0.35, teethUpper: 0.33, quiver: 0.26 }), e: 'inOutQuad' },
+    { d: 0.33, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_dribble_tap_054', name: 'Тюкает носом #54', cat: 'ball', w: 2, frames: [
+    { d: 0.17, p: m({ width: 47.9, height: 11.0, smile: 0.34, openness: 0.18, teethUpper: 0.24, tongueOut: 0.06, cornerLeft: -1.0, cornerRight: -1.3, upperRaise: 0.09, lowerDroop: 0.05, lipTight: 0.01, quiver: 0.00, drool: 0.01 }), e: 'outQuad' },
+    { d: 0.31, p: m({ smile: 0.36, openness: 0.22, teethUpper: 0.17, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.38, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_catch_snap_055', name: 'Ловит щелчком #55', cat: 'ball', w: 3, frames: [
+    { d: 0.2, p: m({ width: 32.6, height: 11.3, smile: 0.20, openness: 0.34, teethUpper: 0.41, tongueOut: 0.03, cornerLeft: -0.3, cornerRight: -0.6, upperRaise: 0.02, lowerDroop: 0.08, lipTight: 0.18, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.45, p: m({ smile: 0.19, openness: 0.38, teethUpper: 0.48, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.44, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_chew_gnaw_056', name: 'Грызёт мяч #56', cat: 'ball', w: 2, frames: [
+    { d: 0.12, p: m({ width: 35.0, height: 10.6, smile: 0.11, openness: 0.13, teethUpper: 0.16, tongueOut: 0.07, cornerLeft: 0.3, cornerRight: -0.0, upperRaise: 0.04, lowerDroop: 0.10, lipTight: 0.14, quiver: 0.14, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.48, p: m({ smile: 0.17, openness: 0.09, teethUpper: 0.21, quiver: 0.14 }), e: 'inOutQuad' },
+    { d: 0.34, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_blow_push_057', name: 'Дует толкает #57', cat: 'ball', w: 4, frames: [
+    { d: 0.18, p: m({ width: 45.5, height: 9.3, smile: 0.08, openness: 0.18, teethUpper: 0.00, tongueOut: 0.00, cornerLeft: 1.0, cornerRight: -1.2, upperRaise: 0.10, lowerDroop: 0.10, lipTight: 0.02, quiver: 0.03, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.36, p: m({ smile: 0.04, openness: 0.16, teethUpper: 0.00, quiver: 0.03 }), e: 'inOutQuad' },
+    { d: 0.34, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_frustrated_growl_058', name: 'Рычит досада мяч #58', cat: 'ball', w: 3, frames: [
+    { d: 0.18, p: m({ width: 33.7, height: 9.2, smile: -0.28, openness: 0.23, teethUpper: 0.48, tongueOut: 0.00, cornerLeft: 1.1, cornerRight: 0.9, upperRaise: 0.16, lowerDroop: 0.09, lipTight: 0.12, quiver: 0.11, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.34, p: m({ smile: -0.25, openness: 0.26, teethUpper: 0.55, quiver: 0.11 }), e: 'inOutQuad' },
+    { d: 0.34, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_joy_bark_059', name: 'Радостный гав с мячом #59', cat: 'ball', w: 3, frames: [
+    { d: 0.19, p: m({ width: 42.6, height: 8.6, smile: 0.74, openness: 0.54, teethUpper: 0.47, tongueOut: 0.13, cornerLeft: -2.1, cornerRight: -2.2, upperRaise: 0.05, lowerDroop: 0.07, lipTight: 0.00, quiver: 0.00, drool: 0.07 }), e: 'outQuad' },
+    { d: 0.41, p: m({ smile: 0.78, openness: 0.51, teethUpper: 0.45, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.28, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_focus_stare_060', name: 'Сосредоточен на мяче #60', cat: 'ball', w: 5, frames: [
+    { d: 0.16, p: m({ width: 41.0, height: 11.6, smile: 0.14, openness: 0.16, teethUpper: 0.12, tongueOut: 0.06, cornerLeft: -0.5, cornerRight: -0.6, upperRaise: 0.03, lowerDroop: 0.03, lipTight: 0.17, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.29, p: m({ smile: 0.19, openness: 0.12, teethUpper: 0.19, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.46, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_bite_hold_061', name: 'Кусь держит мяч #61', cat: 'ball', w: 3, frames: [
+    { d: 0.2, p: m({ width: 36.3, height: 8.3, smile: 0.18, openness: 0.20, teethUpper: 0.48, tongueOut: 0.06, cornerLeft: -0.4, cornerRight: -0.6, upperRaise: 0.15, lowerDroop: 0.04, lipTight: 0.20, quiver: 0.19, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.49, p: m({ smile: 0.14, openness: 0.19, teethUpper: 0.53, quiver: 0.19 }), e: 'inOutQuad' },
+    { d: 0.32, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_toss_up_062', name: 'Подброс вверх ртом #62', cat: 'ball', w: 6, frames: [
+    { d: 0.17, p: m({ width: 40.1, height: 8.0, smile: 0.36, openness: 0.41, teethUpper: 0.16, tongueOut: 0.18, cornerLeft: -0.9, cornerRight: -1.2, upperRaise: 0.12, lowerDroop: 0.03, lipTight: 0.02, quiver: 0.26, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.3, p: m({ smile: 0.40, openness: 0.43, teethUpper: 0.08, quiver: 0.26 }), e: 'inOutQuad' },
+    { d: 0.47, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_excited_pant_063', name: 'Взволнованное пыхтит с мячом #63', cat: 'ball', w: 2, frames: [
+    { d: 0.21, p: m({ width: 44.1, height: 11.1, smile: 0.54, openness: 0.38, teethUpper: 0.37, tongueOut: 0.15, cornerLeft: -1.6, cornerRight: -2.1, upperRaise: 0.08, lowerDroop: 0.23, lipTight: 0.16, quiver: 0.00, drool: 0.06 }), e: 'outQuad' },
+    { d: 0.43, p: m({ smile: 0.52, openness: 0.41, teethUpper: 0.35, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.31, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_dribble_tap_064', name: 'Тюкает носом #64', cat: 'ball', w: 4, frames: [
+    { d: 0.13, p: m({ width: 36.7, height: 10.6, smile: 0.44, openness: 0.15, teethUpper: 0.17, tongueOut: 0.03, cornerLeft: -0.3, cornerRight: -2.3, upperRaise: 0.01, lowerDroop: 0.04, lipTight: 0.22, quiver: 0.00, drool: 0.04 }), e: 'outQuad' },
+    { d: 0.4, p: m({ smile: 0.39, openness: 0.15, teethUpper: 0.10, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.38, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_catch_snap_065', name: 'Ловит щелчком #65', cat: 'ball', w: 5, frames: [
+    { d: 0.2, p: m({ width: 36.0, height: 8.0, smile: 0.10, openness: 0.36, teethUpper: 0.32, tongueOut: 0.02, cornerLeft: -0.4, cornerRight: -0.3, upperRaise: 0.14, lowerDroop: 0.06, lipTight: 0.02, quiver: 0.21, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.26, p: m({ smile: 0.15, openness: 0.37, teethUpper: 0.24, quiver: 0.21 }), e: 'inOutQuad' },
+    { d: 0.34, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_chew_gnaw_066', name: 'Грызёт мяч #66', cat: 'ball', w: 4, frames: [
+    { d: 0.17, p: m({ width: 35.2, height: 7.2, smile: 0.06, openness: 0.07, teethUpper: 0.29, tongueOut: 0.03, cornerLeft: 0.3, cornerRight: 0.6, upperRaise: 0.08, lowerDroop: 0.03, lipTight: 0.20, quiver: 0.15, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.25, p: m({ smile: 0.11, openness: 0.09, teethUpper: 0.21, quiver: 0.15 }), e: 'inOutQuad' },
+    { d: 0.34, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_blow_push_067', name: 'Дует толкает #67', cat: 'ball', w: 5, frames: [
+    { d: 0.21, p: m({ width: 44.3, height: 10.0, smile: 0.07, openness: 0.09, teethUpper: 0.00, tongueOut: 0.04, cornerLeft: 0.0, cornerRight: 0.3, upperRaise: 0.06, lowerDroop: 0.04, lipTight: 0.05, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.36, p: m({ smile: 0.12, openness: 0.06, teethUpper: 0.00, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.45, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_frustrated_growl_068', name: 'Рычит досада мяч #68', cat: 'ball', w: 2, frames: [
+    { d: 0.17, p: m({ width: 36.6, height: 9.3, smile: -0.25, openness: 0.14, teethUpper: 0.54, tongueOut: 0.00, cornerLeft: 0.9, cornerRight: 1.4, upperRaise: 0.23, lowerDroop: 0.10, lipTight: 0.20, quiver: 0.23, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.34, p: m({ smile: -0.25, openness: 0.14, teethUpper: 0.52, quiver: 0.23 }), e: 'inOutQuad' },
+    { d: 0.37, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_joy_bark_069', name: 'Радостный гав с мячом #69', cat: 'ball', w: 5, frames: [
+    { d: 0.19, p: m({ width: 39.0, height: 10.5, smile: 0.65, openness: 0.49, teethUpper: 0.49, tongueOut: 0.12, cornerLeft: -1.9, cornerRight: -2.3, upperRaise: 0.06, lowerDroop: 0.19, lipTight: 0.02, quiver: 0.00, drool: 0.04 }), e: 'outQuad' },
+    { d: 0.49, p: m({ smile: 0.69, openness: 0.47, teethUpper: 0.45, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.43, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_focus_stare_070', name: 'Сосредоточен на мяче #70', cat: 'ball', w: 4, frames: [
+    { d: 0.18, p: m({ width: 45.7, height: 8.6, smile: 0.18, openness: 0.13, teethUpper: 0.09, tongueOut: 0.00, cornerLeft: -0.4, cornerRight: -0.2, upperRaise: 0.02, lowerDroop: 0.11, lipTight: 0.02, quiver: 0.05, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.23, p: m({ smile: 0.24, openness: 0.12, teethUpper: 0.03, quiver: 0.05 }), e: 'inOutQuad' },
+    { d: 0.41, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_bite_hold_071', name: 'Кусь держит мяч #71', cat: 'ball', w: 2, frames: [
+    { d: 0.13, p: m({ width: 33.8, height: 8.8, smile: 0.14, openness: 0.24, teethUpper: 0.49, tongueOut: 0.10, cornerLeft: -0.0, cornerRight: -1.8, upperRaise: 0.15, lowerDroop: 0.06, lipTight: 0.05, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.38, p: m({ smile: 0.14, openness: 0.23, teethUpper: 0.45, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.29, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_toss_up_072', name: 'Подброс вверх ртом #72', cat: 'ball', w: 4, frames: [
+    { d: 0.18, p: m({ width: 32.7, height: 9.5, smile: 0.32, openness: 0.37, teethUpper: 0.22, tongueOut: 0.22, cornerLeft: -1.1, cornerRight: -0.8, upperRaise: 0.09, lowerDroop: 0.01, lipTight: 0.11, quiver: 0.25, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.45, p: m({ smile: 0.27, openness: 0.41, teethUpper: 0.26, quiver: 0.25 }), e: 'inOutQuad' },
+    { d: 0.28, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_excited_pant_073', name: 'Взволнованное пыхтит с мячом #73', cat: 'ball', w: 4, frames: [
+    { d: 0.12, p: m({ width: 42.8, height: 11.9, smile: 0.62, openness: 0.39, teethUpper: 0.48, tongueOut: 0.18, cornerLeft: -1.6, cornerRight: -1.6, upperRaise: 0.14, lowerDroop: 0.20, lipTight: 0.06, quiver: 0.00, drool: 0.05 }), e: 'outQuad' },
+    { d: 0.29, p: m({ smile: 0.67, openness: 0.42, teethUpper: 0.49, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.34, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_dribble_tap_074', name: 'Тюкает носом #74', cat: 'ball', w: 3, frames: [
+    { d: 0.15, p: m({ width: 44.9, height: 9.3, smile: 0.35, openness: 0.22, teethUpper: 0.24, tongueOut: 0.06, cornerLeft: -1.4, cornerRight: -1.0, upperRaise: 0.05, lowerDroop: 0.04, lipTight: 0.20, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.5, p: m({ smile: 0.40, openness: 0.25, teethUpper: 0.19, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.48, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_catch_snap_075', name: 'Ловит щелчком #75', cat: 'ball', w: 4, frames: [
+    { d: 0.14, p: m({ width: 40.2, height: 10.4, smile: 0.19, openness: 0.38, teethUpper: 0.43, tongueOut: 0.03, cornerLeft: -0.2, cornerRight: -0.1, upperRaise: 0.02, lowerDroop: 0.08, lipTight: 0.22, quiver: 0.30, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.25, p: m({ smile: 0.23, openness: 0.39, teethUpper: 0.50, quiver: 0.30 }), e: 'inOutQuad' },
+    { d: 0.44, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_chew_gnaw_076', name: 'Грызёт мяч #76', cat: 'ball', w: 2, frames: [
+    { d: 0.2, p: m({ width: 43.0, height: 8.8, smile: 0.02, openness: 0.10, teethUpper: 0.25, tongueOut: 0.07, cornerLeft: 0.2, cornerRight: 0.5, upperRaise: 0.02, lowerDroop: 0.09, lipTight: 0.05, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.28, p: m({ smile: 0.02, openness: 0.14, teethUpper: 0.21, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.47, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_blow_push_077', name: 'Дует толкает #77', cat: 'ball', w: 3, frames: [
+    { d: 0.17, p: m({ width: 47.4, height: 9.9, smile: 0.08, openness: 0.14, teethUpper: 0.00, tongueOut: 0.00, cornerLeft: -0.2, cornerRight: 0.2, upperRaise: 0.11, lowerDroop: 0.01, lipTight: 0.15, quiver: 0.02, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.34, p: m({ smile: 0.10, openness: 0.18, teethUpper: 0.03, quiver: 0.02 }), e: 'inOutQuad' },
+    { d: 0.4, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_frustrated_growl_078', name: 'Рычит досада мяч #78', cat: 'ball', w: 4, frames: [
+    { d: 0.21, p: m({ width: 41.6, height: 9.7, smile: -0.22, openness: 0.22, teethUpper: 0.54, tongueOut: 0.00, cornerLeft: 1.8, cornerRight: 0.4, upperRaise: 0.18, lowerDroop: 0.12, lipTight: 0.00, quiver: 0.19, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.26, p: m({ smile: -0.27, openness: 0.24, teethUpper: 0.47, quiver: 0.19 }), e: 'inOutQuad' },
+    { d: 0.34, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_joy_bark_079', name: 'Радостный гав с мячом #79', cat: 'ball', w: 4, frames: [
+    { d: 0.2, p: m({ width: 39.1, height: 10.3, smile: 0.75, openness: 0.43, teethUpper: 0.55, tongueOut: 0.14, cornerLeft: -2.0, cornerRight: -2.3, upperRaise: 0.09, lowerDroop: 0.24, lipTight: 0.19, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.31, p: m({ smile: 0.80, openness: 0.40, teethUpper: 0.62, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.33, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_focus_stare_080', name: 'Сосредоточен на мяче #80', cat: 'ball', w: 4, frames: [
+    { d: 0.16, p: m({ width: 40.4, height: 11.4, smile: 0.14, openness: 0.13, teethUpper: 0.05, tongueOut: 0.05, cornerLeft: -0.5, cornerRight: -0.5, upperRaise: 0.08, lowerDroop: 0.07, lipTight: 0.10, quiver: 0.10, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.34, p: m({ smile: 0.11, openness: 0.10, teethUpper: 0.08, quiver: 0.10 }), e: 'inOutQuad' },
+    { d: 0.48, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_bite_hold_081', name: 'Кусь держит мяч #81', cat: 'ball', w: 3, frames: [
+    { d: 0.16, p: m({ width: 47.3, height: 9.2, smile: 0.19, openness: 0.26, teethUpper: 0.54, tongueOut: 0.08, cornerLeft: -0.6, cornerRight: -0.3, upperRaise: 0.20, lowerDroop: 0.01, lipTight: 0.10, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.45, p: m({ smile: 0.14, openness: 0.27, teethUpper: 0.56, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.43, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_toss_up_082', name: 'Подброс вверх ртом #82', cat: 'ball', w: 2, frames: [
+    { d: 0.2, p: m({ width: 36.6, height: 7.5, smile: 0.24, openness: 0.47, teethUpper: 0.16, tongueOut: 0.22, cornerLeft: -1.3, cornerRight: -1.1, upperRaise: 0.17, lowerDroop: 0.11, lipTight: 0.02, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.41, p: m({ smile: 0.24, openness: 0.47, teethUpper: 0.11, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_excited_pant_083', name: 'Взволнованное пыхтит с мячом #83', cat: 'ball', w: 5, frames: [
+    { d: 0.13, p: m({ width: 47.9, height: 10.1, smile: 0.56, openness: 0.35, teethUpper: 0.35, tongueOut: 0.16, cornerLeft: -2.1, cornerRight: -2.0, upperRaise: 0.03, lowerDroop: 0.22, lipTight: 0.05, quiver: 0.31, drool: 0.04 }), e: 'outQuad' },
+    { d: 0.46, p: m({ smile: 0.59, openness: 0.36, teethUpper: 0.35, quiver: 0.31 }), e: 'inOutQuad' },
+    { d: 0.43, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_dribble_tap_084', name: 'Тюкает носом #84', cat: 'ball', w: 4, frames: [
+    { d: 0.14, p: m({ width: 39.9, height: 7.8, smile: 0.40, openness: 0.15, teethUpper: 0.21, tongueOut: 0.05, cornerLeft: -0.9, cornerRight: -1.2, upperRaise: 0.03, lowerDroop: 0.10, lipTight: 0.10, quiver: 0.00, drool: 0.08 }), e: 'outQuad' },
+    { d: 0.3, p: m({ smile: 0.44, openness: 0.12, teethUpper: 0.28, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.47, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_catch_snap_085', name: 'Ловит щелчком #85', cat: 'ball', w: 3, frames: [
+    { d: 0.21, p: m({ width: 47.0, height: 11.0, smile: 0.21, openness: 0.42, teethUpper: 0.31, tongueOut: 0.02, cornerLeft: 0.8, cornerRight: -1.0, upperRaise: 0.12, lowerDroop: 0.01, lipTight: 0.22, quiver: 0.37, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.51, p: m({ smile: 0.15, openness: 0.41, teethUpper: 0.35, quiver: 0.37 }), e: 'inOutQuad' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_chew_gnaw_086', name: 'Грызёт мяч #86', cat: 'ball', w: 4, frames: [
+    { d: 0.17, p: m({ width: 43.4, height: 7.2, smile: 0.04, openness: 0.09, teethUpper: 0.29, tongueOut: 0.06, cornerLeft: 0.0, cornerRight: 0.5, upperRaise: 0.05, lowerDroop: 0.11, lipTight: 0.01, quiver: 0.14, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.37, p: m({ smile: -0.01, openness: 0.10, teethUpper: 0.36, quiver: 0.14 }), e: 'inOutQuad' },
+    { d: 0.34, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_blow_push_087', name: 'Дует толкает #87', cat: 'ball', w: 3, frames: [
+    { d: 0.2, p: m({ width: 47.9, height: 7.2, smile: 0.12, openness: 0.20, teethUpper: 0.05, tongueOut: 0.01, cornerLeft: -0.2, cornerRight: -0.2, upperRaise: 0.01, lowerDroop: 0.01, lipTight: 0.10, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.36, p: m({ smile: 0.07, openness: 0.20, teethUpper: 0.09, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.37, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_frustrated_growl_088', name: 'Рычит досада мяч #88', cat: 'ball', w: 5, frames: [
+    { d: 0.13, p: m({ width: 45.2, height: 7.9, smile: -0.13, openness: 0.21, teethUpper: 0.52, tongueOut: 0.00, cornerLeft: 1.2, cornerRight: 1.4, upperRaise: 0.22, lowerDroop: 0.09, lipTight: 0.06, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.41, p: m({ smile: -0.12, openness: 0.25, teethUpper: 0.56, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.43, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_joy_bark_089', name: 'Радостный гав с мячом #89', cat: 'ball', w: 5, frames: [
+    { d: 0.2, p: m({ width: 40.1, height: 7.2, smile: 0.81, openness: 0.48, teethUpper: 0.51, tongueOut: 0.16, cornerLeft: -2.1, cornerRight: -2.2, upperRaise: 0.06, lowerDroop: 0.19, lipTight: 0.21, quiver: 0.00, drool: 0.04 }), e: 'outQuad' },
+    { d: 0.44, p: m({ smile: 0.83, openness: 0.50, teethUpper: 0.43, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.41, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_focus_stare_090', name: 'Сосредоточен на мяче #90', cat: 'ball', w: 5, frames: [
+    { d: 0.22, p: m({ width: 34.3, height: 11.7, smile: 0.19, openness: 0.06, teethUpper: 0.11, tongueOut: 0.00, cornerLeft: -0.7, cornerRight: -0.5, upperRaise: 0.02, lowerDroop: 0.06, lipTight: 0.13, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.45, p: m({ smile: 0.23, openness: 0.06, teethUpper: 0.15, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.39, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_bite_hold_091', name: 'Кусь держит мяч #91', cat: 'ball', w: 2, frames: [
+    { d: 0.22, p: m({ width: 43.3, height: 7.8, smile: 0.20, openness: 0.27, teethUpper: 0.55, tongueOut: 0.05, cornerLeft: -0.9, cornerRight: -0.4, upperRaise: 0.09, lowerDroop: 0.01, lipTight: 0.16, quiver: 0.29, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.26, p: m({ smile: 0.23, openness: 0.25, teethUpper: 0.55, quiver: 0.29 }), e: 'inOutQuad' },
+    { d: 0.47, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_toss_up_092', name: 'Подброс вверх ртом #92', cat: 'ball', w: 4, frames: [
+    { d: 0.14, p: m({ width: 41.9, height: 11.7, smile: 0.37, openness: 0.38, teethUpper: 0.19, tongueOut: 0.24, cornerLeft: -0.3, cornerRight: -2.0, upperRaise: 0.28, lowerDroop: 0.03, lipTight: 0.01, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.37, p: m({ smile: 0.37, openness: 0.41, teethUpper: 0.21, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.37, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_excited_pant_093', name: 'Взволнованное пыхтит с мячом #93', cat: 'ball', w: 2, frames: [
+    { d: 0.22, p: m({ width: 46.2, height: 11.5, smile: 0.62, openness: 0.39, teethUpper: 0.41, tongueOut: 0.16, cornerLeft: -1.8, cornerRight: -1.7, upperRaise: 0.03, lowerDroop: 0.19, lipTight: 0.08, quiver: 0.00, drool: 0.06 }), e: 'outQuad' },
+    { d: 0.23, p: m({ smile: 0.66, openness: 0.42, teethUpper: 0.48, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.47, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_dribble_tap_094', name: 'Тюкает носом #94', cat: 'ball', w: 6, frames: [
+    { d: 0.17, p: m({ width: 39.9, height: 8.9, smile: 0.44, openness: 0.18, teethUpper: 0.17, tongueOut: 0.05, cornerLeft: -1.2, cornerRight: -0.9, upperRaise: 0.02, lowerDroop: 0.09, lipTight: 0.05, quiver: 0.00, drool: 0.02 }), e: 'outQuad' },
+    { d: 0.37, p: m({ smile: 0.45, openness: 0.21, teethUpper: 0.15, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.31, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_catch_snap_095', name: 'Ловит щелчком #95', cat: 'ball', w: 3, frames: [
+    { d: 0.2, p: m({ width: 39.8, height: 11.4, smile: 0.21, openness: 0.37, teethUpper: 0.35, tongueOut: 0.01, cornerLeft: -0.3, cornerRight: -0.7, upperRaise: 0.07, lowerDroop: 0.05, lipTight: 0.06, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.31, p: m({ smile: 0.23, openness: 0.39, teethUpper: 0.28, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.4, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_chew_gnaw_096', name: 'Грызёт мяч #96', cat: 'ball', w: 2, frames: [
+    { d: 0.12, p: m({ width: 40.3, height: 10.8, smile: -0.02, openness: 0.15, teethUpper: 0.19, tongueOut: 0.07, cornerLeft: -0.0, cornerRight: 0.4, upperRaise: 0.04, lowerDroop: 0.01, lipTight: 0.00, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.37, p: m({ smile: -0.01, openness: 0.17, teethUpper: 0.13, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.35, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_blow_push_097', name: 'Дует толкает #97', cat: 'ball', w: 2, frames: [
+    { d: 0.13, p: m({ width: 36.1, height: 8.7, smile: 0.10, openness: 0.20, teethUpper: 0.00, tongueOut: 0.03, cornerLeft: 0.3, cornerRight: -0.3, upperRaise: 0.06, lowerDroop: 0.08, lipTight: 0.03, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.26, p: m({ smile: 0.07, openness: 0.18, teethUpper: 0.07, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.33, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_frustrated_growl_098', name: 'Рычит досада мяч #98', cat: 'ball', w: 6, frames: [
+    { d: 0.16, p: m({ width: 35.1, height: 11.8, smile: -0.17, openness: 0.23, teethUpper: 0.52, tongueOut: 0.04, cornerLeft: 1.0, cornerRight: 1.5, upperRaise: 0.16, lowerDroop: 0.07, lipTight: 0.15, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.36, p: m({ smile: -0.23, openness: 0.22, teethUpper: 0.58, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.3, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_joy_bark_099', name: 'Радостный гав с мячом #99', cat: 'ball', w: 4, frames: [
+    { d: 0.15, p: m({ width: 42.2, height: 7.0, smile: 0.79, openness: 0.51, teethUpper: 0.47, tongueOut: 0.10, cornerLeft: -1.2, cornerRight: -3.4, upperRaise: 0.04, lowerDroop: 0.13, lipTight: 0.18, quiver: 0.00, drool: 0.02 }), e: 'outQuad' },
+    { d: 0.44, p: m({ smile: 0.82, openness: 0.49, teethUpper: 0.41, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.37, p: m({}), e: 'outQuad' },
+  ]},
+  { id: 'ball_focus_stare_100', name: 'Сосредоточен на мяче #100', cat: 'ball', w: 2, frames: [
+    { d: 0.17, p: m({ width: 47.3, height: 7.4, smile: 0.14, openness: 0.13, teethUpper: 0.02, tongueOut: 0.00, cornerLeft: -0.5, cornerRight: -0.1, upperRaise: 0.01, lowerDroop: 0.05, lipTight: 0.22, quiver: 0.00, drool: 0.00 }), e: 'outQuad' },
+    { d: 0.35, p: m({ smile: 0.12, openness: 0.13, teethUpper: 0.00, quiver: 0.00 }), e: 'inOutQuad' },
+    { d: 0.42, p: m({}), e: 'outQuad' },
+  ]},
+
 ];
 
 /* ---------------- procedural generator ---------------- */
 
 export function generateProceduralMouth(): MouthDef {
-  const cat = (['happy','sad','angry','disgusted','surprised','playful','idle','eating','social'] as MouthCat[])[Math.floor(Math.random()*9)];
+  const cat = (['happy','sad','angry','disgusted','surprised','playful','idle','eating','social','ball'] as MouthCat[])[Math.floor(Math.random()*10)];
   const frames: MouthFrame[] = [];
   const n = 2 + Math.floor(Math.random()*3);
   for (let i = 0; i < n; i++) {
@@ -1419,6 +1925,7 @@ export function generateProceduralMouth(): MouthDef {
     if (cat==='disgusted') { smileBase = -0.08 - Math.random()*0.32; opennessBase = Math.random()*0.18; }
     if (cat==='surprised') { smileBase = (Math.random()-0.5)*0.28; opennessBase = 0.22 + Math.random()*0.42; }
     if (cat==='playful') { smileBase = 0.18 + Math.random()*0.52; opennessBase = Math.random()*0.48; }
+    if (cat==='ball') { smileBase = 0.14 + Math.random()*0.48; opennessBase = 0.12 + Math.random()*0.38; }
     // уголки анатомически: smile>0 → corner -, smile<0 → corner +
     const cornerBias = -smileBase * 2.8; // вверх при улыбке, вниз при грусти
     const asym = (Math.random()-0.5)*1.2; // асимметрия

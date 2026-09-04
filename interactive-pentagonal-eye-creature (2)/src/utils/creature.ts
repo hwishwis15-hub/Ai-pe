@@ -687,6 +687,8 @@ export class CreatureEntity {
       mx: number; my: number;
       cursorVX: number; cursorVY: number; cursorSpeed: number;
       food: { x: number; y: number }[];
+      balls?: { x: number; y: number; vx: number; vy: number; radius: number; id: string; carriedBy: string | null }[];
+      focusBall?: { x: number; y: number; vx: number; vy: number } | null;
       tool: string;
       globalScale: number;
       centerMode: string;
@@ -744,6 +746,21 @@ export class CreatureEntity {
         const v = this.valence;
         const a = this.arousal;
         const roll = Math.random();
+        // ---- ball autonomous trigger: high playfulness wants to play ----
+        const balls = (env as any).balls as { x:number; y:number; vx:number; vy:number; radius:number; id:string; carriedBy:string|null }[] | undefined;
+        if (balls && balls.length && !this.eat && !this.isDragging && Math.random() < 0.018) {
+          const play = this.mind.getPersonality ? this.mind.getPersonality().playfulness : this.cfg.playfulness;
+          const closest = balls.reduce((b:any, c:any) => Math.hypot(c.x - this.x, c.y - this.y) < Math.hypot(b.x - this.x, b.y - this.y) ? c : b, balls[0]);
+          const dBall = Math.hypot(closest.x - this.x, closest.y - this.y);
+          if (play > 0.38 && dBall < 280 && Math.random() < play * 0.22) {
+            if (Math.random() < 0.45) this.mouth.playCategory('ball');
+            // occasionally trigger ball action via cortex
+            if (Math.random() < 0.18) {
+              const act = closest.carriedBy === this.cfg.id ? 'carry_ball' : dBall < 90 ? 'dribble_ball' : 'chase_ball';
+              try { this.mind['activeActionId'] = act; } catch {}
+            }
+          }
+        }
         if (this.social) {
           if (this.social.tone === 'warm') this.mouth.playCategory('happy');
           else if (this.social.tone === 'annoyed') this.mouth.playCategory('angry');

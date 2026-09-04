@@ -38,7 +38,7 @@ export type EyeMood =
   | 'focused' 
   | 'dazed';
 
-export type ActiveTool = 'none' | 'laser' | 'food' | 'tickle' | 'burst' | 'force';
+export type ActiveTool = 'none' | 'laser' | 'food' | 'tickle' | 'burst' | 'force' | 'ball';
 
 export interface CreatureState {
   x: number;
@@ -72,6 +72,29 @@ export interface FoodOrb {
   /** seconds since it landed — older snacks are less tempting */
   age?: number;
   settled?: boolean;
+}
+
+export interface BallOrb {
+  id: string;
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  radius: number;
+  color: string;
+  /** spin for rolling effect */
+  spin: number;
+  vSpin: number;
+  /** seconds alive */
+  age: number;
+  /** who is carrying it, if any */
+  carriedBy: string | null;
+  /** time since last creature touch */
+  lastTouch: number;
+  /** squish for bounce */
+  squish: number;
+  /** trail points */
+  trail?: { x: number; y: number }[];
 }
 
 export interface Settings {
@@ -144,6 +167,8 @@ export interface Settings {
   showDrool: boolean;
   /** food orb size */
   foodSize: number;              // 0.5 … 2
+  /** ball size */
+  ballSize: number;              // 0.5 … 2
 
   /* ---- SOCIAL ---- */
   /** allow them to start games together */
@@ -166,6 +191,8 @@ export interface Settings {
   showBonds: boolean;
   /** food shelf-life in seconds (0 = never spoils) */
   foodLifetime: number;        // 0 … 240
+  /** ball shelf-life (0 = never spoils) */
+  ballLifetime: number;        // 0 … 240
   /** show nickname pill strictly anchored above each creature */
   showNicks: boolean;
 }

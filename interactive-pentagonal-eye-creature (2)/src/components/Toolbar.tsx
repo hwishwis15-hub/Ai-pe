@@ -33,6 +33,7 @@ import {
   AudioWaveform,
   Bomb,
   Languages,
+  Circle,
 } from 'lucide-react';
 
 interface ToolbarProps {
@@ -222,6 +223,14 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               >
                 <Utensils className="h-3.5 w-3.5" />
                 <span className="hidden xl:inline">{t('tool.feed')}</span>
+              </button>
+              <button
+                onClick={() => setActiveTool('ball')}
+                className={`${toolBtn(activeTool === 'ball')} ${activeTool === 'ball' ? '!bg-sky-400 !text-sky-950 shadow-[0_4px_14px_-4px_rgba(56,189,248,0.85)]' : ''}`}
+                title={`${t('tool.ballTip')} (5)`}
+              >
+                <Circle className="h-3.5 w-3.5" />
+                <span className="hidden xl:inline">{t('tool.ball')}</span>
               </button>
               <button
                 onClick={() => setActiveTool('tickle')}

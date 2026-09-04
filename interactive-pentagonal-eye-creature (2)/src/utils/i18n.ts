@@ -22,6 +22,8 @@ const UI_EN: Record<string, string> = {
   'tool.feedTip': 'Drop food',
   'tool.tickleTip': 'Tickle',
   'tool.burstTip': 'Quantum burst: shatter & respawn',
+  'tool.ball': 'Ball',
+  'tool.ballTip': 'Throw ball — play solo or together',
 
   'act.jump': 'Bounce',
   'act.eyes': 'New eye expression',
@@ -217,6 +219,8 @@ const UI_RU: Record<string, string> = {
   'tool.feedTip': 'Бросить еду',
   'tool.tickleTip': 'Щекотать',
   'tool.burstTip': 'Квантовый взрыв: разрыв и пересборка',
+  'tool.ball': 'Мяч',
+  'tool.ballTip': 'Бросить мяч — играй один или вместе',
 
   'act.jump': 'Прыжок',
   'act.eyes': 'Новая мимика глаз',

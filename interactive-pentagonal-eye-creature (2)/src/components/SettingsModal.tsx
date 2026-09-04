@@ -465,6 +465,18 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, settings, setS
                   min={0} max={240} step={5} fmt={(v) => (v === 0 ? 'forever' : `${v}s`)} accent="#fbbf24"
                   onChange={(v) => set({ foodLifetime: v })} />
               </Section>
+
+              <Section title="Ball — 100+ mechanics" icon="⚽">
+                <Slider label="Ball size" hint="Size of the ball — affects push, carry, dribble physics" value={s.ballSize}
+                  min={0.5} max={2} step={0.05} fmt={(v) => `${Math.round(v * 100)}%`} accent="#38bdf8"
+                  onChange={(v) => set({ ballSize: v })} />
+                <Slider label="Ball shelf life" hint="Seconds before ball fades away (0 = forever)" value={s.ballLifetime}
+                  min={0} max={240} step={5} fmt={(v) => (v === 0 ? 'forever' : `${v}s`)} accent="#38bdf8"
+                  onChange={(v) => set({ ballLifetime: v })} />
+                <p className="text-[9.5px] text-white/30 leading-relaxed">
+                  Мяч — живой предмет с физикой (гравитация, отскок, спин Магнуса, трение качения, трейл). Существа играют одни (дриблинг, жонглирование, бросок-ловля) и вместе (пас, keep-away, отбор, пас-отдал-бегом). 100+ ротовых анимаций категории Ball + 15 теле-акций (chase/dribble/carry/toss/fetch/juggle/pass/guard/pounce).
+                </p>
+              </Section>
             </div>
           )}
         </div>

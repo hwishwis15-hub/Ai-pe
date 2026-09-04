@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { ThemeConfig, ActiveTool, Settings, FoodOrb } from '../types';
+import { ThemeConfig, ActiveTool, Settings, FoodOrb, BallOrb } from '../types';
+import { createBall, stepBall, drawBall, kickBall, carryBall } from '../utils/ball';
 import { soundFx } from '../utils/audio';
 import { ACTIONS, startAction } from '../utils/actions';
 import { clamp } from '../utils/math';
@@ -60,6 +61,8 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
   const particleSysRef = useRef<ParticleSystem>(new ParticleSystem());
   const creaturesRef = useRef<CreatureEntity[]>([]);
   const foodOrbsRef = useRef<FoodOrb[]>([]);
+  const ballOrbsRef = useRef<BallOrb[]>([]);
+  const ballDragRef = useRef<BallOrb | null>(null);
   const socialRef = useRef<SocialDirector>(new SocialDirector());
   // (blaster removed)
 
@@ -281,6 +284,109 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
       prevCursorRef.current.y = my;
       const cursorSpeed = Math.hypot(cursorVelRef.current.x, cursorVelRef.current.y);
 
+      /* ---------- ball: real physics, solo & duet play (100+ mechanics) ---------- */
+      for (let i = ballOrbsRef.current.length - 1; i >= 0; i--) {
+        const ball = ballOrbsRef.current[i];
+        // carry handling — if carried, stick to carrier mouth
+        if (ball.carriedBy) {
+          const carrier = creaturesRef.current.find(c => c.cfg.id === ball.carriedBy);
+          if (carrier) {
+            // mouth position approx
+            const headY = carrier.y - carrier.bodyH(settings.creatureScale) * 0.22;
+            // use creature x,y + slight offset toward facing (vx)
+            const offX = Math.cos(carrier.rotation) * 18 + (carrier.vx || 0) * 0.08;
+            carryBall(ball, carrier.x + offX, headY + 8, carrier.cfg.id);
+            // auto throw if carrier does toss action or random
+            if (carrier.action && ['toss_ball','carry_ball'].includes(carrier.action.def.id) && Math.random() < 0.02) {
+              const a = Math.atan2(carrier.vy || -3, carrier.vx || 5 + Math.random()*4) + (Math.random()-0.5)*0.6;
+              const pow = 7 + Math.random()*9;
+              kickBall(ball, a, pow, (Math.random()-0.5)*1.2);
+              try { carrier.mouth.playById(['ball_toss_up_002','ball_toss_up_012','ball_joy_bark_009','ball_excited_pant_003'][Math.floor(Math.random()*4)]); } catch {}
+              try { carrier.mouth.playCategory('ball'); } catch {}
+            }
+            // drop if too long carried
+            if (ball.lastTouch > 2.5 + Math.random()*2.5 && Math.random() < 0.012) {
+              const a = Math.random()*Math.PI*2;
+              kickBall(ball, a, 4 + Math.random()*5);
+            }
+          } else {
+            ball.carriedBy = null;
+          }
+        } else {
+          stepBall(ball, dt, width, height, 46);
+        }
+
+        // ball-ball collisions
+        for (let j = i+1; j < ballOrbsRef.current.length; j++) {
+          const other = ballOrbsRef.current[j];
+          if (other.carriedBy) continue;
+          const dx = other.x - ball.x;
+          const dy = other.y - ball.y;
+          const d = Math.hypot(dx, dy) || 1;
+          const minD = ball.radius + other.radius;
+          if (d < minD) {
+            const nx = dx / d, ny = dy / d;
+            const overlap = (minD - d) * 0.5;
+            ball.x -= nx * overlap; ball.y -= ny * overlap;
+            other.x += nx * overlap; other.y += ny * overlap;
+            // elastic exchange
+            const v1 = ball.vx * nx + ball.vy * ny;
+            const v2 = other.vx * nx + other.vy * ny;
+            const imp = (v1 - v2) * 0.62;
+            ball.vx -= imp * nx; ball.vy -= imp * ny;
+            other.vx += imp * nx; other.vy += imp * ny;
+            ball.vSpin += imp * 0.04; other.vSpin -= imp * 0.04;
+            ball.squish = 0.86; other.squish = 0.86;
+          }
+        }
+
+        // lifetime fade
+        const blife = settings.ballLifetime > 0 ? settings.ballLifetime : Infinity;
+        const bfadeStart = blife * 0.82;
+        const bstale = ball.age > bfadeStart ? (ball.age - bfadeStart) / (blife - bfadeStart) : 0;
+        if (bstale >= 1) { ballOrbsRef.current.splice(i, 1); continue; }
+        ctx.save();
+        ctx.globalAlpha = 1 - bstale * 0.7;
+        drawBall(ctx, ball, now);
+        ctx.restore();
+
+        // creature <-> ball collisions & mouth triggers (100+ mouth anims)
+        for (const c of creaturesRef.current) {
+          const bw = c.bodyW(settings.creatureScale) * 0.42;
+          const dx = ball.x - c.x;
+          const dy = ball.y - (c.y - c.bodyH(settings.creatureScale)*0.05);
+          const dist = Math.hypot(dx, dy);
+          const touchR = bw * 0.55 + ball.radius;
+          if (dist < touchR && !ball.carriedBy) {
+            // push ball
+            const ang = Math.atan2(dy, dx);
+            const impPower = Math.hypot(c.vx, c.vy) * 0.42 + 2.2;
+            // body bump
+            ball.vx += Math.cos(ang) * impPower * 0.18;
+            ball.vy += Math.sin(ang) * impPower * 0.18;
+            ball.vSpin += (c.vx * 0.02);
+            ball.squish = 0.84;
+            // chance to bite & carry
+            const wantsCarry = c.mind.getPersonality ? c.mind.getPersonality().playfulness > 0.42 : Math.random() < 0.6;
+            if (dist < bw*0.42 + ball.radius*0.65 && Math.random() < (wantsCarry ? 0.035 : 0.012)) {
+              carryBall(ball, ball.x, ball.y, c.cfg.id);
+              try { c.mouth.playById(['ball_bite_hold_001','ball_catch_snap_005','ball_bite_hold_011','ball_catch_snap_015'][Math.floor(Math.random()*4)]); } catch {}
+              // also trigger ball-category random for variety
+              if (Math.random() < 0.5) { try { c.mouth.playCategory('ball'); } catch {} }
+              c.lastInteraction = now;
+              // happy chirp
+              try { (c as any).pushMood?.(0.12, 0.10); } catch {}
+            } else if (Math.random() < 0.018) {
+              // dribble / nose tap mouth
+              try { c.mouth.playById(['ball_dribble_tap_004','ball_dribble_tap_014','ball_blow_push_007','ball_focus_stare_010'][Math.floor(Math.random()*4)]); } catch {}
+            }
+            // creature also gets nudged a bit
+            c.vx -= Math.cos(ang) * 0.8;
+            c.vy -= Math.sin(ang) * 0.8;
+          }
+        }
+      }
+
       /* ---------- food: lands, lingers, tempts ---------- */
       for (let i = foodOrbsRef.current.length - 1; i >= 0; i--) {
         const food = foodOrbsRef.current[i];
@@ -459,6 +565,14 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
       const foodInfo = foodOrbsRef.current.map((f) => ({
         id: f.id, x: f.x, y: f.y, age: f.age ?? 0, forKind: (f.forKind ?? 'adult') as 'adult' | 'child',
       }));
+      const ballPts = ballOrbsRef.current.map(b => ({ x: b.x, y: b.y, vx: b.vx, vy: b.vy, radius: b.radius, id: b.id, carriedBy: b.carriedBy }));
+      const ballFocus = ballPts.length ? ballPts.reduce((best:any, cur:any) => {
+        const cx = creaturesRef.current[0]?.x ?? width/2;
+        const cy = creaturesRef.current[0]?.y ?? height/2;
+        const d0 = Math.hypot(cur.x - cx, cur.y - cy);
+        const bd = best ? Math.hypot(best.x - cx, best.y - cy) : Infinity;
+        return d0 < bd ? cur : best;
+      }, null as any) : null;
 
       // social fabric: relationships, moods and emergent games
       const actors = list.map((c) => c.toSocialActor());
@@ -517,6 +631,8 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
           cursorVY: cursorVelRef.current.y,
           cursorSpeed,
           food: foodPts,
+          balls: ballPts,
+          focusBall: ballFocus,
           tool: activeTool,
           globalScale: settings.creatureScale,
           centerMode: settings.centerMode,
@@ -809,6 +925,35 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
 
     const hit = hitTest(mx, my);
 
+    if (activeTool === 'ball') {
+      // spawn or drag ball — click creates, drag throws
+      const existing = ballOrbsRef.current.find(b => Math.hypot(b.x - mx, b.y - my) < b.radius + 22);
+      if (existing && !existing.carriedBy) {
+        ballDragRef.current = existing;
+        (existing as any)._dragStartX = existing.x;
+        (existing as any)._dragStartY = existing.y;
+        existing.vx = 0; existing.vy = 0;
+        return;
+      }
+      const scale = settings.ballSize;
+      const b = createBall(mx, my, (Math.random()-0.5)*3, -2 - Math.random()*2, scale);
+      // give initial toss toward random direction for fun
+      b.vx += (Math.random()-0.5)*6;
+      b.vy += (Math.random()-0.5)*6;
+      ballOrbsRef.current.push(b);
+      // limit to 4 balls
+      if (ballOrbsRef.current.length > 4) ballOrbsRef.current.shift();
+      // mouth excited
+      for (const c of creaturesRef.current) {
+        if (Math.hypot(c.x - mx, c.y - my) < 320) {
+          try { c.mouth.playById('ball_excited_pant_003'); } catch {}
+          try { c.mouth.playCategory('ball'); } catch {}
+        }
+      }
+      soundFx.playChirp('happy');
+      return;
+    }
+
     if (activeTool === 'burst') {
       if (hit) {
         hit.triggerBurst(settings.creatureScale, onBehaviorChange);
@@ -984,6 +1129,25 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
   };
 
   const handlePointerUp = () => {
+    if (ballDragRef.current) {
+      const b = ballDragRef.current;
+      const rect2 = canvasRef.current?.getBoundingClientRect();
+      if (rect2) {
+        void (window as any).lastBallUX; void (window as any).lastBallUY;
+        // compute velocity from drag delta
+        const dx = b.x - (b as any)._dragStartX;
+        const dy = b.y - (b as any)._dragStartY;
+        if (dx !== undefined) {
+          b.vx = dx * 0.22;
+          b.vy = dy * 0.22;
+          if (Math.hypot(b.vx, b.vy) < 1.5) { b.vx = (Math.random()-0.5)*4; b.vy = -3; }
+          b.vSpin = dx * 0.008;
+        }
+      }
+      // also simple throw if no drag start recorded
+      if (Math.hypot(b.vx, b.vy) < 0.5) { b.vx = (Math.random()-0.5)*8; b.vy = -4 - Math.random()*4; }
+      ballDragRef.current = null;
+    }
     mouseRef.current.down = false;
     const now = performance.now();
     const d = draggedRef.current;
