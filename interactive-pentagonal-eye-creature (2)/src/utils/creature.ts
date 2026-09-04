@@ -732,6 +732,15 @@ export class CreatureEntity {
     this.updateMood(dt);
     this.social = env.social ?? null;
 
+    // счастье и энергия теперь ЖИВЫЕ — отражают валентность/возбуждение и энергию мозга, а не статику
+    const targetHappy = clamp(50 + this.valence * 42 + this.arousal * 6 + (this.temperament.cheer - 0.5) * 10, 5, 98);
+    this.happiness += (targetHappy - this.happiness) * Math.min(1, dt * 1.4);
+    // лёгкая микро-дрожь чтобы было видно жизнь даже в покое
+    this.happiness = clamp(this.happiness + Math.sin(performance.now() * 0.0013 + this.cfg.tempo * 2.1) * 0.05, 0, 100);
+    const targetEnergy = clamp(this.mind.getEnergy() * 100 * (0.88 + this.arousal * 0.14), 4, 100);
+    this.energyStat += (targetEnergy - this.energyStat) * Math.min(1, dt * 1.9);
+    this.curiosityStat = clamp(this.mind.personality.curiosity * 100, 5, 100);
+
     // Autonomous mouth twitches — mood-driven, completely random timing
     this.mouthTwitchT += dt;
     if (!this.eat && !this.isDragging && !this.isBursting()) {
@@ -1401,18 +1410,22 @@ export class CreatureEntity {
       ctx.restore();
     }
 
-    // body gradient
+    // body gradient — ПОЛНЫЙ ЦВЕТ: всё тело в свой tint, без белого центра
     const lightAngle = Math.atan2(env.my - this.y, env.mx - this.x);
     const gx0 = -Math.cos(lightAngle) * curW * 0.62;
     const gy0 = -Math.sin(lightAngle) * curH * 0.62;
     const gx1 = Math.cos(lightAngle) * curW * 0.62;
     const gy1 = Math.sin(lightAngle) * curH * 0.62;
 
+    const baseTint = parseColor(this.cfg.tint);
+    const tintLight = rgbString(mixRGB(baseTint, parseColor('#FFFFFF'), 0.22));
+    const tintDark = rgbString(mixRGB(baseTint, parseColor('#000000'), 0.32));
+    const tintMidDark = rgbString(mixRGB(baseTint, parseColor('#000000'), 0.16));
     const mats: Record<string, string[]> = {
-      matte: ['#FFFFFF', this.cfg.tint, '#E4E9F0'],
-      glossy: ['#FFFFFF', this.cfg.tint, '#C7D0DC'],
-      glowing: ['#FFFFFF', '#FDFEFF', '#EDF3FA'],
-      hologram: ['#F4FBFF', '#DFF6FE', '#BFEAFE'],
+      matte: [tintLight, this.cfg.tint, tintDark],
+      glossy: [tintLight, this.cfg.tint, tintMidDark],
+      glowing: [tintLight, this.cfg.tint, tintDark],
+      hologram: [tintLight, this.cfg.tint, tintDark],
     };
     const bodyStops = makeStops(mats[env.bodyMaterial] ?? mats.matte);
     const bodyGrad = ctx.createLinearGradient(gx0, gy0, gx1, gy1);
@@ -1429,14 +1442,14 @@ export class CreatureEntity {
     ctx.fill();
     ctx.restore();
 
-    // inner shading
+    // inner shading — приглушён, чтобы не выбеливать полный цвет тела
     ctx.save();
     drawRoundedPolygon(ctx, vertices, radius);
     ctx.clip();
     const ig = ctx.createLinearGradient(0, -curH * 0.7, 0, curH * 0.4);
-    ig.addColorStop(0, 'rgba(255,255,255,0.85)');
-    ig.addColorStop(0.45, 'rgba(255,255,255,0.12)');
-    ig.addColorStop(1, 'rgba(148,163,184,0.14)');
+    ig.addColorStop(0, 'rgba(255,255,255,0.28)');
+    ig.addColorStop(0.45, 'rgba(255,255,255,0.06)');
+    ig.addColorStop(1, 'rgba(0,0,0,0.10)');
     ctx.fillStyle = ig;
     ctx.fill();
     ctx.restore();

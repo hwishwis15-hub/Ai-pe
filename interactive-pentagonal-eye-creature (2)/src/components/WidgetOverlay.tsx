@@ -4,8 +4,8 @@ import { BEHAVIORS } from '../utils/eyeBehaviors';
 import { t, tp, tl } from '../utils/i18n';
 import type { RosterEntry } from './CreatureCanvas';
 
-/** Компактная полоса показателя персонажа */
-const StatRow: React.FC<{ label: string; value: number; color: string }> = ({
+/** @deprecated — верхние статические шкалы удалены, оставлен для совместимости */
+export const StatRow: React.FC<{ label: string; value: number; color: string }> = ({
   label,
   value,
   color,
@@ -301,25 +301,6 @@ export const WidgetOverlay: React.FC<WidgetOverlayProps> = ({
 
               {!collapsed[r.id] && (
               <>
-              {/* Полосы показателей */}
-              <div className="space-y-1.5">
-                <StatRow
-                  label={t('stat.happy')}
-                  value={r.happiness}
-                  color="linear-gradient(90deg,#fb7185,#f43f5e)"
-                />
-                <StatRow
-                  label={t('stat.energy')}
-                  value={r.energy}
-                  color="linear-gradient(90deg,#fbbf24,#f59e0b)"
-                />
-                <StatRow
-                  label={t('stat.curiosity')}
-                  value={r.curiosity}
-                  color="linear-gradient(90deg,#38bdf8,#0ea5e9)"
-                />
-              </div>
-
               {/* Настроение (валентность) — отклонение от центра */}
               <div className="mt-2 pt-1.5 border-t border-white/[0.08]">
                 <div className="flex items-center justify-between text-[8.5px] font-semibold uppercase tracking-[0.14em] text-white/30 mb-1">
@@ -365,7 +346,7 @@ export const WidgetOverlay: React.FC<WidgetOverlayProps> = ({
                 </div>
               </div>
 
-              {/* Те же 6 параметров характера, что и раньше — теперь и у других персонажей */}
+              {/* Характер — 6 базовых черт + живые счастье/энергия (реально отражают происходящее) */}
               <div className="mt-1.5 pt-1.5 border-t border-white/[0.08] space-y-1">
                 <div className="text-[7.5px] font-bold uppercase tracking-[0.16em] text-white/25 mb-0.5">
                   {tl('Personality')}
@@ -376,6 +357,11 @@ export const WidgetOverlay: React.FC<WidgetOverlayProps> = ({
                 <TraitBar label={t('trait.diligence')} v={r.diligence} color="linear-gradient(90deg,#34d399,#22d3ee)" />
                 <TraitBar label={t('trait.curiosity')} v={r.curiousityTrait} color="linear-gradient(90deg,#c084fc,#e879f9)" />
                 <TraitBar label={t('trait.stubbornness')} v={r.stubbornness} color="linear-gradient(90deg,#fb923c,#f43f5e)" />
+                <div className="pt-1 mt-1 border-t border-white/[0.06] space-y-1">
+                  <div className="text-[7px] font-bold uppercase tracking-[0.16em] text-white/20">— LIVE —</div>
+                  <TraitBar label={t('stat.happy')} v={r.happiness / 100} color="linear-gradient(90deg,#fb7185,#f43f5e)" />
+                  <TraitBar label={t('stat.energy')} v={r.energy / 100} color="linear-gradient(90deg,#fbbf24,#f59e0b)" />
+                </div>
               </div>
               </>
               )}

@@ -16,4 +16,23 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"),
     },
   },
+  server: {
+    host: "0.0.0.0",
+    port: 5173,
+    strictPort: true,
+    cors: true,
+    // @ts-ignore — Vite 7+ allowedHosts
+    allowedHosts: true as unknown as string[],
+    headers: {
+      "X-Frame-Options": "ALLOWALL",
+    },
+    hmr: {
+      clientPort: 443,
+    },
+  },
+  preview: {
+    host: "0.0.0.0",
+    port: 5173,
+    cors: true,
+  },
 });
