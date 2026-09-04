@@ -342,10 +342,10 @@ export const WidgetOverlay: React.FC<WidgetOverlayProps> = ({
                 </button>
               </div>
 
-              {/* Меню цвета — каждому персонажу уже на сцене (главный + компаньоны), голубой удалён, палитра расширена */}
+              {/* Меню цвета — каждому персонажу уже на сцене (главный + компаньоны), голубой удалён, палитра светлее */}
               <div className="flex items-center gap-1 mb-2 -mt-0.5 flex-wrap">
                 <span className="text-[7px] font-bold uppercase tracking-[0.14em] text-white/25 mr-1">Цвет:</span>
-                {['#fb7185', '#f43f5e', '#fbbf24', '#f59e0b', '#a78bfa', '#e879f9', '#f472b6', '#34d399', '#facc15', '#a3e635'].map((col) => (
+                {['#fda4af', '#fb7185', '#fcd34d', '#fbbf24', '#c4b5fd', '#f0abfc', '#f9a8d4', '#6ee7b7', '#fde047', '#bef264'].map((col) => (
                   <button
                     key={col}
                     onClick={() => (window as unknown as { pentaSetTint?: (id: string, tint: string) => void }).pentaSetTint?.(r.id, col)}

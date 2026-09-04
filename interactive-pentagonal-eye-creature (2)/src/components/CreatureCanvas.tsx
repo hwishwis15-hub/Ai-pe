@@ -72,7 +72,7 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
   const cursorVelRef = useRef({ x: 0, y: 0 });
   const draggedRef = useRef<CreatureEntity | null>(null);
 
-  // ---- primary creature is created once — цвет точь-в-точь как полоски метрик (голубой убран, теперь тёплый розовый) ----
+  // ---- primary creature is created once — бледный тёплый розовый, без голубого ----
   if (creaturesRef.current.length === 0) {
     const primary = new CreatureEntity(
       {
@@ -80,7 +80,7 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
         name: 'Penta',
         kind: 'adult',
         sizeFactor: 1,
-        tint: '#fb7185',
+        tint: '#fda4af',
         tempo: 1,
         boldness: 0.5,
         sociability: 0.55,
@@ -523,7 +523,7 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
         });
       }
 
-      // draw back-to-front by y so overlaps look right
+      // draw back-to-front by y so overlaps look right — тела без ников, ники рисуем отдельным верхним слоем
       [...list].sort((a, b) => a.y - b.y).forEach((c) => {
         c.draw(ctx, {
           mx, my,
@@ -541,9 +541,72 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
           glintBrightness: settings.glintBrightness,
           eyeFreedom: settings.eyeFreedom,
           showMouths: settings.showMouths,
-          showNicks: settings.showNicks,
+          showNicks: false,
         });
       });
+
+      // — НИКИ строго над каждым телом (включая главного Penta) — отдельным слоем поверх всех тел, всегда горизонтально и всегда видно
+      if (settings.showNicks) {
+        for (const c of [...list].sort((a, b) => a.y - b.y)) {
+          if (c.isBursting()) continue;
+          const curH = c.bodyH(settings.creatureScale);
+          const eatLift = (c as unknown as { eat: { lift: number } | null }).eat ? ((c as unknown as { eat: { lift: number } }).eat!.lift) : 0;
+          const bounce = (c as unknown as { mind: { bodyBounce: number }; hoverBobScale: number }).mind.bodyBounce * ((c as unknown as { hoverBobScale: number }).hoverBobScale ?? 1);
+          const jitterY = (c as unknown as { burst: { phase: string } }).burst.phase === 'charge' ? (Math.random() - 0.5) * 4 : 0;
+          const jitterX = (c as unknown as { burst: { phase: string } }).burst.phase === 'charge' ? (Math.random() - 0.5) * 4 : 0;
+          const nx = c.x + jitterX;
+          const ny = c.y + eatLift + bounce + jitterY - curH / 2 - 22;
+          ctx.save();
+          ctx.translate(nx, ny);
+          const name = c.cfg.name || 'Penta';
+          ctx.font = '700 11px "Plus Jakarta Sans", system-ui, sans-serif';
+          const padX = 10;
+          let w = 0;
+          try { w = ctx.measureText(name).width + padX * 2; } catch { w = name.length * 7 + padX * 2; }
+          w = Math.max(w, 44);
+          const h = 18;
+          const r = 9;
+          const x1 = -w / 2, y1 = -h / 2, x2 = w / 2, y2 = h / 2;
+          // тень
+          ctx.shadowColor = 'rgba(0,0,0,0.35)';
+          ctx.shadowBlur = 10;
+          ctx.shadowOffsetY = 2;
+          // пилюля
+          ctx.fillStyle = 'rgba(15,23,42,0.88)';
+          // @ts-ignore
+          ctx.strokeStyle = c.cfg.tint;
+          ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          // @ts-ignore
+          if (typeof (ctx as unknown as { roundRect?: Function }).roundRect === 'function') {
+            (ctx as unknown as { roundRect: (x:number,y:number,w:number,h:number,r:number)=>void }).roundRect(x1, y1, w, h, r);
+          } else {
+            ctx.moveTo(x1 + r, y1);
+            // @ts-ignore
+            ctx.arcTo(x2, y1, x2, y2, r);
+            // @ts-ignore
+            ctx.arcTo(x2, y2, x1, y2, r);
+            // @ts-ignore
+            ctx.arcTo(x1, y2, x1, y1, r);
+            // @ts-ignore
+            ctx.arcTo(x1, y1, x2, y1, r);
+            ctx.closePath();
+          }
+          ctx.fill();
+          // сброс тени для обводки свечения
+          ctx.shadowColor = c.cfg.tint;
+          ctx.shadowBlur = 12;
+          ctx.stroke();
+          // текст
+          ctx.shadowColor = 'transparent';
+          ctx.shadowBlur = 0;
+          ctx.fillStyle = '#FFFFFF';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(name, 0, 0.5);
+          ctx.restore();
+        }
+      }
 
       // expose EVERY creature's state to the HUD (panels for all companions)
       const roster: RosterEntry[] = list.map((c) => ({

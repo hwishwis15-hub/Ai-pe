@@ -44,8 +44,8 @@ export interface CreatureConfig {
 
 export function defaultConfig(kind: CreatureKind, index: number): CreatureConfig {
   const child = kind === 'child';
-  // Цвета тела — яркая палитра без голубого, 10 вариантов
-  const vivid = ['#fb7185', '#f43f5e', '#fbbf24', '#f59e0b', '#a78bfa', '#e879f9', '#f472b6', '#34d399', '#facc15', '#a3e635'];
+  // Цвета тела — палитра без голубого, капельку бледнее (на шаг светлее Tailwind)
+  const vivid = ['#fda4af', '#fb7185', '#fcd34d', '#fbbf24', '#c4b5fd', '#f0abfc', '#f9a8d4', '#6ee7b7', '#fde047', '#bef264'];
   return {
     id: `penta_${Date.now()}_${index}`,
     name: child ? 'Pip' : 'Penta II',
@@ -1417,9 +1417,9 @@ export class CreatureEntity {
     const gy1 = Math.sin(lightAngle) * curH * 0.62;
 
     const baseTint = parseColor(this.cfg.tint);
-    const tintLight = rgbString(mixRGB(baseTint, parseColor('#FFFFFF'), 0.22));
-    const tintDark = rgbString(mixRGB(baseTint, parseColor('#000000'), 0.32));
-    const tintMidDark = rgbString(mixRGB(baseTint, parseColor('#000000'), 0.16));
+    const tintLight = rgbString(mixRGB(baseTint, parseColor('#FFFFFF'), 0.33));
+    const tintDark = rgbString(mixRGB(baseTint, parseColor('#000000'), 0.20));
+    const tintMidDark = rgbString(mixRGB(baseTint, parseColor('#000000'), 0.10));
     const mats: Record<string, string[]> = {
       matte: [tintLight, this.cfg.tint, tintDark],
       glossy: [tintLight, this.cfg.tint, tintMidDark],
@@ -1446,9 +1446,9 @@ export class CreatureEntity {
     drawRoundedPolygon(ctx, vertices, radius);
     ctx.clip();
     const ig = ctx.createLinearGradient(0, -curH * 0.7, 0, curH * 0.4);
-    ig.addColorStop(0, 'rgba(255,255,255,0.28)');
-    ig.addColorStop(0.45, 'rgba(255,255,255,0.06)');
-    ig.addColorStop(1, 'rgba(0,0,0,0.10)');
+    ig.addColorStop(0, 'rgba(255,255,255,0.36)');
+    ig.addColorStop(0.45, 'rgba(255,255,255,0.10)');
+    ig.addColorStop(1, 'rgba(0,0,0,0.06)');
     ctx.fillStyle = ig;
     ctx.fill();
     ctx.restore();
