@@ -712,7 +712,7 @@ export class CreatureEntity {
       stubbornness: number;
       others: CreatureEntity[];
       social?: SocialDirective | null;
-      foodOrbs?: { id: string; x: number; y: number; age: number }[];
+      foodOrbs?: { id: string; x: number; y: number; age: number; forKind?: 'adult' | 'child' }[];
       onBehavior?: (name: string) => void;
       onRipple?: (x: number, y: number, scale: number, count: number, color: string) => void;
     }
@@ -880,7 +880,7 @@ export class CreatureEntity {
       // completely unscheduled — a random urge to go look at a snack
       if (Math.random() < dt * 0.22) {
         const candidates = env.foodOrbs
-          .filter((f) => this.appetiteFor(f.id, f.age) > 0.12)
+          .filter((f) => (f.forKind ? f.forKind === this.cfg.kind : true) && this.appetiteFor(f.id, f.age) > 0.12)
           .sort((a, b) => Math.hypot(a.x - this.x, a.y - this.y) - Math.hypot(b.x - this.x, b.y - this.y));
         const target = candidates[Math.floor(Math.random() * Math.min(3, candidates.length))];
         if (target) {

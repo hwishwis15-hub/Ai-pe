@@ -67,6 +67,8 @@ export interface FoodOrb {
   radius: number;
   color: string;
   type: 'star' | 'berry' | 'energy';
+  /** which creature kind may eat it — child food is smaller and only for children */
+  forKind?: 'adult' | 'child';
   /** seconds since it landed — older snacks are less tempting */
   age?: number;
   settled?: boolean;

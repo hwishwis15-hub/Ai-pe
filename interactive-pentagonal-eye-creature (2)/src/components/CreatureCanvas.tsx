@@ -313,14 +313,28 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
 
         const pulse = 1 + Math.sin(now * 0.006 + food.x) * 0.12;
         const fade = 1 - stale * 0.75;
+        const isChildFood = food.forKind === 'child';
         ctx.save();
         ctx.globalAlpha = fade;
         ctx.beginPath();
         ctx.arc(food.x, food.y, food.radius * pulse, 0, Math.PI * 2);
         ctx.fillStyle = food.color;
         ctx.shadowColor = food.color;
-        ctx.shadowBlur = 12;
+        ctx.shadowBlur = isChildFood ? 9 : 12;
         ctx.fill();
+        if (isChildFood) {
+          // тонкий белый кант чтобы маленький корм сразу отличался от взрослого
+          ctx.shadowBlur = 0;
+          ctx.strokeStyle = 'rgba(255,255,255,0.92)';
+          ctx.lineWidth = 1.6;
+          ctx.stroke();
+          // маленькая иконка-сердечко/точка внутри для дополнительной подсказки
+          ctx.beginPath();
+          ctx.arc(food.x + food.radius * 0.35, food.y + food.radius * 0.35, Math.max(1.2, food.radius * 0.18), 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255,255,255,0.95)';
+          ctx.fill();
+        }
+        ctx.shadowBlur = 0;
         ctx.beginPath();
         ctx.arc(food.x - food.radius * 0.3, food.y - food.radius * 0.3, food.radius * 0.3, 0, Math.PI * 2);
         ctx.fillStyle = 'rgba(255,255,255,0.85)';
@@ -332,7 +346,7 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
         let nearby: typeof creaturesRef.current = [];
         try {
           nearby = creaturesRef.current.filter(
-            (c) => { try { return !c.eat && Math.hypot(food.x - c.x, food.y - c.y) < c.bodyW(settings.creatureScale) * 0.52; } catch { return false; } }
+            (c) => { try { return !c.eat && (food.forKind ? c.cfg.kind === food.forKind : true) && Math.hypot(food.x - c.x, food.y - c.y) < c.bodyW(settings.creatureScale) * 0.52; } catch { return false; } }
           );
         } catch { nearby = []; }
         for (const c of nearby) {
@@ -443,7 +457,7 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
       const list = creaturesRef.current;
       const foodPts = foodOrbsRef.current.map((f) => ({ x: f.x, y: f.y }));
       const foodInfo = foodOrbsRef.current.map((f) => ({
-        id: f.id, x: f.x, y: f.y, age: f.age ?? 0,
+        id: f.id, x: f.x, y: f.y, age: f.age ?? 0, forKind: (f.forKind ?? 'adult') as 'adult' | 'child',
       }));
 
       // social fabric: relationships, moods and emergent games
@@ -736,15 +750,59 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
     mouseRef.current.down = true;
 
     if (activeTool === 'food') {
-      foodOrbsRef.current.push({
-        id: Math.random().toString(),
-        x: mx, y: my,
-        vx: (Math.random() - 0.5) * 4,
-        vy: -3,
-        radius: 12 * settings.foodSize,
-        color: ['#F59E0B', '#EC4899', '#3B82F6', '#10B981', '#A855F7'][Math.floor(Math.random() * 5)],
-        type: 'star',
-      });
+      const pickColor = () => ['#F59E0B', '#EC4899', '#3B82F6', '#10B981', '#A855F7'][Math.floor(Math.random() * 5)];
+      const hasChild = creaturesRef.current.some((c) => c.cfg.kind === 'child');
+      if (hasChild) {
+        // mixed sprinkle: one adult-sized and one child-sized, so each kind has its own snack
+        foodOrbsRef.current.push({
+          id: Math.random().toString(),
+          x: mx + (Math.random() - 0.5) * 10,
+          y: my + (Math.random() - 0.5) * 6,
+          vx: (Math.random() - 0.5) * 4,
+          vy: -3,
+          radius: 12 * settings.foodSize,
+          color: pickColor(),
+          type: 'star',
+          forKind: 'adult',
+        });
+        foodOrbsRef.current.push({
+          id: Math.random().toString(),
+          x: mx + (Math.random() - 0.5) * 18,
+          y: my + (Math.random() - 0.5) * 10,
+          vx: (Math.random() - 0.5) * 4,
+          vy: -3,
+          radius: 7 * settings.foodSize,
+          color: pickColor(),
+          type: 'star',
+          forKind: 'child',
+        });
+        // a little extra scatter so the sprinkle feels generous (keeps kind balance)
+        if (Math.random() < 0.5) {
+          const kind = Math.random() < 0.5 ? 'adult' as const : 'child' as const;
+          foodOrbsRef.current.push({
+            id: Math.random().toString(),
+            x: mx + (Math.random() - 0.5) * 26,
+            y: my + (Math.random() - 0.5) * 14,
+            vx: (Math.random() - 0.5) * 4,
+            vy: -3,
+            radius: (kind === 'adult' ? 12 : 7) * settings.foodSize,
+            color: pickColor(),
+            type: 'star',
+            forKind: kind,
+          });
+        }
+      } else {
+        foodOrbsRef.current.push({
+          id: Math.random().toString(),
+          x: mx, y: my,
+          vx: (Math.random() - 0.5) * 4,
+          vy: -3,
+          radius: 12 * settings.foodSize,
+          color: pickColor(),
+          type: 'star',
+          forKind: 'adult',
+        });
+      }
       soundFx.playChirp('happy');
       return;
     }
