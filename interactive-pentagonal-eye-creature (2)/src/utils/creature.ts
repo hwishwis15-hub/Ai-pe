@@ -1362,6 +1362,7 @@ export class CreatureEntity {
       mouthScale?: number;
       showTears?: boolean;
       showDrool?: boolean;
+      showNicks?: boolean;
     }
   ) {
     const curW = this.bodyW(env.globalScale);
@@ -1648,6 +1649,55 @@ export class CreatureEntity {
 
     ctx.restore();
     ctx.restore();
+
+    // — ник над головой, намертво привязан к телу (world coords, не вращается) —
+    if (env.showNicks) {
+      ctx.save();
+      const nickY = this.y + eatLift + moodBounce - curH * 0.62 - 18 + chargeJitterY;
+      const nickX = this.x + chargeJitterX;
+      // не вращаем — текст всегда горизонтально
+      ctx.translate(nickX, nickY);
+      const name = this.cfg.name;
+      ctx.font = '700 11px "Plus Jakarta Sans", system-ui, sans-serif';
+      const padX = 10;
+      let w = 0;
+      try { w = ctx.measureText(name).width + padX * 2; } catch { w = name.length * 7 + padX * 2; }
+      const h = 18;
+      const r = 9;
+      const x1 = -w / 2, y1 = -h / 2, x2 = w / 2, y2 = h / 2;
+      // тень-пилюля
+      ctx.fillStyle = 'rgba(15,23,42,0.78)';
+      (ctx as unknown as { shadowColor: string; shadowBlur: number }).shadowColor = this.cfg.tint;
+      (ctx as unknown as { shadowBlur: number }).shadowBlur = 0;
+      ctx.strokeStyle = this.cfg.tint;
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      // @ts-ignore — roundRect may not be typed
+      if (typeof (ctx as unknown as { roundRect?: Function }).roundRect === 'function') {
+        (ctx as unknown as { roundRect: (x:number,y:number,w:number,h:number,r:number)=>void }).roundRect(x1, y1, w, h, r);
+      } else {
+        ctx.moveTo(x1 + r, y1);
+        // @ts-ignore
+        ctx.arcTo(x2, y1, x2, y2, r);
+        // @ts-ignore
+        ctx.arcTo(x2, y2, x1, y2, r);
+        // @ts-ignore
+        ctx.arcTo(x1, y2, x1, y1, r);
+        // @ts-ignore
+        ctx.arcTo(x1, y1, x2, y1, r);
+        ctx.closePath();
+      }
+      ctx.fill();
+      ctx.stroke();
+      // свечение обводки
+      ctx.shadowColor = this.cfg.tint;
+      ctx.shadowBlur = 10;
+      ctx.fillStyle = '#FFFFFF';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(name, 0, 0.5);
+      ctx.restore();
+    }
 
     // If in charge phase, overlay the radiant singularity on top
     if (this.burst.phase === 'charge') {

@@ -83,6 +83,7 @@ export function App() {
     cursorGlow: true,
     showBonds: true,
     foodLifetime: 100,
+    showNicks: true,
   });
 
   const [fxs, setFxs] = useState<FXSettings>({
@@ -193,6 +194,7 @@ export function App() {
         fxs={fxs}
         onBehaviorChange={setCurrentBehaviorName}
         onStatsUpdate={setStats}
+        onTintChange={(id, tint) => setCompanions((prev) => prev.map((c) => (c.id === id ? { ...c, tint } : c)))}
       />
 
       {/* Top Floating Widget HUD */}

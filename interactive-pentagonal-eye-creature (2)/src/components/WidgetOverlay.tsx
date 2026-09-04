@@ -292,6 +292,22 @@ export const WidgetOverlay: React.FC<WidgetOverlayProps> = ({
                 </div>
               </button>
 
+              {/* Меню цвета — каждому персонажу уже на сцене (главный + компаньоны) */}
+              <div className="flex items-center gap-1 mb-2 -mt-0.5 flex-wrap">
+                <span className="text-[7px] font-bold uppercase tracking-[0.14em] text-white/25 mr-1">Цвет:</span>
+                {['#fb7185', '#f43f5e', '#fbbf24', '#f59e0b', '#38bdf8', '#0ea5e9'].map((col) => (
+                  <button
+                    key={col}
+                    onClick={() => (window as unknown as { pentaSetTint?: (id: string, tint: string) => void }).pentaSetTint?.(r.id, col)}
+                    className={`h-[18px] w-[18px] rounded-full border-2 transition-all shrink-0 ${
+                      r.tint === col ? 'border-white scale-110 shadow-[0_0_8px_rgba(255,255,255,0.6)]' : 'border-white/20 hover:border-white/50 hover:scale-105'
+                    }`}
+                    style={{ background: col }}
+                    title={col}
+                  />
+                ))}
+              </div>
+
               {/* Индикатор взрыва */}
               {r.bursting && (
                 <div className="mb-2 px-2 py-1 rounded-lg bg-rose-500/20 border border-rose-400/30 text-[9px] font-bold uppercase tracking-wider text-rose-200 text-center animate-pulse">

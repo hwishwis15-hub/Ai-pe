@@ -41,6 +41,7 @@ interface CreatureCanvasProps {
   fxs: FXSettings;
   onBehaviorChange?: (name: string) => void;
   onStatsUpdate?: (stats: { happiness: number; energy: number; curiosity: number }) => void;
+  onTintChange?: (id: string, tint: string) => void;
 }
 
 export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
@@ -51,6 +52,7 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
   fxs,
   onBehaviorChange,
   onStatsUpdate,
+  onTintChange,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const particleSysRef = useRef<ParticleSystem>(new ParticleSystem());
@@ -183,6 +185,18 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
         c.lastInteraction = 0;
       }
       soundFx.playChirp('curious');
+    };
+
+    (window as unknown as { pentaSetTint?: (id: string, tint: string) => void }).pentaSetTint = (id, tint) => {
+      const c = creaturesRef.current.find((e) => e.cfg.id === id);
+      if (c) {
+        c.cfg.tint = tint;
+        c.lastInteraction = performance.now();
+        // лёгкий всплеск чтобы было видно смену цвета
+        c.vScaleX = 0.12;
+        c.vScaleY = -0.12;
+      }
+      if (id !== 'penta_primary' && onTintChange) onTintChange(id, tint);
     };
 
     const render = (now: number) => {
@@ -514,6 +528,7 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
           glintBrightness: settings.glintBrightness,
           eyeFreedom: settings.eyeFreedom,
           showMouths: settings.showMouths,
+          showNicks: settings.showNicks,
         });
       });
 
@@ -594,7 +609,7 @@ export const CreatureCanvas: React.FC<CreatureCanvasProps> = ({
       cancelAnimationFrame(animId);
       window.removeEventListener('resize', handleResize);
     };
-  }, [theme, settings, activeTool, onBehaviorChange, onStatsUpdate]);
+  }, [theme, settings, activeTool, onBehaviorChange, onStatsUpdate, onTintChange]);
 
   /* ---------------- pointer ---------------- */
 

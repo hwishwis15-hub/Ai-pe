@@ -164,6 +164,8 @@ export interface Settings {
   showBonds: boolean;
   /** food shelf-life in seconds (0 = never spoils) */
   foodLifetime: number;        // 0 … 240
+  /** show nickname pill strictly anchored above each creature */
+  showNicks: boolean;
 }
 
 /** locked = always returns to center · free = stays where you leave it · auto = decides itself */

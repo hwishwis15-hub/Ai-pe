@@ -450,6 +450,8 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, settings, setS
                   onChange={() => set({ cursorGlow: !s.cursorGlow })} accent="#22d3ee" />
                 <Toggle label="Relationship bonds" hint="Dotted tethers drawn between interacting creatures" on={s.showBonds}
                   onChange={() => set({ showBonds: !s.showBonds })} accent="#22d3ee" />
+                <Toggle label="Ники над головой" hint="Маленькие пилюли с именем над каждым существом — всегда горизонтально" on={s.showNicks}
+                  onChange={() => set({ showNicks: !s.showNicks })} accent="#38bdf8" />
                 <Slider label="Particle count" hint="How much dust fills the air" value={s.particlesCount}
                   min={0} max={140} step={1} fmt={(v) => `${v}`} accent="#22d3ee"
                   onChange={(v) => set({ particlesCount: Math.round(v) })} />
