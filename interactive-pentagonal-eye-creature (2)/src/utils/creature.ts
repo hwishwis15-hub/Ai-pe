@@ -1647,16 +1647,11 @@ export class CreatureEntity {
       ctx.restore();
     }
 
-    ctx.restore();
-    ctx.restore();
-
-    // — ник над головой, намертво привязан к телу (world coords, не вращается) —
-    if (env.showNicks) {
+    // — ник строго над телом, намертво привязан к x,y (следует за физикой), контр-поворот чтобы остаться горизонтально —
+    if (env.showNicks !== false) {
       ctx.save();
-      const nickY = this.y + eatLift + moodBounce - curH * 0.62 - 18 + chargeJitterY;
-      const nickX = this.x + chargeJitterX;
-      // не вращаем — текст всегда горизонтально
-      ctx.translate(nickX, nickY);
+      ctx.translate(0, -curH / 2 - 22);
+      ctx.rotate(-this.rotation);
       const name = this.cfg.name;
       ctx.font = '700 11px "Plus Jakarta Sans", system-ui, sans-serif';
       const padX = 10;
@@ -1665,7 +1660,6 @@ export class CreatureEntity {
       const h = 18;
       const r = 9;
       const x1 = -w / 2, y1 = -h / 2, x2 = w / 2, y2 = h / 2;
-      // тень-пилюля
       ctx.fillStyle = 'rgba(15,23,42,0.78)';
       (ctx as unknown as { shadowColor: string; shadowBlur: number }).shadowColor = this.cfg.tint;
       (ctx as unknown as { shadowBlur: number }).shadowBlur = 0;
@@ -1689,7 +1683,6 @@ export class CreatureEntity {
       }
       ctx.fill();
       ctx.stroke();
-      // свечение обводки
       ctx.shadowColor = this.cfg.tint;
       ctx.shadowBlur = 10;
       ctx.fillStyle = '#FFFFFF';
@@ -1698,6 +1691,9 @@ export class CreatureEntity {
       ctx.fillText(name, 0, 0.5);
       ctx.restore();
     }
+
+    ctx.restore();
+    ctx.restore();
 
     // If in charge phase, overlay the radiant singularity on top
     if (this.burst.phase === 'charge') {
